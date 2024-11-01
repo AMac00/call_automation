@@ -1,0 +1,1118 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Camelot raw and simulated endpoint API &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="VMON API" href="vmon.html" />
+    <link rel="prev" title="SipMsgObject API" href="sipmessages.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vmon.html" title="VMON API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sipmessages.html" title="SipMsgObject API"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api_reference.html" accesskey="U">API Reference</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="camelot-raw-and-simulated-endpoint-api">
+<h1>Camelot raw and simulated endpoint API<a class="headerlink" href="#camelot-raw-and-simulated-endpoint-api" title="Permalink to this headline">¶</a></h1>
+<p>This document is for simulated endpoint or creation of raw message.
+only when tng-pi is used these methods can be used.(not for camelot-pi only scripts)</p>
+<div class="section" id="module-camelot.utils.rawendpoint_helper">
+<span id="api-methods"></span><h2>API Methods<a class="headerlink" href="#module-camelot.utils.rawendpoint_helper" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="camelot.utils.rawendpoint_helper.InActionObject">
+<em class="property">class </em><code class="descclassname">camelot.utils.rawendpoint_helper.</code><code class="descname">InActionObject</code><span class="sig-paren">(</span><em>camelotconn</em>, <em>msgstr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#InActionObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.InActionObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.InActionObject.add_verify_sip_header">
+<code class="descname">add_verify_sip_header</code><span class="sig-paren">(</span><em>headername</em>, <em>value</em>, <em>mode=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#InActionObject.add_verify_sip_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.InActionObject.add_verify_sip_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queued an action for validating given header in the original message</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>headername</strong> – name of header needs to be verified</li>
+<li><strong>value</strong> – value of header given to be verified as
+value of given header</li>
+<li><strong>mode</strong> – (optional) parameter mode is 1 if exact match is
+required else 0 (default value)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">validation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_in_action_set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">validation</span><span class="o">.</span><span class="n">add_verify_sip_header</span><span class="p">(</span><span class="s1">&#39;Allow-Events&#39;</span><span class="p">,</span><span class="s1">&#39;kpml,dialog&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">validation</span><span class="o">.</span><span class="n">add_verify_sip_header</span><span class="p">(</span><span class="s1">&#39;Supported&#39;</span><span class="p">,</span><span class="s1">&#39;X-cisco-serviceuri&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ep</span><span class="o">.</span><span class="n">start_validation_event</span><span class="p">(</span><span class="n">callback_handler</span><span class="p">,</span><span class="n">validation</span><span class="p">,</span>
+<span class="go">                                             method=&#39;INVITE&#39;)</span>
+</pre></div>
+</div>
+<p>Above example will validate two things
+1) If ‘Allow-Events’ value is exactly ‘kpml,dialog’ or not
+2) If ‘Supported’ value contains ‘X-cisco-serviceuri’ or not
+If both the conditions are true callback handler will get ‘1’ else ‘0’</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.InActionObject.get_verify_sip_header">
+<code class="descname">get_verify_sip_header</code><span class="sig-paren">(</span><em>index</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#InActionObject.get_verify_sip_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.InActionObject.get_verify_sip_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a validation header from InActionObject</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> – index of the header to be extracted</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">validation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_in_action_set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">validation</span><span class="o">.</span><span class="n">add_verify_sip_header</span><span class="p">(</span><span class="s1">&#39;Allow-Events&#39;</span><span class="p">,</span><span class="s1">&#39;kpml,dialog&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">validation</span><span class="o">.</span><span class="n">add_verify_sip_header</span><span class="p">(</span><span class="s1">&#39;Supported&#39;</span><span class="p">,</span><span class="s1">&#39;X-cisco-serviceuri&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">validation</span><span class="o">.</span><span class="n">get_verify_sip_header</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Above example will get the header stored at first postion which
+may be different then header added first to the InActionSet</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.utils.rawendpoint_helper.Media">
+<em class="property">class </em><code class="descclassname">camelot.utils.rawendpoint_helper.</code><code class="descname">Media</code><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#Media"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.Media" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.Media.audio">
+<code class="descname">audio</code><em class="property"> = 'audio'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.Media.audio" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.Media.none">
+<code class="descname">none</code><em class="property"> = 'none'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.Media.none" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.Media.video">
+<code class="descname">video</code><em class="property"> = 'video'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.Media.video" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject">
+<em class="property">class </em><code class="descclassname">camelot.utils.rawendpoint_helper.</code><code class="descname">MsgObject</code><span class="sig-paren">(</span><em>camelotconn</em>, <em>msgstr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject.add_raw_body">
+<code class="descname">add_raw_body</code><span class="sig-paren">(</span><em>msgType</em>, <em>bodyStr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject.add_raw_body"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject.add_raw_body" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add body other than SDP</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>msgType</strong> – type of message,
+this will be used in Content-Type field</li>
+<li><strong>bodyStr</strong> – actual body which will be added in message</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msgObj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_message</span><span class="p">(</span><span class="n">msgStr</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msgObj</span><span class="o">.</span><span class="n">add_raw_body</span><span class="p">(</span><span class="n">msgType</span><span class="p">,</span><span class="n">bodyStr</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Above example will create a message with headers generated using msgStr
+and bodyStr will be added as it is in body
+and given msgType will be added to Content-Type</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject.add_sdp_attrib">
+<code class="descname">add_sdp_attrib</code><span class="sig-paren">(</span><em>media</em>, <em>typestr</em>, <em>attrib</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject.add_sdp_attrib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject.add_sdp_attrib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add SDP attrib in Raw Message</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>media</strong> – Name of media in which attrib needs to be added
+value will remain ‘none’ for session level attribs</li>
+<li><strong>typestr</strong> – Type of attribute added values can be ‘a/m/o’ etc.</li>
+<li><strong>attrib</strong> – Attribute which needs to be added, it can be blank</li>
+<li><strong>value</strong> – Value of attribute to be added</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">It returns attrib_id of newly added attribute</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Using this function a line in below format will be added
+under given media</p>
+<dl class="docutils">
+<dt>if attirb is not blank</dt>
+<dd>type=attrib:value</dd>
+<dt>if attrib is blank</dt>
+<dd>type=value</dd>
+</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_message</span><span class="p">(</span><span class="n">SipTemplateMethods</span><span class="o">.</span><span class="n">SIP_INVITE</span><span class="p">,</span>
+<span class="go">                                    &#39;media&#39;=&#39;audio&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">add_sdp_attrib</span><span class="p">(</span><span class="s1">&#39;audio&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;ptime&#39;</span><span class="p">,</span><span class="s1">&#39;20&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">add_sdp_attrib</span><span class="p">(</span><span class="s1">&#39;audio&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;sendonly&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In above example
+First add_sdp_attrib will add a=ptime:20 in audio
+Second add_sdp_attrib will add a=sendonly in audio</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject.add_sdp_attrib_after">
+<code class="descname">add_sdp_attrib_after</code><span class="sig-paren">(</span><em>attr_id</em>, <em>media</em>, <em>typestr</em>, <em>attrib</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject.add_sdp_attrib_after"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject.add_sdp_attrib_after" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add SDP attrib after a particular sdp attribute</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>attr_id</strong> – ID of attribute after which we want to add this
+attribute</li>
+<li><strong>media</strong> – Name of media in which attrib needs to be added
+value will remain ‘none’ for session level attribs</li>
+<li><strong>typestr</strong> – Type of attribute added values can be ‘a/m/o’ etc.</li>
+<li><strong>attrib</strong> – Attribute which needs to be added, it can be blank</li>
+<li><strong>value</strong> – Value of attribute to be added</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">It returns attrib_id of newly added attribute</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This will create a new attribute and place it after attribute
+referred using attr_id</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_message</span><span class="p">(</span><span class="n">SipTemplateMethods</span><span class="o">.</span><span class="n">SIP_INVITE</span><span class="p">,</span>
+<span class="go">                                                &#39;media&#39;=&#39;audio&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attr_id</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">add_sdp_attrib</span><span class="p">(</span><span class="s1">&#39;audio&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;ptime&#39;</span><span class="p">,</span><span class="s1">&#39;20&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">add_sdp_attrib_after</span><span class="p">(</span><span class="n">attr_id</span><span class="p">,</span><span class="s1">&#39;audio&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;sendonly&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In above example
+add_sdp_attrib will add a=ptime:20 in audio
+add_sdp_attrib_after will add a=sendonly in audio just after
+attribute added in line above</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject.add_sip_header">
+<code class="descname">add_sip_header</code><span class="sig-paren">(</span><em>headername</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject.add_sip_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject.add_sip_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add given header to Raw message</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>headername</strong> – name of header needs to be added</li>
+<li><strong>value</strong> – value of header given in headername</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">returns header_id of added header</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_message</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">add_sip_header</span><span class="p">(</span><span class="s1">&#39;To&#39;</span><span class="p">,</span><span class="s1">&#39;&lt;sip:[sip.raw.dn]@[sip.cm.cm1ip]&gt;&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Above example will add new ‘To’ Header to raw message.
+Header will be added at the end of similar headers, so
+if there are ‘To’ Headers already present, header added
+above will be added at the end
+While creating message or adding sip header all configuration
+parameters can be used. Along with them few special purpose
+configuration parameters are also present</p>
+<ol class="arabic">
+<li><p class="first">auto.sip.call.newcallid: This tag will generate a new call-id</p>
+</li>
+<li><dl class="first docutils">
+<dt>auto.sip.time.currtime: This will be used to generate value</dt>
+<dd><p class="first last">for Date field</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>auto.sip.signalling.port: This port will place endpoint signalling</dt>
+<dd><p class="first last">port, used in via and contact</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>auto.sip.call.contentlen: This will calculate length of SDP and put</dt>
+<dd><p class="first last">that value here</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">auto.sip.via.branch: This will generate new branch for via</p>
+</li>
+<li><dl class="first docutils">
+<dt>auto.sip.tag: This will generate new tag which can be used in To or</dt>
+<dd><p class="first last">From</p>
+</dd>
+</dl>
+</li>
+</ol>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject.get_raw_body">
+<code class="descname">get_raw_body</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject.get_raw_body"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject.get_raw_body" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get raw body added earlier ‘{}’ will be returned
+if no raw body is added</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">It returns a string consisting of raw body of message</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msgObj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_message</span><span class="p">(</span><span class="n">msgStr</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msgObj</span><span class="o">.</span><span class="n">add_raw_body</span><span class="p">(</span><span class="n">msgType</span><span class="p">,</span><span class="n">bodyStr</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msgObj</span><span class="o">.</span><span class="n">get_raw_body</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>In above example get_raw_body will return a string consisting
+of raw body text</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject.get_sdp_attrib">
+<code class="descname">get_sdp_attrib</code><span class="sig-paren">(</span><em>media=''</em>, <em>typestr=''</em>, <em>attrib='none'</em>, <em>value=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject.get_sdp_attrib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject.get_sdp_attrib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve SDP attributes for given values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>media</strong> – Name of media for which attributes need to be
+retrieved. If not provided or left blank will
+return attribute for all media including session
+level attributes</li>
+<li><strong>typestr</strong> – Type of attribute. If not provided all types will
+be considered</li>
+<li><strong>attrib</strong> – Name of attribute. If not provided all attributes
+will be considered</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">It returns list of attributes matching given condition</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>All parameters are optional.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_message</span><span class="p">(</span><span class="n">SipTemplateMethods</span><span class="o">.</span><span class="n">SIP_INVITE</span><span class="p">,</span>
+<span class="go">                                                &#39;media&#39;=&#39;audio&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sdp_audio</span> <span class="o">=</span> <span class="n">get_sdp_attrib</span><span class="p">(</span><span class="s1">&#39;audio&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sdp_all</span> <span class="o">=</span> <span class="n">get_sdp_attrib</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>First call to get_sdp_attrib will return all attributes of type ‘a’
+under audio
+Second call to get_sdp_attrib will return all attributes in SDP</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject.get_sdp_lines_port0">
+<code class="descname">get_sdp_lines_port0</code><span class="sig-paren">(</span><em>sdp_list</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject.get_sdp_lines_port0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject.get_sdp_lines_port0" title="Permalink to this definition">¶</a></dt>
+<dd><p>get all mlines with its attribute lines having port 0.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sdp_list</strong> – this is a list of sdp message returned by
+get_sdp_attrib().</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">is a list of lists with mline having port 0 .
+contaning sdp objects m line and corresponding attribute lines.
+[[sdpLineObject1(mline),sdpLineObject1(atr1),sdpLineObject1(atr2)],
+[sdpLineObject2(mline),sdpLineObject2(atr1),sdpLineObject2(atr2)]]</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>NOTE: This API can be used for Simulated Endpoints as well.</dt>
+<dd>i.e., the endpoint need not to be RawEndpoint.</dd>
+</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msgObj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_message</span><span class="p">(</span><span class="n">msgStr</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sdplist</span> <span class="o">=</span>  <span class="n">msgObj</span><span class="o">.</span><span class="n">get_sdp_attrib</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msgObj</span><span class="o">.</span><span class="n">get_sdp_lines_port0</span><span class="p">(</span><span class="n">sdplist</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject.get_sip_header">
+<code class="descname">get_sip_header</code><span class="sig-paren">(</span><em>headername</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject.get_sip_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject.get_sip_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get value(s) for given header</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>header</strong> – header name or header id to be retrieved</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">return dictionary with header_id as key and
+header value as values</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_message</span><span class="p">(</span><span class="n">SipTemplateMethods</span><span class="o">.</span><span class="n">SIP_INVITE</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">to_id</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">add_sip_header</span><span class="p">(</span><span class="s1">&#39;To&#39;</span><span class="p">,</span><span class="s1">&#39;&lt;sip:12345@[sip.cm.cm1ip]&gt;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">get_sip_header</span><span class="p">(</span><span class="n">to_id</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">get_sip_header</span><span class="p">(</span><span class="s1">&#39;Via&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In above example
+First get_sip_header will retrieve ‘To’ header pointed by to_id
+if there are more ‘To’ headers added then also the header
+pointed by to_id will be retrieved
+Second get_sip_header will retrieve all ‘Via’ header,
+i.e. if there are more than one ‘Via’ header present all will be
+retrieved</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject.modify_sdp_attrib">
+<code class="descname">modify_sdp_attrib</code><span class="sig-paren">(</span><em>attr_id</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject.modify_sdp_attrib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject.modify_sdp_attrib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modify SDP attribute pointed by attr_id.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>attr_id</strong> – ID of attribute after which we want to add this
+attribute.</li>
+<li><strong>value</strong> – New value to be placed after modification.
+This function will modify existing attribute</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_message</span><span class="p">(</span><span class="n">SipTemplateMethods</span><span class="o">.</span><span class="n">SIP_INVITE</span><span class="p">,</span>
+<span class="go">                                                &#39;media&#39;=&#39;audio&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">attr_id</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">add_sdp_attrib</span><span class="p">(</span><span class="s1">&#39;audio&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;ptime&#39;</span><span class="p">,</span><span class="s1">&#39;20&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">modify_sdp_attrib</span><span class="p">(</span><span class="n">attr_id</span><span class="p">,</span><span class="s1">&#39;50&#39;</span><span class="p">)</span>
+<span class="go">In above example first call to add_sdp_attrib will add a new attribute</span>
+<span class="go">And then call to modify_sdp_attrib will change its value to 50</span>
+<span class="go">Making resultant attribute</span>
+<span class="go">a=ptime:50</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject.modify_sip_header">
+<code class="descname">modify_sip_header</code><span class="sig-paren">(</span><em>header</em>, <em>value</em>, <em>exclude_tag=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject.modify_sip_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject.modify_sip_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modify value for given header id</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>header</strong> – header name or header id to be modified</li>
+<li><strong>value</strong> – value of header given in header name</li>
+<li><strong>exclude_tag</strong> – Exclude From/To tag from owerwritting</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_message</span><span class="p">(</span><span class="n">SipTemplateMethods</span><span class="o">.</span><span class="n">SIP_INVITE</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">modify_sip_header</span><span class="p">(</span><span class="s1">&#39;To&#39;</span><span class="p">,</span><span class="s1">&#39;&lt;sip:12345@[sip.cm.cm1ip]&gt;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">from_dict</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">get_sip_header</span><span class="p">(</span><span class="s1">&#39;From&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">from_id</span> <span class="o">=</span> <span class="n">from_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">modify_sip_header</span><span class="p">(</span><span class="n">from_id</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In above example
+First modify_sip_header will modify all ‘To’ headers to new value
+Second modify_sip_header will modify from header pointed by from_id</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">modify_sip_header</span><span class="p">(</span><span class="s1">&#39;From&#39;</span><span class="p">,</span><span class="s1">&#39;newValue&#39;</span><span class="p">,</span> <span class="n">exclude_tag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Above example will modify ‘From’ header without replacing tag value.
+Here it will use old tag value as it is.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject.remove_raw_body">
+<code class="descname">remove_raw_body</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject.remove_raw_body"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject.remove_raw_body" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove raw body if present and do nothing if raw body is not present</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msgObj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_message</span><span class="p">(</span><span class="n">msgStr</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msgObj</span><span class="o">.</span><span class="n">remove_raw_body</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>In above example we are assuming that msgStr have rawbody included
+then call to remove_raw_body will remove that body</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject.remove_sdp_attrib">
+<code class="descname">remove_sdp_attrib</code><span class="sig-paren">(</span><em>attr_id</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject.remove_sdp_attrib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject.remove_sdp_attrib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove SDP attribute pointed by attr_id</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>attr_id</strong> – ID of attribute to be removed</td>
+</tr>
+</tbody>
+</table>
+<p>This fucntion will remove attribute line</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_message</span><span class="p">(</span><span class="n">SipTemplateMethods</span><span class="o">.</span><span class="n">SIP_INVITE</span><span class="p">,</span>
+<span class="go">                                                &#39;media&#39;=&#39;audio&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sdp</span> <span class="o">=</span> <span class="n">get_sdp_attrib</span><span class="p">(</span><span class="s1">&#39;audio&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">sdp</span><span class="p">)):</span>
+<span class="gp">&gt;&gt;&gt; </span>   <span class="k">if</span> <span class="n">sdp</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;sendrecv&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="n">msg</span><span class="o">.</span><span class="n">remove_sdp_attrib</span><span class="p">(</span><span class="n">sdp</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">sdpid</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span>       <span class="k">break</span>
+</pre></div>
+</div>
+<p>Above Example will remove sendrecv attrib</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.MsgObject.remove_sip_header">
+<code class="descname">remove_sip_header</code><span class="sig-paren">(</span><em>header</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#MsgObject.remove_sip_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.MsgObject.remove_sip_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remove given header from Raw message</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>header</strong> – header name or header id to be removed</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_message</span><span class="p">(</span><span class="n">SipTemplateMethods</span><span class="o">.</span><span class="n">SIP_INVITE</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">to_id</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">add_sip_header</span><span class="p">(</span><span class="s1">&#39;To&#39;</span><span class="p">,</span><span class="s1">&#39;&lt;sip:12345@[sip.cm.cm1ip]&gt;&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">remove_sip_header</span><span class="p">(</span><span class="n">to_id</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">msg</span><span class="o">.</span><span class="n">remove_sip_header</span><span class="p">(</span><span class="s1">&#39;From&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In above example
+First remove_sip_header will remove To header pointed by to_id
+if there are more ‘To’ headers added then also only the header
+pointed by to_id will be removed
+Second remove_sip_header will remove all ‘From’ header,
+i.e. if there are more than one ‘From’ header present all will be
+removed</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.utils.rawendpoint_helper.OutActionObject">
+<em class="property">class </em><code class="descclassname">camelot.utils.rawendpoint_helper.</code><code class="descname">OutActionObject</code><span class="sig-paren">(</span><em>camelotconn</em>, <em>msgstr</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#OutActionObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.OutActionObject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.OutActionObject.add_extra_sdp_line">
+<code class="descname">add_extra_sdp_line</code><span class="sig-paren">(</span><em>media='none'</em>, <em>type_attr=''</em>, <em>attrib=''</em>, <em>value=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#OutActionObject.add_extra_sdp_line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.OutActionObject.add_extra_sdp_line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adding sdp attrib with value given, at the end of sdp blindly.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>media</strong> – Value of the media. Default is session level</li>
+<li><strong>type_attr</strong> – Type of attribute.</li>
+<li><strong>attrib</strong> – Name of attribute.</li>
+<li><strong>value</strong> – Value of the attribute.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_out_action_set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">add_extra_sdp_line</span><span class="p">(</span><span class="n">typestr</span><span class="o">=</span><span class="s1">&#39;v&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;camelot&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">add_extra_sdp_line</span><span class="p">(</span><span class="s1">&#39;audio&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;fmtp&#39;</span><span class="p">,</span><span class="s1">&#39;100&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.OutActionObject.add_sdp_attrib">
+<code class="descname">add_sdp_attrib</code><span class="sig-paren">(</span><em>media='none'</em>, <em>typestr=''</em>, <em>attrib=''</em>, <em>value=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#OutActionObject.add_sdp_attrib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.OutActionObject.add_sdp_attrib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adding sdp attrib with value given</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>media</strong> – Value of the media. Default is session level</li>
+<li><strong>typestr</strong> – Type of attribute.</li>
+<li><strong>attrib</strong> – Name of attribute.</li>
+<li><strong>value</strong> – Value of the attribute.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_out_action_set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">add_sdp_header</span><span class="p">(</span><span class="n">typestr</span><span class="o">=</span><span class="s1">&#39;v&#39;</span><span class="p">,</span><span class="n">value</span><span class="o">=</span><span class="s1">&#39;camelot&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">add_sdp_header</span><span class="p">(</span><span class="s1">&#39;audio&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;fmtp&#39;</span><span class="p">,</span><span class="s1">&#39;100&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.OutActionObject.add_sdp_lines_port0">
+<code class="descname">add_sdp_lines_port0</code><span class="sig-paren">(</span><em>sdp_list</em>, <em>m_index=-1</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#OutActionObject.add_sdp_lines_port0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.OutActionObject.add_sdp_lines_port0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add m= line with port 0 and corresponding m lines at the end of sdp.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>sdp_list</strong> – <p>is a list containing sdp objects[m line,
+attributes]</p>
+<p>[sdpLineObject(mline),sdpLineObject(atr1),sdpLineObject(atr2)]</p>
+</li>
+<li><strong>m_index</strong> – index of m=line, where this port 0 m=line
+to be inserted. If not provided (default) inserted as a last
+m=line.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>NOTE: This API can be used for Simulated Endpoints as well.</dt>
+<dd>i.e., the endpoint need not to be RawEndpoint.</dd>
+</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_out_action_set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">add_sdp_lines_port0</span><span class="p">(</span><span class="n">sdp_list</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.OutActionObject.add_sip_header">
+<code class="descname">add_sip_header</code><span class="sig-paren">(</span><em>headername</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#OutActionObject.add_sip_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.OutActionObject.add_sip_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queued an action for adding given header to the original message</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>headername</strong> – name of header needs to be added to original
+message. This can be suffixed with a optional index</li>
+<li><strong>value</strong> – value of header given in headername and need to be
+added to original message</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_action_set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">add_sip_header</span><span class="p">(</span><span class="s1">&#39;To&#39;</span><span class="p">,</span><span class="s1">&#39;NewTo&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">add_sip_header</span><span class="p">(</span><span class="s1">&#39;To:0&#39;</span><span class="p">,</span> <span class="s1">&#39;FirstTo&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Above example will add Two new ‘To’ Header to original message on which
+this action will be applied. First ‘To’ Header with value NewTo will be
+added at the end as no Index is specified. Second ‘To’ Header with
+value ‘FirstTo’ will be added as the first ‘To’ as index given is zero.
+If index provided is greater than equal to the number of headers
+already provided then that value is added as last value for that header</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.OutActionObject.get_media_type">
+<code class="descname">get_media_type</code><span class="sig-paren">(</span><em>sdp_list</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#OutActionObject.get_media_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.OutActionObject.get_media_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>this gives the type of media line</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>sdp_list</strong> – is a list contaning sdp objects[m line,
+attributes].
+[sdp(mline),sdp(atr1),sdp(atr2)]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">will be a string AUDIO, VIDEO, BFCP,PRESENTATION_VIDEO, IX
+or FECC.</td>
+</tr>
+</tbody>
+</table>
+<dl class="docutils">
+<dt>NOTE: This API can be used for Simulated Endpoints as well.</dt>
+<dd>i.e., the endpoint need not to be RawEndpoint.</dd>
+</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_out_action_set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">get_media_type</span><span class="p">(</span><span class="n">sdp_list</span><span class="p">)</span>
+<span class="go">    BFCP</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.OutActionObject.modify_sdp_media_attrib">
+<code class="descname">modify_sdp_media_attrib</code><span class="sig-paren">(</span><em>media='none'</em>, <em>typestr=''</em>, <em>attrib='none'</em>, <em>value=''</em>, <em>newvalue=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#OutActionObject.modify_sdp_media_attrib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.OutActionObject.modify_sdp_media_attrib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve SDP attributes for given values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>typestr</strong> – Type of attribute. If not provided all types will
+be considered</li>
+<li><strong>attrib</strong> – Name of attribute. If not provided all attributes
+will be considered</li>
+<li><strong>value</strong> – Value of the attribute. If not provided all
+attributes will be considered.</li>
+<li><strong>newvalue</strong> – new Value of the attribute.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>All parameters are optional.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_out_action_set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">modify_sdp_media_attrib</span><span class="p">(</span><span class="s1">&#39;audio&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s1">&#39;0 0&#39;</span><span class="p">,</span>
+<span class="go">                                    newvalue=&#39;1 2&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.OutActionObject.modify_sdp_session_attrib">
+<code class="descname">modify_sdp_session_attrib</code><span class="sig-paren">(</span><em>typestr=''</em>, <em>attrib='none'</em>, <em>value=''</em>, <em>newvalue=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#OutActionObject.modify_sdp_session_attrib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.OutActionObject.modify_sdp_session_attrib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve SDP attributes for given values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>typestr</strong> – Type of attribute. If not provided all types will
+be considered</li>
+<li><strong>attrib</strong> – Name of attribute. If not provided all attributes
+will be considered</li>
+<li><strong>value</strong> – Value of the attribute. If not provided all
+attributes will be considered.</li>
+<li><strong>newvalue</strong> – new Value of the attribute.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>All parameters are optional.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_out_action_set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">modify_sdp_session_attrib</span><span class="p">(</span><span class="s1">&#39;t&#39;</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="s1">&#39;0 0&#39;</span><span class="p">,</span> <span class="n">newvalue</span><span class="o">=</span><span class="s1">&#39;1 2&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.OutActionObject.modify_sip_header">
+<code class="descname">modify_sip_header</code><span class="sig-paren">(</span><em>headername</em>, <em>value</em>, <em>oldValue=''</em>, <em>exclude_tag=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#OutActionObject.modify_sip_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.OutActionObject.modify_sip_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queued an action for removing given header from the original message</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>headername</strong> – name of header that needs to be modified in
+original message</li>
+<li><strong>value</strong> – New value of header given in headername and need to
+be put in original message</li>
+<li><strong>oldValue</strong> – Value need to be matched in original message</li>
+<li><strong>exclude_tag</strong> – Exclude From/To tag from owerwritting</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_action_set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">modify_sip_header</span><span class="p">(</span><span class="s1">&#39;Call-ID&#39;</span><span class="p">,</span><span class="s1">&#39;newCallID&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">modify_sip_header</span><span class="p">(</span><span class="s1">&#39;Call-ID&#39;</span><span class="p">,</span><span class="s1">&#39;newCallID&#39;</span><span class="p">,</span><span class="s1">&#39;oldCallID&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">modify_sip_header</span><span class="p">(</span><span class="s1">&#39;Call-ID:0&#39;</span><span class="p">,</span><span class="s1">&#39;newCallID&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">modify_sip_header</span><span class="p">(</span><span class="s1">&#39;Call-ID:0&#39;</span><span class="p">,</span><span class="s1">&#39;newCallID&#39;</span><span class="p">,</span><span class="s1">&#39;oldCallID&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Above example shows four different ways of using modify_sip_header
+First without index and without old value, this one will modify all
+header with given header name.
+Second with an old value, this one will modify all ‘Call-ID’ Header
+which contain OldCallID in their value.
+Third with an index will modify given header at the given index.
+In this example First(index 0) Call-ID header is deleted.
+Forth with both index and an old value will only consider index as
+index take precedence over value, and if both are provided only index
+is considered</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">modify_sip_header</span><span class="p">(</span><span class="s1">&#39;From&#39;</span><span class="p">,</span><span class="s1">&#39;newValue&#39;</span><span class="p">,</span> <span class="n">exclude_tag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Above example will modify ‘From’ header without replacing tag value.
+Here it will use old tag value as it is.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.OutActionObject.remove_sdp_media_attrib">
+<code class="descname">remove_sdp_media_attrib</code><span class="sig-paren">(</span><em>media='none'</em>, <em>typestr=''</em>, <em>attrib='none'</em>, <em>value=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#OutActionObject.remove_sdp_media_attrib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.OutActionObject.remove_sdp_media_attrib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve SDP attributes for given values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>media</strong> – Value of the media. If not provided all
+media will be considered.</li>
+<li><strong>typestr</strong> – Type of attribute. If not provided all types will
+be considered</li>
+<li><strong>attrib</strong> – Name of attribute. If not provided all attributes
+will be considered</li>
+<li><strong>value</strong> – Value of the attribute. If not provided all
+attributes will be considered.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>All parameters are optional.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_out_action_set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">remove_sdp_media_attrib</span><span class="p">(</span><span class="s1">&#39;audio&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>First call to remove_sdp_media_attrib will remove all attributes
+under audio</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.OutActionObject.remove_sdp_session_attrib">
+<code class="descname">remove_sdp_session_attrib</code><span class="sig-paren">(</span><em>typestr=''</em>, <em>attrib='none'</em>, <em>value=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#OutActionObject.remove_sdp_session_attrib"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.OutActionObject.remove_sdp_session_attrib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve SDP attributes for given values</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>typestr</strong> – Type of attribute. If not provided all types will
+be considered</li>
+<li><strong>attrib</strong> – Name of attribute. If not provided all attributes
+will be considered</li>
+<li><strong>value</strong> – Value of the attribute. If not provided all
+attributes will be considered.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>All parameters are optional.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_out_action_set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">remove_sdp_session_attrib</span><span class="p">(</span><span class="s1">&#39;v&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.utils.rawendpoint_helper.OutActionObject.remove_sip_header">
+<code class="descname">remove_sip_header</code><span class="sig-paren">(</span><em>headername</em>, <em>value=''</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#OutActionObject.remove_sip_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.OutActionObject.remove_sip_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queued an action for removing given header from the original message</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>headername</strong> – name of header that needs to be removed from
+original message</li>
+<li><strong>value</strong> – value of header need to be matched for deletion
+of header</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">srv</span><span class="o">.</span><span class="n">create_action_set</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">remove_sip_header</span><span class="p">(</span><span class="s1">&#39;From&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">remove_sip_header</span><span class="p">(</span><span class="s1">&#39;From&#39;</span><span class="p">,</span><span class="s1">&#39;OldFrom&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">remove_sip_header</span><span class="p">(</span><span class="s1">&#39;From:0&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">actions</span><span class="o">.</span><span class="n">remove_sip_header</span><span class="p">(</span><span class="s1">&#39;From:0&#39;</span><span class="p">,</span><span class="s1">&#39;delFrom&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Above example shows four different ways of using remove_sip_header.
+First without index and value, this one will delete all header with
+given header name.
+Second with a value, this one will delete all ‘From’ Header which
+contain OldFrom in their value.
+Third with an index will delete given header at the given index. In
+this example First From header will be deleted.
+Forth with both index and value will only consider index as index
+take precedence over value, and if both are provided only index
+is considered</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders">
+<em class="property">class </em><code class="descclassname">camelot.utils.rawendpoint_helper.</code><code class="descname">SipHeaders</code><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#SipHeaders"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.Accept">
+<code class="descname">Accept</code><em class="property"> = 'Accept'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.Accept" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.AcceptLanguage">
+<code class="descname">AcceptLanguage</code><em class="property"> = 'Accept-Language'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.AcceptLanguage" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.Allow">
+<code class="descname">Allow</code><em class="property"> = 'Allow'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.Allow" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.AllowEvents">
+<code class="descname">AllowEvents</code><em class="property"> = 'Allow-Events'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.AllowEvents" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.CSeq">
+<code class="descname">CSeq</code><em class="property"> = 'CSeq'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.CSeq" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.CallID">
+<code class="descname">CallID</code><em class="property"> = 'Call-ID'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.CallID" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.Contact">
+<code class="descname">Contact</code><em class="property"> = 'Contact'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.Contact" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.ContentLenght">
+<code class="descname">ContentLenght</code><em class="property"> = 'Content-Length'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.ContentLenght" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.ContentType">
+<code class="descname">ContentType</code><em class="property"> = 'Content-Type'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.ContentType" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.Date">
+<code class="descname">Date</code><em class="property"> = 'Date'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.Date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.Expires">
+<code class="descname">Expires</code><em class="property"> = 'Expires'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.Expires" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.From">
+<code class="descname">From</code><em class="property"> = 'From'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.From" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.MaxForwards">
+<code class="descname">MaxForwards</code><em class="property"> = 'Max-Forwards'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.MaxForwards" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.MinSE">
+<code class="descname">MinSE</code><em class="property"> = 'Min-SE'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.MinSE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.RecvInfo">
+<code class="descname">RecvInfo</code><em class="property"> = 'Recv-Info'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.RecvInfo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.RemotePartyID">
+<code class="descname">RemotePartyID</code><em class="property"> = 'Remote-Party-ID'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.RemotePartyID" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.StatusLine">
+<code class="descname">StatusLine</code><em class="property"> = 'Status-Line'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.StatusLine" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.Supported">
+<code class="descname">Supported</code><em class="property"> = 'Supported'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.Supported" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.Timestamp">
+<code class="descname">Timestamp</code><em class="property"> = 'Timestamp'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.Timestamp" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.To">
+<code class="descname">To</code><em class="property"> = 'To'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.To" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.UserAgent">
+<code class="descname">UserAgent</code><em class="property"> = 'User-Agent'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.UserAgent" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipHeaders.Via">
+<code class="descname">Via</code><em class="property"> = 'Via'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipHeaders.Via" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.utils.rawendpoint_helper.SipTemplateMethods">
+<em class="property">class </em><code class="descclassname">camelot.utils.rawendpoint_helper.</code><code class="descname">SipTemplateMethods</code><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#SipTemplateMethods"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipTemplateMethods" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipTemplateMethods.SIP_100">
+<code class="descname">SIP_100</code><em class="property"> = 'SIP_100'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipTemplateMethods.SIP_100" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipTemplateMethods.SIP_180">
+<code class="descname">SIP_180</code><em class="property"> = 'SIP_180'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipTemplateMethods.SIP_180" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipTemplateMethods.SIP_200">
+<code class="descname">SIP_200</code><em class="property"> = 'SIP_200'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipTemplateMethods.SIP_200" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipTemplateMethods.SIP_ACK">
+<code class="descname">SIP_ACK</code><em class="property"> = 'SIP_ACK'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipTemplateMethods.SIP_ACK" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipTemplateMethods.SIP_BYE">
+<code class="descname">SIP_BYE</code><em class="property"> = 'SIP_BYE'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipTemplateMethods.SIP_BYE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.utils.rawendpoint_helper.SipTemplateMethods.SIP_INVITE">
+<code class="descname">SIP_INVITE</code><em class="property"> = 'SIP_INVITE'</em><a class="headerlink" href="#camelot.utils.rawendpoint_helper.SipTemplateMethods.SIP_INVITE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.utils.rawendpoint_helper.sdpLineObject">
+<em class="property">class </em><code class="descclassname">camelot.utils.rawendpoint_helper.</code><code class="descname">sdpLineObject</code><span class="sig-paren">(</span><em>mediaidx</em>, <em>lineid</em>, <em>mediatype</em>, <em>attrtype</em>, <em>attr</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/utils/rawendpoint_helper.html#sdpLineObject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.utils.rawendpoint_helper.sdpLineObject" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Camelot raw and simulated endpoint API</a><ul>
+<li><a class="reference internal" href="#module-camelot.utils.rawendpoint_helper">API Methods</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="sipmessages.html"
+                        title="previous chapter">SipMsgObject API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vmon.html"
+                        title="next chapter">VMON API</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/tngpicommands.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vmon.html" title="VMON API"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sipmessages.html" title="SipMsgObject API"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api_reference.html" >API Reference</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

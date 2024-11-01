@@ -1,0 +1,1054 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>camelot.vapi.vapi_imp_uds_control &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../camelot.html" accesskey="U">camelot</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for camelot.vapi.vapi_imp_uds_control</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">camelot</span>
+<span class="kn">from</span> <span class="nn">camelot.vapi</span> <span class="k">import</span> <span class="n">vapi_camelot_utils</span> <span class="k">as</span> <span class="n">v</span>
+<span class="kn">from</span> <span class="nn">camelot</span> <span class="k">import</span> <span class="n">camlogger</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">camlogger</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">CamelotIMPUdsControl</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">CamelotVapiUtils</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;Camelot im, presence and uds commands</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">imp_query_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Shows the xmpp query status and response details</span>
+<span class="sd">        for the provided query_id. The query_id being provided here</span>
+<span class="sd">        should be the one returned by the xmpp/im roster, chat and presence</span>
+<span class="sd">        commands. By default once the response is returned the Camelot</span>
+<span class="sd">        cleares the response clear is set to False.</span>
+
+<span class="sd">        :parameter query_id: Mandatory Parameter. Takes the queryid returned by</span>
+<span class="sd">         any of xmpp roster commands</span>
+<span class="sd">        :parameter clear: Optional parameter. Defaults to True.</span>
+<span class="sd">         If set to Fase then Camelot will not clear the response</span>
+<span class="sd">         otherwise by defaults Camelot clears the response on returning</span>
+<span class="sd">         to the user.</span>
+<span class="sd">        :parameter queryid: for backward compatibility of tngpi users</span>
+<span class="sd">        :parameter noclear: for backward compatibility of tngpi users</span>
+
+<span class="sd">        :returns: Upon success, A dictionary of field:value pairs with</span>
+<span class="sd">         the following fields.\n</span>
+<span class="sd">          * status:This field takes success/failure depend on</span>
+<span class="sd">          the query reponse received</span>
+<span class="sd">          * command:This field will show the command which was</span>
+<span class="sd">          invoked for this queryid.</span>
+<span class="sd">          * contact:This field will show the JID of the buddy for</span>
+<span class="sd">          which the query was made</span>
+<span class="sd">          * starttime:This field shows the time the query was generated</span>
+<span class="sd">          * failure reason:This field shows the reason for the failure</span>
+<span class="sd">          if error response was received</span>
+<span class="sd">          * xml stanza:This field shows the xml stanza for the error</span>
+<span class="sd">          responses received.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.imp_query_response(&#39;4063652144&#39;, &#39;False&#39;)</span>
+<span class="sd">        {&#39;status&#39;:&#39;success&#39;, &#39;command&#39;: &#39;removebuddy&#39;,</span>
+<span class="sd">        &#39;contact&#39;: &#39;jabberep1500001@camelot.test&#39;,</span>
+<span class="sd">        &#39;starttime&#39;: &#39;2014-07-24T18:04:09&#39;,</span>
+<span class="sd">        &#39;failure reason&#39;: &#39;&#39;, &#39;xml stanza&#39;:&#39;&#39; }</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">query_id</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;invalid query id&quot;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">IMP_QUERY_RESPONSE</span><span class="p">,</span> <span class="n">query_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">clear</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;clear&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;noclear&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">IMP_QUERY_RESPONSE</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">clear_xmpp_im_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryid</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Clears the imp query response for the provided queryid.</span>
+<span class="sd">        If thequery_id is not provided then the camelot clears</span>
+<span class="sd">        all responses for xmpp roster management commands like</span>
+<span class="sd">        add_buddy, remove_buddy, remove_buddy etc. If the provided</span>
+<span class="sd">        queryid doesn&#39;t have the buffered the response then the</span>
+<span class="sd">        command returns 0.</span>
+
+<span class="sd">        :parameter query_id: Optional parameter. Takes the queryid for</span>
+<span class="sd">         which the response should be cleared in Camelot</span>
+<span class="sd">        :parameter queryid: This is used for backward compatibility of tngpi</span>
+
+<span class="sd">        :returns: 1 on success 0 on failure.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.imp_clear_response(&#39;172539688&#39;)</span>
+<span class="sd">        1</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">IMP_CLEAR_RESPONSE</span>
+
+        <span class="k">if</span> <span class="n">queryid</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">queryid</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">IMP_CLEAR_RESPONSE</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">imp_clear_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_id</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Clears the imp query response for the provided queryid.</span>
+<span class="sd">        If thequery_id is not provided then the camelot clears</span>
+<span class="sd">        all responses for xmpp roster management commands like</span>
+<span class="sd">        add_buddy, remove_buddy, remove_buddy etc. If the provided</span>
+<span class="sd">        queryid doesn&#39;t have the buffered the response then the</span>
+<span class="sd">        command returns 0.</span>
+
+<span class="sd">        :parameter query_id: Optional parameter. Takes the queryid for</span>
+<span class="sd">         which the response should be cleared in Camelot</span>
+<span class="sd">        :parameter queryid: This is used for backward compatibility of tngpi</span>
+
+<span class="sd">        :returns: 1 on success 0 on failure.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.imp_clear_response(&#39;172539688&#39;)</span>
+<span class="sd">        1</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">IMP_CLEAR_RESPONSE</span>
+
+        <span class="k">if</span> <span class="n">query_id</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">query_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">IMP_CLEAR_RESPONSE</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">send_xmpp_im</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jabber_id</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; TNGPI COMMAND</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">jabber_id</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;invalid buddy&#39;s jid&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;empty message&quot;</span><span class="p">)</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">^</span><span class="si">{}</span><span class="s1">^&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">SEND_IM</span><span class="p">,</span> <span class="n">jabber_id</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">SEND_IM</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">send_im</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jid</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Sends the message to the buddy whose jabber id is mentioned. Both jid</span>
+<span class="sd">        and msg are mandatory fields. The query id which is returned by this</span>
+<span class="sd">        command can be used by get_im_query_response command to know the</span>
+<span class="sd">        details of the sent message and the contact to whom it was sent.User</span>
+<span class="sd">        can call this API on receiving the station event &#39;imquerycompleted&#39;</span>
+<span class="sd">        from Camelot.</span>
+
+<span class="sd">        :parameter jid: buddy&#39;s jid</span>
+<span class="sd">        :parameter msg:  message to be sent.</span>
+
+<span class="sd">        :returns: success case returns query id.</span>
+<span class="sd">         if jid is not given then error returned is a message saying</span>
+<span class="sd">         &quot;must specify buddy jid&quot;</span>
+<span class="sd">         if  msg is not given then error returned is a message saying</span>
+<span class="sd">         &quot;must specify message&quot;</span>
+<span class="sd">         if invalid jid is mentioned then it returns 0</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.send_im(&#39;jabberep1401001@camelot.test&#39;,&#39;hello&#39;)</span>
+<span class="sd">        4051806944</span>
+<span class="sd">        &gt;&gt;&gt; ep1.send_im()</span>
+<span class="sd">        must specify contact user</span>
+<span class="sd">        &gt;&gt;&gt; ep1.send_im(&#39;jabberep1401001@camelot.test&#39;)</span>
+<span class="sd">        must specify message</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">jid</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;invalid buddy&#39;s jid&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">msg</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;empty message&quot;</span><span class="p">)</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">^</span><span class="si">{}</span><span class="s1">^&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">SEND_IM</span><span class="p">,</span> <span class="n">jid</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">SEND_IM</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">im_query_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_id</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This command is invoked with the query id returned from IM/XMPP</span>
+<span class="sd">        operations like sending a chat message using send_im, to</span>
+<span class="sd">        know the information about the sent message.</span>
+
+<span class="sd">        :parameter query_id: Id returned by send_im command.</span>
+<span class="sd">        :parameter clear: default value is True, Camelot clears the response</span>
+<span class="sd">         after returning information about the response received.</span>
+<span class="sd">         However, if clear option is set to False the response is not cleared</span>
+<span class="sd">         in camelot.</span>
+
+<span class="sd">        :returns: returns the dictionary with field:value pair with the</span>
+<span class="sd">         following fileds:\n</span>
+<span class="sd">         * status - If IM/XMPP operation like sending a chat message</span>
+<span class="sd">           using send_im got a type=error in the response, status will</span>
+<span class="sd">           be set to &#39;failure&#39;. If successful, status will be set to &#39;success&#39;.</span>
+<span class="sd">         * state - This is the state of the last IM/XMPP operations</span>
+<span class="sd">           done, like sending a chat message using send_im.</span>
+<span class="sd">           This state is being received in XMPP chat event message from</span>
+<span class="sd">           XMPP/IMP server. The possible chat states are -</span>
+<span class="sd">           &quot;composing, displayed, delivered, invalid, error&quot;.</span>
+<span class="sd">         * command - This field shows the command which was invoked</span>
+<span class="sd">           for this queryid.</span>
+<span class="sd">         * contact - This field shows the JID of the buddy for which</span>
+<span class="sd">           the query was made.</span>
+<span class="sd">         * message - This field shows the message which was sent using</span>
+<span class="sd">           IM/XMPP commands like sending a chat message using send_im.</span>
+<span class="sd">         * starttime - This field shows the time the query was generated.</span>
+
+<span class="sd">        &gt;&gt;&gt; a_query_id = ep1.send_im(&#39;jabberep1600002@camelot.test&#39;,&#39;hello&#39;)</span>
+<span class="sd">         &#39;4051371016&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ep1.im_query_response(&#39;4051371016&#39;)</span>
+<span class="sd">        {&#39;command&#39;: &#39;sendim&#39;,</span>
+<span class="sd">         &#39;contact&#39;: &#39;jabberep1600002@camelot.test&#39;,</span>
+<span class="sd">         &#39;message&#39;: &#39;hello&#39;,</span>
+<span class="sd">         &#39;sent time&#39;: &#39;2016-10-17T14:40:13.409&#39;,</span>
+<span class="sd">         &#39;state&#39;: &#39;delivered&#39;,</span>
+<span class="sd">         &#39;status&#39;: &#39;success&#39;}</span>
+
+<span class="sd">        &gt;&gt;&gt; a_query_id = ep1.send_im(&#39;abc@camelot.test&#39;,&#39;hello&#39;)</span>
+<span class="sd">         &#39;182615876&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ep1.im_query_response(&#39;182615876&#39;)</span>
+<span class="sd">        {&#39;command&#39;: &#39;sendim&#39;,</span>
+<span class="sd">         &#39;contact&#39;: &#39;abc@camelot.test&#39;,</span>
+<span class="sd">         &#39;message&#39;: &#39;hello&#39;,</span>
+<span class="sd">         &#39;sent time&#39;: &#39;2016-10-17T14:40:27.993&#39;,</span>
+<span class="sd">         &#39;state&#39;: &#39;error&#39;,</span>
+<span class="sd">         &#39;status&#39;: &#39;failure&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">query_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;invalid query id&quot;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">IM_QUERY_RESPONSE</span><span class="p">,</span> <span class="n">query_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">clear</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;clear&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;noclear&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">IM_QUERY_RESPONSE</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_xmpp_im_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jabber_id</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; TNGPI COMMAND &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">jabber_id</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;invalid jid, provide valid jid&#39;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_IM_INFO</span><span class="p">,</span> <span class="n">jabber_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">clear</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;clear&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;noclear&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_IM_INFO</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_xmpp_im_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jabber_id</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;gets last sent and received message from  buddy whose jabber id is</span>
+<span class="sd">         given.Also shows total number of messages sent and received</span>
+
+<span class="sd">        :parameter jabber_id: The jabber id of buddy</span>
+<span class="sd">        :parameter clear: If true the camelot clears the response</span>
+<span class="sd">         for future retrieval purpose on returning to the user.</span>
+<span class="sd">         By default Camelot does not clears the received response on</span>
+<span class="sd">         returning to the user.This parameter lets the user to instruct</span>
+<span class="sd">         the camelot to override the default behaviour</span>
+
+<span class="sd">        :returns: If the -field argument is omitted, a list of {field  value}</span>
+<span class="sd">        information is returned .If the -field option is specified, only the</span>
+<span class="sd">        value for the specified field is returned</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.get_xmpp_im_info(jabber_id)</span>
+<span class="sd">        {{&#39;last received im&#39;: &#39;hello 2&#39;,</span>
+<span class="sd">         &#39;last received im timestamp&#39;: &#39;2015-04-02T19:09:29.290&#39;,</span>
+<span class="sd">         &#39;last sent im&#39;: &#39;hello&#39;,</span>
+<span class="sd">         &#39;last sent im timestamp&#39;: &#39;2015-04-02T19:08:49:391&#39;,</span>
+<span class="sd">         &#39;total ims received&#39;: &#39;1&#39;,</span>
+<span class="sd">         &#39;total ims sent&#39;: &#39;1&#39;}</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">jabber_id</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;invalid jabber_id, provide valid jabber_id&#39;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_IM_INFO</span><span class="p">,</span> <span class="n">jabber_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">clear</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;clear&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;noclear&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_IM_INFO</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_im_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jid</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Provides information about last message sent and received to and from</span>
+<span class="sd">        buddy along with there time stamp.It also shows the total number of</span>
+<span class="sd">        messages sent and received.</span>
+
+<span class="sd">        :parameter jid: buddy&#39;s jid</span>
+<span class="sd">        :parameter clear: defaults to False else if set to True the Camleot</span>
+<span class="sd">         clears the response.</span>
+
+<span class="sd">        :returns: returns the dictionary with field:value pair with the</span>
+<span class="sd">         following fields:</span>
+
+<span class="sd">            * last sent im: message sent</span>
+<span class="sd">            * last sent im timestamp: time stamp of sent message</span>
+<span class="sd">            * last received im: message recv</span>
+<span class="sd">            * last received im timestamp: time stamp of received message</span>
+<span class="sd">            * total ims sent: total messages sent</span>
+<span class="sd">            * total ims received: total messages received</span>
+<span class="sd">            * total error im responses received: total error responses received</span>
+<span class="sd">            * last received error im resp: last error response received</span>
+<span class="sd">            * last received error im resp timestamp: time stamp of last error</span>
+<span class="sd">              response received</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.get_im_info(&#39;jabberep2100007@camelot.test&#39;)</span>
+<span class="sd">        {&#39;last received im timestamp&#39;: &#39;0-00-00T00:00:00.00&#39;,</span>
+<span class="sd">        &#39;last sent im&#39;: &#39;testmail2&#39;, &#39;last sent im timestamp&#39;:</span>
+<span class="sd">        &#39;2016-09-16T11:44:14:678&#39;, &#39;total error im responses received&#39;: &#39;1&#39;,</span>
+<span class="sd">        &#39;last received im&#39;: &#39;&#39;, &#39;total ims received&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;total ims sent&#39;: &#39;1&#39;,</span>
+<span class="sd">        &#39;last received error im resp&#39;: &quot;&lt;error type=&#39;cancel&#39;&gt;&lt;service-</span>
+<span class="sd">        unavailable xmlns=&#39;urn:ietf:params:xml:ns:xmpp-stanzas&#39;/&gt;&lt;/error&gt;&quot;,</span>
+<span class="sd">        &#39;last received error im resp timestamp&#39;: &#39;2016-09-16T11:44:14.735&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">jid</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;invalid jid, provide valid jid&#39;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_IM_INFO</span><span class="p">,</span> <span class="n">jid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">clear</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;clear&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;noclear&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_IM_INFO</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">im_clear_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_id</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Clears the im query(send_im) response for the provided queryid.</span>
+<span class="sd">        If thequery_id is not provided then the camelot clears</span>
+<span class="sd">        all responses for xmpp roster management commands like</span>
+<span class="sd">        add_buddy, remove_buddy, remove_buddy etc. If the provided</span>
+<span class="sd">        queryid doesn&#39;t have the buffered the response then the</span>
+<span class="sd">        command returns 0.</span>
+
+<span class="sd">        :parameter query_id: Optional parameter. Takes the queryid for</span>
+<span class="sd">         which the response should be cleared in Camelot</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.imclearresponse(&#39;172539688&#39;)</span>
+<span class="sd">        1</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">IMP_CLEAR_RESPONSE</span>
+        <span class="k">if</span> <span class="n">query_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">query_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">IMP_CLEAR_RESPONSE</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_presence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Modifies the show and status field values in the presence</span>
+<span class="sd">        information of the endpoint.When the setpresence command is</span>
+<span class="sd">        invoked the Camelot prepares the XMPP request and send the</span>
+<span class="sd">        presence request to the xmpp server. On successfully sending</span>
+<span class="sd">        the request to server the Camelot returns the query-id to the</span>
+<span class="sd">        clients.. On recieving the response from server the Camelot</span>
+<span class="sd">        generates the station event in the form</span>
+<span class="sd">        &quot;presenceinfo updated query-id&quot;. The clients are expected</span>
+<span class="sd">        to wait for this event and on receiving this event they can call</span>
+<span class="sd">        the command &quot;presence_query_response&quot; to get response.</span>
+
+<span class="sd">        :parameter show: Optional parameter.It takes the value of the field</span>
+<span class="sd">         show to be sent in the presence request. Values accepted for this</span>
+<span class="sd">         field are: available, chat, away, dnd, xa, unavailable, probe, error</span>
+<span class="sd">        :parameter status: Optional parameter. It takes the value of the</span>
+<span class="sd">         field status to be sent in the presence request</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.set_presence(&#39;away&#39;, &#39;in lab&#39;)</span>
+<span class="sd">        187118096</span>
+<span class="sd">        &gt;&gt;&gt; ep1.presence_query_response(&#39;187118096&#39;)</span>
+<span class="sd">        {&#39;result&#39;:&#39;success&#39;, &#39;command&#39;: &#39;setpresence&#39;,</span>
+<span class="sd">        &#39;starttime&#39;:&#39;2014-08-11T13:05:12&#39;,</span>
+<span class="sd">        &#39;show&#39;:&#39;away}&#39;, &#39;status&#39;: &#39;in lab&#39;, &#39;priority&#39;: &#39;127&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">show</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">status</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;show or status should be specified&#39;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">SET_PRESENCE</span>
+        <span class="k">if</span> <span class="n">show</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">show</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">SET_PRESENCE</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_presence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jid</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Shows the presence information of the endpoint</span>
+<span class="sd">        or its buddies.</span>
+
+<span class="sd">        :parameter jid: Optional parameter. If not mentioned it</span>
+<span class="sd">         displayes the self presence. If jid mentioned, it takes</span>
+<span class="sd">         the buddy name in the JID form as explained in xmpp</span>
+<span class="sd">         RFC 6121. ex: jabberep@camelot.test</span>
+
+<span class="sd">        :returns: Returns presence information as dictionary in key-value</span>
+<span class="sd">         format. The keys are as follows:\n</span>
+<span class="sd">         * show :  shows the current presence state of the endpoint.</span>
+<span class="sd">         * status: shows the presence status of the end point.</span>
+<span class="sd">         * priority: shows the priority of the endpoint.</span>
+<span class="sd">         * phone status: shows the phone status of the endpoint.</span>
+<span class="sd">         * im status: shows the im status of the end point.</span>
+<span class="sd">         * subscription: shows the subscription state of the endpoint.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.get_presence()</span>
+<span class="sd">        {&#39;show&#39;:&#39;unavailable&#39;, &#39;status&#39;:&#39;&#39;, &#39;priority&#39;:&#39;-1&#39;,</span>
+<span class="sd">        &#39;phone status&#39;:&#39;&#39;,&#39;im status&#39;:&#39;&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">GET_PRESENCE</span>
+        <span class="k">if</span> <span class="n">jid</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;null&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">jid</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_PRESENCE</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">presence_query_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_id</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Displays the presence response corresponding to the query id</span>
+<span class="sd">        mentioned. By default once the response is returned the</span>
+<span class="sd">        Camelot cleares the response unless -noclear is mentioned</span>
+<span class="sd">        in the command</span>
+
+<span class="sd">        :parameter query_id: Mandatory Parameter. Takes the queryid</span>
+<span class="sd">         returned by setpresence command</span>
+<span class="sd">        :parameter clear: Defaults to True and clears the response</span>
+<span class="sd">         on returning to the user. If set to False the Camelot preserves</span>
+<span class="sd">         the response.</span>
+
+<span class="sd">        :returns: returns the dictionary as key-value pair with the</span>
+<span class="sd">         following keys:\n</span>
+<span class="sd">             * result: shows whether success or failure.</span>
+<span class="sd">             * command: shows the command which was invoked</span>
+<span class="sd">               for this queryid.</span>
+<span class="sd">             * starttime: This field shows the time the query</span>
+<span class="sd">               was generated.</span>
+<span class="sd">             * show: shows the current presence state of the endpoint.</span>
+<span class="sd">             * status: shows the presence status of the end point.</span>
+<span class="sd">             * priority: shows the priority of the endpoint.</span>
+<span class="sd">             * phone status: shows the phone status of the endpoint.</span>
+<span class="sd">             * im status: shows the im status of the end point.</span>
+<span class="sd">             * failure reason: This field shows the reason for the</span>
+<span class="sd">               failure if error response was received.</span>
+<span class="sd">             * xml stanza: shows the xml stanza for the error responses</span>
+<span class="sd">               received.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.presence_query_response(&#39;187118096&#39;)</span>
+<span class="sd">        {&#39;result&#39;:&#39;success&#39;, &#39;command&#39;:&#39;setpresence&#39;,</span>
+<span class="sd">        &#39;starttime&#39;:&#39;2014-08-11T13:05:12&#39;, &#39;show&#39;: &#39;away&#39;,</span>
+<span class="sd">        &#39;status&#39;:&#39;in lab&#39;, &#39;priority&#39;:&#39;127&#39;,  &#39;phonestatus&#39;:</span>
+<span class="sd">        &#39;unavailable&#39;, &#39;imstatus&#39;:&#39;available&#39;, &#39;failure reason&#39;:&#39;&#39;,</span>
+<span class="sd">        &#39;xml stanza&#39;:&#39;&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">query_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;invalid query id&quot;</span><span class="p">)</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">PRESENCE_QUERY_RESPONSE</span><span class="p">,</span> <span class="n">query_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">clear</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;clear&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;noclear&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">PRESENCE_QUERY_RESPONSE</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">presence_clear_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_id</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Clears the presence query(set_presence or get_presence)</span>
+<span class="sd">        response for the provided queryid.If thequery_id is not</span>
+<span class="sd">        provided then the camelot clears all responses for queries</span>
+<span class="sd">        set_presence and get_presence. If the provided queryid</span>
+<span class="sd">        doesn&#39;t have the buffered the response then the command</span>
+<span class="sd">        returns 0.</span>
+
+<span class="sd">        :parameter query_id: Optional parameter. Takes the queryid for</span>
+<span class="sd">         which the response should be cleared in Camelot.</span>
+
+<span class="sd">        :returns: 1 on sucess and 0 on failure.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.presence_clear_response(&#39;172539688&#39;)</span>
+<span class="sd">        1</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">PRESENCE_CLEAR_RESPONSE</span>
+        <span class="k">if</span> <span class="n">query_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">query_id</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">PRESENCE_CLEAR_RESPONSE</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">http_query_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span>
+                           <span class="n">jsessionid</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">jsessionidsso</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">oauthtoken</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span>
+                           <span class="n">secure</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">showfinalresp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">noautoref</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                           <span class="n">service</span><span class="o">=</span><span class="s1">&#39;cucm&#39;</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="s1">&#39;https&#39;</span><span class="p">,</span>
+                           <span class="n">serviceport</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span> <span class="n">servicefqdn</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span> <span class="n">auth_type</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span>
+                           <span class="n">body</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{},</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;GET&#39;</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Forms the HTTP query request as per the argements provided and</span>
+<span class="sd">        sends the request to the server ip and port.</span>
+
+<span class="sd">        :parameter ip: ip address of the http server to which the</span>
+<span class="sd">         requested to be sent.A resolvable FQDN can also be given.</span>
+<span class="sd">         For the Collab Edge deployments this parameter can be optional.</span>
+<span class="sd">         Camelot picks up automaticlly from the DNS reslution.</span>
+<span class="sd">        :parameter port: port of the http server to be connected to.</span>
+<span class="sd">         For the Collab Edge deployments this parameter can be optional.</span>
+<span class="sd">         Camelot picks up automaticlly from the DNS reslution.</span>
+<span class="sd">        :parameter url: This parameter forms the URL of the HTTP GET request.</span>
+<span class="sd">         If the url has the query parameters then user  needs  to provide the</span>
+<span class="sd">         query parameters as part of this arguement.</span>
+<span class="sd">        :parameter jsessionid: if provided Camelot adds jsessionid to the</span>
+<span class="sd">         Cookie header for the formed request.</span>
+<span class="sd">        :parameter jsessionidsso: if provided Camelot adds jsessionidsso to the</span>
+<span class="sd">         Cookie header for the formed request.</span>
+<span class="sd">        :parameter secure: If this optinal parameter is provided Camelot do</span>
+<span class="sd">         sends the formed HTTP get request on https secure connection.This</span>
+<span class="sd">         paramter defaults to 1 always means always sends Http request on</span>
+<span class="sd">         secure connection.</span>
+<span class="sd">        :parameter oauthtoken: If provided Camleot adds Http Authorization</span>
+<span class="sd">         header to the HTTP request and populates this header with this</span>
+<span class="sd">         parameter value. Ex: Authorization: Bearer oauthtoken-value</span>
+<span class="sd">        :parameter showfinalresp: When set to True the Camelot shows only the</span>
+<span class="sd">         final response for that query, all intermediate responses will be</span>
+<span class="sd">         consumed by Camelot internally but will not be shown to the user.</span>
+<span class="sd">         By default Camelot will show all the responses to the client.</span>
+<span class="sd">        :parameter noautoref: when set to True the Camelot doesn&#39;t refresh</span>
+<span class="sd">         either SSO OAuth Token or SSO Session cookies automatically.By</span>
+<span class="sd">         default Camelot will attempt to refresh SSO Oauth token and SSO</span>
+<span class="sd">         Session cookies automatically.</span>
+<span class="sd">        :parameter service: services for sso. cadidates are unity and cucm.</span>
+<span class="sd">         defaults to cucm service.</span>
+<span class="sd">        :parameter domain: Optional Parameter. If provided the command uses</span>
+<span class="sd">         this value to calculate the encoded prefix for the url. If not</span>
+<span class="sd">         provided then command takes the domain value from the endpoint</span>
+<span class="sd">         configuration  sip.phone.domain.</span>
+<span class="sd">        :parameter protocol: It defaults to &quot;https&quot;. This parameter will be</span>
+<span class="sd">         used, as one of the parameter, to calculate the EDGE prefix for the</span>
+<span class="sd">         queries sent to any service node like cucm, ucxn etc through EDGE.</span>
+<span class="sd">        :parameter servicefqdn: It takes the service node like cucm and unity</span>
+<span class="sd">         host address in the resolvable FQDN format. If provided it means that</span>
+<span class="sd">         the query is meant to send to provided service node through Collab</span>
+<span class="sd">         Edge. This parameter will be used, as one of the parameter, to</span>
+<span class="sd">         calculate the EDGE prefix for the HTTP request URL. Note: Camelot</span>
+<span class="sd">         doesn&#39;t understand what is the provided service node rather it just</span>
+<span class="sd">         uses the provided service fqdn.</span>
+<span class="sd">        :parameter serviceport: Defaults to 8443. This parameter value will be</span>
+<span class="sd">         considered only when the &quot;servicefqdn&quot; was configured. If provided</span>
+<span class="sd">         it means that the query is meant to send to service nodes like to</span>
+<span class="sd">         cucm and unity through Collab Edge. This parameter will be used, as</span>
+<span class="sd">         one of the parameter, to calculate the EDGE prefix for the HTTP</span>
+<span class="sd">         request URL.</span>
+<span class="sd">        :parameter auth_type: This parameter is to indicate the authentication</span>
+<span class="sd">         type to be used in Authorization header for the formed request.</span>
+<span class="sd">         Possible values are &#39;Bearer&#39;,&#39;Digest&#39; and &#39;Basic&#39;.While handling</span>
+<span class="sd">         subsequent authorization challenges also this auth type will be used.</span>
+<span class="sd">         If no value is specified then Camelot will choose authentication</span>
+<span class="sd">         type depending on various considerations. Please refer to the below</span>
+<span class="sd">         link for more details on this.</span>
+<span class="sd">         &#39;https://wiki.cisco.com/display/CAMELOT/httpqueryreq&#39;</span>
+<span class="sd">        :parameter body: This parameter can be used to provide a body</span>
+<span class="sd">         to be attached to html query request.Camelot will add corresponding</span>
+<span class="sd">         Content-Length header. However tester needs to ensure correctness</span>
+<span class="sd">         of the body provided.On absence of any value default is None.</span>
+<span class="sd">        :parameter headers: This parameter is of dictionary type which</span>
+<span class="sd">         takes a set of html header and value pairs from tester to be used</span>
+<span class="sd">         in the html query request. On absence of any value by default it</span>
+<span class="sd">         it will be an empty dictionary.For any header where the value can also</span>
+<span class="sd">         come from other parameters of this API , value from this headers</span>
+<span class="sd">         parameter always gets first precedence. For example, if &#39;Host&#39; header</span>
+<span class="sd">         is also included in the headers dictionary then Camelot will take the</span>
+<span class="sd">         value from this dictionary parameter instead of taking the value from</span>
+<span class="sd">         &#39;Host&#39;parameter if present.So testers need to be cautious about this.</span>
+<span class="sd">        :parameter method: Tester can provide http method to be used for the</span>
+<span class="sd">         html query request by using this optional parameter.On absence of</span>
+<span class="sd">         any value by default &#39;GET&#39; method will be used. Possible values for</span>
+<span class="sd">         this parameters are &#39;GET&#39;,&#39;POST&#39;,&#39;DELETE&#39;,&#39;PATCH&#39; etc.</span>
+<span class="sd">        :parameter timeout: This parameter is to configure time in seconds</span>
+<span class="sd">         to wait for a response from the server.On absence by default 10</span>
+<span class="sd">         seconds will be used.</span>
+
+
+<span class="sd">        :returns: query id on success</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.http_query_request(&#39;10.12.10.105&#39;, &#39;8443&#39;,</span>
+<span class="sd">                &#39;/cucm-uds/users?name=USER1500001&#39;, secure=True,</span>
+<span class="sd">                headers={&#39;Cookie&#39;:&#39;i18next=en-US;amlbcookie=01;&#39;,</span>
+<span class="sd">                    &#39;Forwarded&#39;:&#39;for=192.0.2.60;&#39;})</span>
+<span class="sd">        32769</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">config_request</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">HTTP_QUERY_REQ</span>
+
+        <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="n">ip</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">url</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;url is not specified&#39;</span><span class="p">)</span>
+
+        <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">url</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">secure</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="s1">&#39;https&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="s1">&#39;http&#39;</span><span class="p">)</span>
+
+        <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="n">jsessionid</span><span class="p">,</span>
+                                              <span class="n">jsessionidsso</span><span class="p">,</span> <span class="n">oauthtoken</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">showfinalresp</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="s1">&#39;showfinalresp&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="s2">&quot;0&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">noautoref</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="s1">&#39;noautoref&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">service</span> <span class="o">==</span> <span class="s1">&#39;cucm&#39;</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="s1">&#39;cucm-uds&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">service</span> <span class="o">==</span> <span class="s1">&#39;unity&#39;</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="s1">&#39;ucxn&#39;</span><span class="p">)</span>
+
+        <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="n">domain</span><span class="p">,</span>
+                                                    <span class="n">protocol</span><span class="p">,</span> <span class="n">serviceport</span><span class="p">,</span>
+                                                    <span class="n">servicefqdn</span><span class="p">,</span> <span class="n">auth_type</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">body</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> ^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="s1">&#39;NULL&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> ^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="n">body</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">headers</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="n">msgtext</span> <span class="o">=</span> <span class="s1">&#39;set valid {header: value} dictionary for headers&#39;</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">msgtext</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="n">headers</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">method</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="s1">&#39;GET&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">timeout</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;http_query_req arguments </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">config_request</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">HTTP_QUERY_REQ</span><span class="p">,</span> <span class="n">config_request</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">http_query_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_id</span><span class="p">,</span> <span class="n">no_clear</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Returns the http query reponse for the provided valid query id.</span>
+
+<span class="sd">        :parameter query_id: The id of the HTTP request.</span>
+<span class="sd">        :parameter no_clear: If provided the camelot retains the response</span>
+<span class="sd">         for future retrieval purpose on returning to the user.</span>
+<span class="sd">         By default Camelot clears the received response on returning to</span>
+<span class="sd">         the user.This parameter lets the user to instruct the camelot to</span>
+<span class="sd">         override the default behaviour.</span>
+
+<span class="sd">        :returns: Returns http response on success. on failure returns the</span>
+<span class="sd">         empty list.</span>
+<span class="sd">         The following fields are returned in http response:\n</span>
+<span class="sd">         * body : body of the received HTTP response alone.</span>
+<span class="sd">         * statuscode : statuscode received in HTTP response.</span>
+<span class="sd">         * redirqueryid : It holds the queryid to get the intermediate</span>
+<span class="sd">           responses,if the submitted query using</span>
+<span class="sd">           httpqueryreq has more than one response.</span>
+<span class="sd">         * query : actual query made.</span>
+<span class="sd">         * edgenode : Host address of the VCS-E node,if</span>
+<span class="sd">           the query node was made on Collab Edge deployment</span>
+<span class="sd">           otherwise it will be empty.</span>
+<span class="sd">         * edgeport : Port of the VCS-E node used to send the</span>
+<span class="sd">           query when submitted on Collab Edge deployment</span>
+<span class="sd">           otherwise it will be empty.</span>
+<span class="sd">         * servicenode :</span>
+<span class="sd">               * For On-Premise it shows the server that the</span>
+<span class="sd">                 query  was sent to.</span>
+<span class="sd">               * For Collab Edge it shows the service node to</span>
+<span class="sd">                 which the query was sent through VCS-E node.</span>
+<span class="sd">         * serviceport : Defines the server port used for query.</span>
+<span class="sd">               * For On-Premise it shows the server port to which</span>
+<span class="sd">                 the query was sent.</span>
+<span class="sd">               * For Collab Edge it shows the service node port to</span>
+<span class="sd">                 which the query was sent through VCS-E node.</span>
+<span class="sd">         * starttime : Query Time, in YYYY-MM-DDTHH:MM:SS format</span>
+<span class="sd">         * tlscipher : TLS cipher value negotiated for the HTTPS</span>
+<span class="sd">           connection.</span>
+<span class="sd">         * camelot_reason : Error text describing various</span>
+<span class="sd">           application based error scenario with resect to the</span>
+<span class="sd">           query and it&#39;s response.</span>
+<span class="sd">               * For Eg: if Camelot stops generating further request due to</span>
+<span class="sd">                 repetitive 401 received then camelot_reason will be as below</span>
+<span class="sd">                 as part of the query ID to which final 407 belongs.\n</span>
+<span class="sd">               camelot_reason = repetitive 401, Camelot stopped handling\n</span>
+
+<span class="sd">         Please refer to the below link for more details on this.</span>
+<span class="sd">         &#39;https://wiki.cisco.com/display/CAMELOT/httpqueryresponse&#39;</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.http_query_response(32771)</span>
+<span class="sd">         { &#39;query&#39;: &#39;/cucm-uds/clusterUser?username=JABBEREP1200001&#39;,</span>
+<span class="sd">           &#39;servicenode&#39;: &#39;cam-feature12-pub&#39;,&#39;starttime&#39;:&#39;2014-1-7T20:37:15&#39;,</span>
+<span class="sd">           &#39;redirqueryid&#39;:&#39;&#39;,&#39;statuscode&#39;:&#39;200&#39;,</span>
+<span class="sd">           &#39;camelot_reason&#39;: &#39;&#39;,&#39;edgenode&#39;: &#39;&#39;,&#39;edgeport&#39;: &#39;&#39;,</span>
+<span class="sd">           &#39;serviceport&#39;: &#39;8443&#39;,&#39;tlscipher&#39;: &#39;ECDHE-RSA-AES256-GCM-SHA384&#39;,</span>
+<span class="sd">           &#39;Cache-Control&#39;:&#39;private&#39;,&#39;Expires&#39;: &#39;Thu, 01 Jan 1970 05:30:00 IST,</span>
+<span class="sd">           &#39;X-Frame-Options&#39;:&#39;SAMEORIGIN&#39;,&#39;Content-Type&#39;:&#39;application/xml&#39;,</span>
+<span class="sd">           &#39;Content-Length&#39;:&#39;205&#39;,&#39;Date&#39;:Tue, 07 Jan 2014 15:07:15 GMT&#39;,</span>
+<span class="sd">           &#39;Server&#39;:&#39;&#39;body&#39;:&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;</span>
+<span class="sd">           standalone=&quot;yes&quot;?&gt;&lt;clusterUser version=&quot;10.5.0&quot;</span>
+<span class="sd">           uri=&quot;https://cam-feature12-pub:8443/cucm-uds/clusterUser?</span>
+<span class="sd">           username=JABBEREP1200001&quot;&gt;&lt;result found=&quot;false&quot;/&gt;&lt;/clusterUser&gt;&#39;}</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">queryid</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;queryid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">queryid</span><span class="p">:</span>
+            <span class="n">query_id</span> <span class="o">=</span> <span class="n">queryid</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">query_id</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;Specify query id&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">no_clear</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">camelot</span><span class="o">.</span><span class="n">HTTP_QUERY_RESPONSE</span><span class="p">,</span> <span class="n">query_id</span><span class="p">,</span> <span class="s1">&#39;noclear&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">camelot</span><span class="o">.</span><span class="n">HTTP_QUERY_RESPONSE</span><span class="p">,</span> <span class="n">query_id</span><span class="p">,</span> <span class="s1">&#39;clear&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">HTTP_QUERY_RESPONSE</span><span class="p">,</span> <span class="n">config_request</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">http_clear_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query_id</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Clears the http responses retained with camelot.</span>
+
+<span class="sd">        :parameter query_id: The id of the HTTP request which was</span>
+<span class="sd">            placed through httpqueryreq command.</span>
+
+<span class="sd">        :returns: 1 on success 0 on failure.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.http_clear_response(queryid)</span>
+<span class="sd">        1</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">queryid</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;queryid&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">queryid</span><span class="p">:</span>
+            <span class="n">query_id</span> <span class="o">=</span> <span class="n">queryid</span>
+        <span class="k">if</span> <span class="n">query_id</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">HTTP_CLEAR_RESPONSE</span><span class="p">,</span>
+                                            <span class="n">query_id</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">config_request</span> <span class="o">=</span> <span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">HTTP_CLEAR_RESPONSE</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">HTTP_CLEAR_RESPONSE</span><span class="p">,</span>
+                                   <span class="n">config_request</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_imp_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Shows the login status of both IMP and XMPP login for</span>
+<span class="sd">        an endpoint along with additional details of IMP and XMPP login</span>
+
+<span class="sd">        :returns: contains the list of dictionaries with {field, value} pars.\n</span>
+<span class="sd">         The following fields are supported:\n</span>
+
+<span class="sd">         * imp login state :  Shows the login state of the IMP login.</span>
+<span class="sd">           Possible values are: loggedout, loggingin and loggedin.</span>
+<span class="sd">         * xmpp login state :  Shows the login state of the XMPP login.</span>
+<span class="sd">           Possible values are: loggedout, loggingin and loggedin.</span>
+<span class="sd">         * imp login type : The type of the imp login. The possible values are:</span>
+<span class="sd">                * sso : When Camelot used  username/ SSO-oAuthkey</span>
+<span class="sd">                        for the IM/P login.</span>
+<span class="sd">                * uc-directory : when Camelot used username/password for</span>
+<span class="sd">                                 the IM/P login.</span>
+<span class="sd">         * failure reason : Shows the failure reason of IMP or XMPP login</span>
+<span class="sd">         * cups server : shows the IMP server used for IMP and XMPP login.</span>
+<span class="sd">         * cups port : shows the IMP server port used for IMP login</span>
+<span class="sd">         * imp session key : shows the session key received after the</span>
+<span class="sd">           successful login of IMP login.</span>
+<span class="sd">         * vtg-token : Shows the vtg token received as part of SOAP</span>
+<span class="sd">           get-onetime-password API.</span>
+<span class="sd">         * buddy list refresh - status of buddy list refresh.</span>
+<span class="sd">         Below are the possible values:\n</span>
+<span class="sd">             * &quot;&quot; - initial value</span>
+<span class="sd">             * pending - refresh is started</span>
+<span class="sd">             * success - refresh is completed successfully</span>
+<span class="sd">             * failed - refresh is failed</span>
+<span class="sd">         * full_jid : the full jid received from xmpp server from bind</span>
+<span class="sd">           response. The format of it would be user@domain/resource</span>
+<span class="sd">         * jid : it is bare jid of full jid. The bare jid would contain</span>
+<span class="sd">           username@domain</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.get_imp_info()</span>
+<span class="sd">         {&#39;imp cipher&#39;: &#39;ECDHE-ECDSA-AES256-GCM-SHA384&#39;,</span>
+<span class="sd">          &#39;imp login type&#39;: &#39;uc-directory&#39;,</span>
+<span class="sd">          &#39;backup1 cup server&#39;: &#39;&#39;,</span>
+<span class="sd">          &#39;xmpp cipher&#39;: &#39;ECDHE-ECDSA-AES256-GCM-SHA384&#39;,</span>
+<span class="sd">          &#39;primary cup port&#39;: &#39;443&#39;,</span>
+<span class="sd">          &#39;vtg-token&#39;: &#39;97946871&#39;,</span>
+<span class="sd">          &#39;xmpp login state&#39;: &#39;loggedin&#39;,</span>
+<span class="sd">          &#39;imp session key&#39;: &#39;36acd6d6-4fc8-667e-7f0e-6314956dceca&#39;,</span>
+<span class="sd">          &#39;primary cup server&#39;: &#39;10.12.10.106&#39;,</span>
+<span class="sd">          &#39;jid&#39;: &#39;jabberep1200001@camelot.test&#39;,</span>
+<span class="sd">          &#39;full_jid&#39;: &#39;jabberep1200001@camelot.test/75a4134e158474e513fa7160e&#39;,</span>
+<span class="sd">          &#39;backup2 cup port&#39;: &#39;&#39;,</span>
+<span class="sd">          &#39;backup2 cup server&#39;: &#39;&#39;,</span>
+<span class="sd">          &#39;active cup port&#39;: &#39;443&#39;,</span>
+<span class="sd">          &#39;buddy list refresh&#39;: &#39;&#39;,</span>
+<span class="sd">          &#39;last login response timestamp&#39;: &#39;2019-03-12::10:09:17:890&#39;,</span>
+<span class="sd">          &#39;failure reason&#39;: &#39;&#39;,</span>
+<span class="sd">          &#39;backup1 cup port&#39;: &#39;&#39;,</span>
+<span class="sd">          &#39;active cup server&#39;: &#39;10.12.10.106&#39;,</span>
+<span class="sd">          &#39;imp login state&#39;: &#39;loggedin&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_IMP_INFO</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_uds_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;returns the current UDS login information, like state,</span>
+<span class="sd">        home node cluster, current UDS server, UDS server cache list.</span>
+
+<span class="sd">        :returns: a variable sized list of dictionaries with {field value}</span>
+<span class="sd">        pairs containing extended information about the uds login</span>
+<span class="sd">        information.\n</span>
+<span class="sd">            * state : current UDS Login state.</span>
+<span class="sd">            Stable states are{} uds_login_complete/uds_appl_request_complete</span>
+<span class="sd">            Error states are uds_centuds_disc_error/uds_home_cluster_node</span>
+<span class="sd">            _disc_error uds_home_node_version_error/uds_get_uds</span>
+<span class="sd">            servers_error uds_sso_login_error/uds_get_service_profile_error</span>
+<span class="sd">            uds_device_discovery_error/uds_login_error</span>
+<span class="sd">            uds_appl_request_error/uds_server_refresh_req_error</span>
+<span class="sd">            * home-uds server :  Home node server host name</span>
+<span class="sd">            * curr-uds server : Current UDS server picked for UDS requests.</span>
+<span class="sd">            * version : Current UDS server version number</span>
+<span class="sd">            * attempts : No of UDS login attempts</span>
+<span class="sd">            * sucesses : No of UDS login successes</span>
+<span class="sd">            * failures : No of UDS login failures</span>
+<span class="sd">            * error code : HTTP response code for any UDS query request.</span>
+<span class="sd">            * failure reason : Describes the failure reason for UDS</span>
+<span class="sd">            login or any application UDS query request.</span>
+<span class="sd">            * complete error response : Complete HTTP error response</span>
+<span class="sd">            from network</span>
+<span class="sd">            * uds servers cache : UDS servers cache list separated</span>
+<span class="sd">            with space.</span>
+<span class="sd">            * refresh interval : UDS server cache refresh interval</span>
+<span class="sd">            selected/calculated after rand(). Units is minutes.</span>
+<span class="sd">            * first login : Specifies current login flow attempted</span>
+<span class="sd">            is a initial login flow/subsequent login flow.</span>
+<span class="sd">            * uds server refresh : status of uds server list refresh.</span>
+<span class="sd">            Below are the possible values:\n</span>
+<span class="sd">             * &quot;&quot; - initial value</span>
+<span class="sd">             * pending - refresh is started</span>
+<span class="sd">             * success - refresh is completed successfully</span>
+<span class="sd">             * failed - refresh is failed</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.get_uds_info()</span>
+<span class="sd">        {&#39;state&#39; : &#39;uds_login_complete&#39;, &#39;first login&#39; : &#39;yes&#39;,</span>
+<span class="sd">        &#39;attempts&#39; : 1, &#39;successes&#39; : 1, &#39;failures&#39; : 0,</span>
+<span class="sd">        &#39;home-uds server&#39; : &#39;&#39;, &#39;curr-uds server&#39; :</span>
+<span class="sd">        &#39;cam-feature12-pub.camelot.test&#39;, &#39;version&#39; : &#39;10.0&#39;,</span>
+<span class="sd">        &#39;error code&#39; : 200, &#39;failure reason&#39; : &#39;&#39;,</span>
+<span class="sd">        &#39;complete error response&#39; : &#39;&#39;, &#39;uds servers cache&#39; :</span>
+<span class="sd">        &#39;cam-feature12-pub.camelot.test&#39;, &#39;refresh interval&#39; : 6020,</span>
+<span class="sd">        &#39;uds server refresh&#39;: &#39;{}&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_UDS_INFO</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_uds_user</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        returns uds user response as a json object(dictionary)</span>
+
+<span class="sd">        :returns: Dictionary on success and None on failure</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.get_uds_user()</span>
+<span class="sd">        {user&#39;: {@uri&#39;: https://cam-ccm-57.camsso.test:844</span>
+<span class="sd">        /cucm-uds/user/JABBEREP1200001&#39;,</span>
+<span class="sd">        @version&#39;: 12.5.0&#39;,</span>
+<span class="sd">        accountType&#39;: {#text&#39;: ldap&#39;, @useLdapAuth&#39;: true&#39;},</span>
+<span class="sd">        allowProvisionEMMaxLoginTime&#39;: false&#39;,</span>
+<span class="sd">        callForwardAllDestination&#39;: {</span>
+<span class="sd">        @appliesToAllExtensions&#39;: true&#39;,</span>
+<span class="sd">        destination&#39;: None,</span>
+<span class="sd">        sendToVoiceMailPilotNumber&#39;: false&#39;},</span>
+<span class="sd">        credentials&#39;: {@uri&#39;: https://cam-ccm-57.camsso.test:</span>
+<span class="sd">        8443/cucm-uds/user/JABBEREP1200001/credentials&#39;},</span>
+<span class="sd">        department&#39;: None,</span>
+<span class="sd">        devices&#39;: {@uri&#39;: https://cam-ccm-57.camsso.test:8443/</span>
+<span class="sd">        cucm-uds/user/JABBEREP1200001/devices&#39;},</span>
+<span class="sd">        directoryUri&#39;: None,</span>
+<span class="sd">        displayName&#39;: jabberep1200001&#39;,</span>
+<span class="sd">        emMaxLoginTime&#39;: None,</span>
+<span class="sd">        email&#39;: jabberep1200001@camsso.test&#39;,</span>
+<span class="sd">        enableDoNotDisturb&#39;: {#text&#39;: false&#39;,</span>
+<span class="sd">        @appliesToAllDevices&#39;: true&#39;},</span>
+<span class="sd">        extensions&#39;: {@uri&#39;: https://cam-ccm-57.camsso.test:8443/</span>
+<span class="sd">        cucm-uds/user/JABBEREP1200001/extensions&#39;},</span>
+<span class="sd">        firstName&#39;: jabberep1200001&#39;,</span>
+<span class="sd">        homeCluster&#39;: {#text&#39;: true&#39;,</span>
+<span class="sd">        @enableCalendarPresence&#39;: false&#39;,</span>
+<span class="sd">        @enableImAndPresence&#39;: true&#39;},</span>
+<span class="sd">        homeNumber&#39;: None,</span>
+<span class="sd">        id&#39;: 5f66fe4a-cc50-41d2-137a-05978b2d45df&#39;,</span>
+<span class="sd">        imAndPresence&#39;: {server&#39;: cam-cup-77.camsso.test&#39;},</span>
+<span class="sd">        lastName&#39;: jabberep1200001&#39;,</span>
+<span class="sd">        manager&#39;: None,</span>
+<span class="sd">        middleName&#39;: None,</span>
+<span class="sd">        mobileConnect&#39;: false&#39;,</span>
+<span class="sd">        mobileNumber&#39;: None,</span>
+<span class="sd">        msUri&#39;: None,</span>
+<span class="sd">        nickName&#39;: None,</span>
+<span class="sd">        pager&#39;: None,</span>
+<span class="sd">        phoneNumber&#39;: None,</span>
+<span class="sd">        remoteDestinationLimit&#39;: 4&#39;,</span>
+<span class="sd">        selfServiceId&#39;: None,</span>
+<span class="sd">        serviceProfile&#39;: {uri&#39;: http://cam-ccm-8:6970/SPDefault.cnf.xml&#39;},</span>
+<span class="sd">        speedDials&#39;: {@uri&#39;: https://cam-ccm-8:8443/cucm-uds/</span>
+<span class="sd">        user/JABBEREP1200001/speedDials&#39;},</span>
+<span class="sd">        subscribedServices&#39;: {@uri&#39;: https://cam-ccm-8:8443/</span>
+<span class="sd">        cucm-uds/user/JABBEREP1200001/subscribedServices&#39;},</span>
+<span class="sd">        title&#39;: None,</span>
+<span class="sd">        userLocale&#39;: {</span>
+<span class="sd">        #text&#39;: English, United States&#39;,</span>
+<span class="sd">        @appliesToAllDevices&#39;: true&#39;,</span>
+<span class="sd">        @uri&#39;: https://cam-ccm-8:8443/cucm-uds/options/installedLocales&#39;,</span>
+<span class="sd">        @value&#39;: &#39;,</span>
+<span class="sd">        },</span>
+<span class="sd">        userName&#39;: JABBEREP1200001&#39;,</span>
+<span class="sd">        }}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_UDS_USER</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">close_xmpp_im</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jabber_id</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        closes  im  sesion with the buddy whose jabber id is given</span>
+
+<span class="sd">        :parameter jabber_id: The jabber id of the buddy</span>
+
+<span class="sd">        :returns: True on success and False on failure</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.close_xmpp_im(jabber_id)</span>
+<span class="sd">        1</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering method close_xmpp_im().&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">jabber_id</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;jabber id not specified&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">XMPP_CLOSE_IM</span><span class="p">,</span> <span class="n">jabber_id</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">sso_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_name</span><span class="o">=</span><span class="s1">&#39;default&#39;</span><span class="p">,</span> <span class="n">user_mode</span><span class="o">=</span><span class="s1">&#39;user&#39;</span><span class="p">,</span>
+                  <span class="n">login_type</span><span class="o">=</span><span class="s1">&#39;jabber&#39;</span><span class="p">,</span> <span class="n">imp_login</span><span class="o">=</span><span class="s1">&#39;implogin&#39;</span><span class="p">,</span> <span class="n">jsession_id</span><span class="o">=</span><span class="s1">&#39;no&#39;</span><span class="p">,</span>
+                  <span class="n">jsession_id_sso</span><span class="o">=</span><span class="s1">&#39;no&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Invokes the SSO based login with configured sip.phone.sso</span>
+<span class="sd">        paramters and/or argument values. It internaly invokes,</span>
+<span class="sd">        the various UDS and IDP queries required to get SSO OAuth token.</span>
+<span class="sd">        The queries involves, home node discovery, sso mode discovery,</span>
+<span class="sd">        SAML request/response processing and OAuth token retrieval.</span>
+
+<span class="sd">        :parameter user_name:  user_name used for home node discovery</span>
+<span class="sd">         and IDP authentication</span>
+<span class="sd">        :parameter user_mode: user_mode decides the argument name while forming</span>
+<span class="sd">         the home node discovery query. Refer sip.phone.sso.</span>
+<span class="sd">        :parameter login_type: type decides to invoke jabber bassed SSO login</span>
+<span class="sd">         or browser based SSO login.  Refer sip.phone.ssso</span>
+<span class="sd">        :parameter jsession_id:  jsession_id value retrieved in the</span>
+<span class="sd">         previous successful login</span>
+<span class="sd">        :parameter jsession_id_sso: jsession_id_sso of the previous</span>
+<span class="sd">         successful login</span>
+
+<span class="sd">        :returns: The current ssologin state, either loggingin or loggedout.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.sso_login(&#39;jabber1000&#39;, &#39;user&#39;, &#39;jabber&#39;)</span>
+<span class="sd">        &#39;loggingin&#39;</span>
+<span class="sd">         It invokes the jabber based sso login for the user jabber1000 by</span>
+<span class="sd">         forming the home node discovery query with argument type as user_name.</span>
+<span class="sd">         Note: If mode is email then argument type  is email. And jsessionid</span>
+<span class="sd">         and jsession_id_sso are only applicable for browser based login.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;user_name&#39;</span><span class="p">:</span> <span class="n">user_name</span><span class="p">,</span>
+                  <span class="s1">&#39;user_mode&#39;</span><span class="p">:</span> <span class="n">user_mode</span><span class="p">,</span>
+                  <span class="s1">&#39;login_type&#39;</span><span class="p">:</span> <span class="n">login_type</span><span class="p">,</span>
+                  <span class="s1">&#39;imp_login&#39;</span><span class="p">:</span> <span class="n">imp_login</span><span class="p">,</span>
+                  <span class="s1">&#39;jsession_id&#39;</span><span class="p">:</span> <span class="n">jsession_id</span><span class="p">,</span>
+                  <span class="s1">&#39;jsession_id_sso&#39;</span><span class="p">:</span> <span class="n">jsession_id_sso</span>
+                  <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">SSO_LOGIN</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_secure_uds_users_access_url_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;returns the configured secured UDS users access URL information</span>
+<span class="sd">         received in device config xml file.</span>
+
+<span class="sd">        :returns: A variable sized list of dictionaries with {field value}</span>
+<span class="sd">        pairs containing URL server, port, url path etc., information.</span>
+<span class="sd">            * secure_uds_users_access_url_parsed :  Url present status</span>
+<span class="sd">                * True - Url tag is present</span>
+<span class="sd">                * False- Url tag is not present</span>
+<span class="sd">            * secure_uds_users_access_url :  Complete url</span>
+<span class="sd">            * host_name : Url server host name</span>
+<span class="sd">            * port : Url server port</span>
+<span class="sd">            * url : Url service path</span>
+<span class="sd">            * secure : Url is secured or not</span>
+<span class="sd">                * True - Url is secured (https)</span>
+<span class="sd">                * False- Url is non-secured (http)</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.get_secure_uds_users_access_url_info()</span>
+<span class="sd">        {&#39;secure_uds_users_access_url_parsed&#39; : &#39;True&#39;,</span>
+<span class="sd">        &#39;secure_uds_users_access_url&#39; :</span>
+<span class="sd">        &#39;cam-feature4-pub:8443/cucm-uds/users&#39;,</span>
+<span class="sd">        &#39;host_name&#39; : &#39;cam-feature4-pub.camelot.test&#39;,</span>
+<span class="sd">        &#39;port&#39;: 8443, &#39;url&#39; : &#39;cucm-uds/users&#39;, &#39;secure&#39; : &#39;True&#39;</span>
+<span class="sd">        }</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span>
+                                   <span class="n">GET_SECURE_UDS_USERS_ACCESS_URL_INFO</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../camelot.html" >camelot</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

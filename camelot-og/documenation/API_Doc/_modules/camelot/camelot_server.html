@@ -1,0 +1,1000 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>camelot.camelot_server &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../camelot.html" accesskey="U">camelot</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for camelot.camelot_server</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">camelot</span>
+<span class="kn">from</span> <span class="nn">camelot.encoder</span> <span class="k">import</span> <span class="n">encoder</span>
+<span class="kn">from</span> <span class="nn">camelot</span> <span class="k">import</span> <span class="n">camlogger</span>
+<span class="kn">from</span> <span class="nn">camelot.endpoint</span> <span class="k">import</span> <span class="n">CamelotEndpoint</span>
+<span class="kn">from</span> <span class="nn">camelot.utils.rawendpoint_helper</span> <span class="k">import</span> <span class="p">(</span><span class="n">OutActionObject</span><span class="p">,</span> <span class="n">InActionObject</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">Thread</span>
+<span class="kn">from</span> <span class="nn">camelot.utils.vapi_ei_utils</span> <span class="k">import</span> <span class="n">VAPIEIUtils</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">camlogger</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CamelotServer"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer">[docs]</a><span class="k">class</span> <span class="nc">CamelotServer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">server_key</span><span class="p">,</span>
+                 <span class="n">version</span><span class="o">=</span><span class="n">VAPIEIUtils</span><span class="o">.</span><span class="n">CLIENT_VERSION</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ip</span> <span class="o">=</span> <span class="n">ip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_port</span> <span class="o">=</span> <span class="n">port</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__server_key</span> <span class="o">=</span> <span class="n">server_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__version</span> <span class="o">=</span> <span class="n">version</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_server_conn</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">_get_camelot_connection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ip</span><span class="p">,</span>
+                                                            <span class="bp">self</span><span class="o">.</span><span class="n">_port</span><span class="p">,</span>
+                                                            <span class="bp">self</span><span class="o">.</span><span class="n">__version</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__endpoints</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__reconnect_callback</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tng_cleanup_required</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">clean_up_eps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;clean_up_eps called for ip:</span><span class="si">{}</span><span class="s2"> , port:</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_port</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tng_cleanup_required</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;cleaning up TNG pi end points.....&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">ep_key</span><span class="p">,</span> <span class="n">ep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__endpoints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">ep</span><span class="o">.</span><span class="n">outofservice</span><span class="p">()</span>
+                <span class="n">ep</span><span class="o">.</span><span class="n">uninit_ep</span><span class="p">()</span>
+                <span class="n">ep</span><span class="o">.</span><span class="n">_release_ep</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_all_endpoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__endpoints</span>
+
+    <span class="k">def</span> <span class="nf">_get_server_conn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        returns the connection if not stopped. if stopped it recreates the new</span>
+<span class="sd">        connection to the camelot server running on self._ip:self._port.</span>
+<span class="sd">        if reconnect is successful then it calls the _reconnect_callback</span>
+<span class="sd">        registered.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_server_conn</span><span class="o">.</span><span class="n">_stopped</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_server_conn</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">_get_camelot_connection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_ip</span><span class="p">,</span>
+                                                                <span class="bp">self</span><span class="o">.</span><span class="n">_port</span><span class="p">,</span>
+                                                                <span class="bp">self</span><span class="o">.</span><span class="n">__version</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__reconnect_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;connection to camelot server is re-established&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reconnect_thread</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span>
+                    <span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_run_reconnect_callback</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_reconnect_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+            <span class="k">for</span> <span class="n">ep_key</span><span class="p">,</span> <span class="n">ep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__endpoints</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># Marking as invalid as no endpoint exists in the restarted</span>
+                <span class="c1"># camelot.</span>
+                <span class="c1"># Endpoints will be valid when user calls create new endpoint</span>
+                <span class="c1"># after the connection is re-established.</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;making endpoint validity as false after &#39;</span>
+                          <span class="s1">&#39; camelot server is re-established&#39;</span><span class="p">)</span>
+                <span class="n">ep</span><span class="o">.</span><span class="n">_is_valid</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_server_conn</span>
+
+    <span class="k">def</span> <span class="nf">_run_reconnect_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__reconnect_callback</span><span class="p">()</span>
+
+<div class="viewcode-block" id="CamelotServer.register_reconnect_callback"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.register_reconnect_callback">[docs]</a>    <span class="k">def</span> <span class="nf">register_reconnect_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Camelot calls this function when the connect to restarted camelot</span>
+<span class="sd">        server is successful. User can have script relavant initialization</span>
+<span class="sd">        code in callback which should be executed on connect to restarted</span>
+<span class="sd">        camleot server is successful</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__reconnect_callback</span> <span class="o">=</span> <span class="n">callback</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ep_id</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ep_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__endpoints</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span>
+                <span class="s1">&#39;endpoint index invalid or out of bounds&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__endpoints</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">ep_id</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CamelotServer.get_server_os"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.get_server_os">[docs]</a>    <span class="k">def</span> <span class="nf">get_server_os</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Queries currently running Camelot server for its host OS.</span>
+
+<span class="sd">        :returns: string indicating the server&#39;s host OS.</span>
+
+<span class="sd">        &gt;&gt;&gt; serv = camelot.create_camelot_server(&#39;10.12.10.180&#39;, &#39;5001&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; serv</span>
+<span class="sd">        &lt;camelot.camelot_server.CamelotServer object at 0x1445550&gt;</span>
+<span class="sd">        &gt;&gt;&gt; serv.get_server_os()</span>
+<span class="sd">        Linux</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering init function : get_server_os&#39;</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">execute_camelot_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_SERVER_OS</span><span class="p">,</span> <span class="s1">&#39;os&#39;</span><span class="p">,</span> <span class="n">request_type</span><span class="o">=</span><span class="s1">&#39;server&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">server_os</span></div>
+
+<div class="viewcode-block" id="CamelotServer.get_vapiei_version"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.get_vapiei_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_vapiei_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Fetches the compatible vapiei version</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">execute_camelot_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_VAPIEI_VERSION</span><span class="p">,</span> <span class="s1">&#39;vv&#39;</span><span class="p">,</span> <span class="n">request_type</span><span class="o">=</span><span class="s1">&#39;server&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">vapiei_version</span></div>
+
+<div class="viewcode-block" id="CamelotServer.get_server_version"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.get_server_version">[docs]</a>    <span class="k">def</span> <span class="nf">get_server_version</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Queries currently running Camelot server for its version.</span>
+
+
+<span class="sd">        :returns: string indicating the server&#39;s Camelot version.</span>
+
+<span class="sd">        &gt;&gt;&gt; serv = camelot.create_camelot_server(&#39;10.12.10.180&#39;, &#39;5001&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; serv</span>
+<span class="sd">        &lt;camelot.camelot_server.CamelotServer object at 0x1445550&gt;</span>
+<span class="sd">        &gt;&gt;&gt; serv.get_server_version(&#39;10.1.2.56&#39;, 9988)</span>
+<span class="sd">        9.5.0.0.15.8</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">execute_camelot_command</span>
+               <span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_SERVER_VERSION</span><span class="p">,</span> <span class="s1">&#39;vr&#39;</span><span class="p">,</span> <span class="n">request_type</span><span class="o">=</span><span class="s1">&#39;server&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">server_version</span></div>
+
+<div class="viewcode-block" id="CamelotServer.get_compat_versions"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.get_compat_versions">[docs]</a>    <span class="k">def</span> <span class="nf">get_compat_versions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Queries Currently running Camelot server for the</span>
+<span class="sd">        compatiblity versions of various app servers.</span>
+
+<span class="sd">        :returns: dictionary of the app and version pairs</span>
+
+<span class="sd">        &gt;&gt;&gt; serv = camelot.create_camelot_server(&#39;10.12.10.180&#39;, &#39;5001&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; serv</span>
+<span class="sd">        &lt;camelot.camelot_server.CamelotServer object at 0x1445550&gt;</span>
+<span class="sd">        &gt;&gt;&gt; serv.get_compat_versions()</span>
+<span class="sd">        {&#39;CTMS&#39;: &#39;1.1.0&#39;, &#39;CME&#39;: &#39;9.1&#39;, &#39;CUCM&#39;: &#39;9.0.0&#39;,</span>
+<span class="sd">         &#39;VAPIEI&#39;: &#39;9.5.0.0.15.8&#39;, &#39;CUP&#39;: &#39;8.5&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">execute_camelot_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_COMPAT_VERSIONS</span><span class="p">,</span> <span class="s1">&#39;cv&#39;</span><span class="p">,</span> <span class="n">request_type</span><span class="o">=</span><span class="s1">&#39;server&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">res</span><span class="o">.</span><span class="n">compat_version</span></div>
+
+<div class="viewcode-block" id="CamelotServer.create_new_endpoint"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.create_new_endpoint">[docs]</a>    <span class="k">def</span> <span class="nf">create_new_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ep_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Creates a new endpoint for the Camelot server.</span>
+
+<span class="sd">        :parameter ep_type: endpoint type.  Possible values:\n</span>
+<span class="sd">            * sk - SCCP (Skinny) audio-only endpoint\n</span>
+<span class="sd">            * skm - SCCP (Skinny) multimedia (audio, video, and data) endpoint</span>
+<span class="sd">            * sks - SCCP (Skinny) IP-STE endpoint\n</span>
+<span class="sd">            * sipx - SIP TNP endpoint for use with CCM\n</span>
+<span class="sd">            * sip - SIP user agent (audio-only)\n</span>
+<span class="sd">            * sipv - SIP user agent (video and audio)\n</span>
+<span class="sd">            * cupc - Cisco Unified Personal Communicator client\n</span>
+<span class="sd">            * cupcd - CUPC in Deskphone mode\n</span>
+<span class="sd">            * csfd - CSF in deskphone mode\n</span>
+<span class="sd">            * cumc - Cisco Unified Mobile Client\n</span>
+<span class="sd">            * h323 - H.323 endpoint\n</span>
+<span class="sd">            * pri - ISDN PRI T1/E1 trunk\n</span>
+<span class="sd">            * cas - CAS T1/E1/Analog trunk (includes analog loop</span>
+<span class="sd">              start i.e. POTS)\n</span>
+<span class="sd">            * raw - Non protocol-specific endpoint for use with protocol</span>
+<span class="sd">              transport services, see Transport Query and Control.\n</span>
+<span class="sd">            * tandbergsip - Tandberg Sip endpoint (MXP 1000, MXP 1700, E20)\n</span>
+<span class="sd">            * imsclient - SIP IMS Client\n</span>
+<span class="sd">            * dmc - Dual mode single registration mobile client\n</span>
+<span class="sd">        :parameter args: endpoint type specific arguments</span>
+
+<span class="sd">        :returns: CamelotEndpoint object on successful creation of the endpoint</span>
+<span class="sd">         else camelot.CamelotError</span>
+
+<span class="sd">        &gt;&gt;&gt; serv = camelot.create_camelot_server(&#39;10.12.10.180&#39;, &#39;5001&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; serv</span>
+<span class="sd">        &lt;camelot.camelot_server.CamelotServer object at 0x1445550&gt;</span>
+<span class="sd">        &gt;&gt;&gt; ep1 = serv.create_new_endpoint( &#39;sipx&#39;,&#39;SEPBAACBAAC7001&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; ep1</span>
+<span class="sd">        &lt;camelot.endpoint.CamelotEndpoint object at 0x29ed490&gt;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">ep_class</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;ep_class&#39;</span><span class="p">,</span> <span class="n">CamelotEndpoint</span><span class="p">)</span>
+        <span class="n">ep_params</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;ep_params&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="n">ep_type</span> <span class="o">==</span> <span class="s1">&#39;cas&#39;</span> <span class="ow">and</span> <span class="s1">&#39;cas_board_id&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;camserv:createep cas ep&#39;</span><span class="p">)</span>
+            <span class="n">cas_board</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cas_board_id&#39;</span><span class="p">)</span>
+            <span class="n">cas_trunk</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cas_line_id&#39;</span><span class="p">)</span>
+            <span class="n">cas_country</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cas_country&#39;</span><span class="p">)</span>
+            <span class="n">cas_protocol</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cas_protocol&#39;</span><span class="p">,</span> <span class="s1">&#39;nocc&#39;</span><span class="p">)</span>
+            <span class="n">cas_line</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;cas_line_num&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;camserv createp cas parm is </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="n">cas_board</span><span class="p">,</span> <span class="n">cas_trunk</span><span class="p">,</span> <span class="n">cas_country</span><span class="p">]):</span>
+                <span class="n">encoded_msg</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+                    <span class="n">camelot</span><span class="o">.</span><span class="n">NEW_ENDPOINT</span><span class="p">,</span> <span class="n">ep_type</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">cas_board</span><span class="p">),</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">cas_trunk</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">cas_protocol</span><span class="p">),</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">cas_country</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">cas_line</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;Invalid CAS arguments&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;camserv createp through args: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+            <span class="n">encoded_msg</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">NEW_ENDPOINT</span><span class="p">,</span> <span class="n">ep_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">ep_class</span><span class="p">,</span> <span class="n">CamelotEndpoint</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span>
+                   <span class="p">(</span><span class="s1">&#39;ep_class: </span><span class="si">%s</span><span class="s1"> not a subclass of CamelotEndpoint&#39;</span><span class="p">))</span>
+        <span class="n">ep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">execute_camelot_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">NEW_ENDPOINT</span><span class="p">,</span> <span class="n">encoded_msg</span><span class="p">,</span> <span class="n">request_type</span><span class="o">=</span><span class="s1">&#39;ep&#39;</span><span class="p">,</span>
+            <span class="n">ep_class</span><span class="o">=</span><span class="n">ep_class</span><span class="p">,</span> <span class="n">ep_params</span><span class="o">=</span><span class="n">ep_params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__endpoints</span><span class="p">[</span><span class="n">ep</span><span class="o">.</span><span class="n">ep_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">ep</span>
+        <span class="k">return</span> <span class="n">ep</span></div>
+
+<div class="viewcode-block" id="CamelotServer.log_mask"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.log_mask">[docs]</a>    <span class="k">def</span> <span class="nf">log_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">moduleid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Set or get the current server logging level.</span>
+
+<span class="sd">        :parameter moduleid: the functional component to which the setting is</span>
+<span class="sd">                             being applied. Modules defined:\n</span>
+<span class="sd">                             * cupc - CUPC endpoint related events</span>
+<span class="sd">                             * cupcd - CUPC-Deskphone mode events</span>
+<span class="sd">                             * csfd - Client Services Framework Deskphone mode</span>
+<span class="sd">                               events</span>
+<span class="sd">                             * http - HTTP related log events</span>
+<span class="sd">                             * media - IP media related events</span>
+<span class="sd">                             * mediatransp - IP media transport events.</span>
+<span class="sd">                               Warning! enabling info</span>
+<span class="sd">                               level logging or lower may result in huge amount</span>
+<span class="sd">                               of log information and may impact server</span>
+<span class="sd">                               performance.</span>
+<span class="sd">                             * qbe - QBE related log events</span>
+<span class="sd">                             * qbetransp - QBE line protocols related log</span>
+<span class="sd">                               events</span>
+<span class="sd">                             * sccp - SCCP endpoints related events</span>
+<span class="sd">                             * sccptransp - SCCP protocol level events</span>
+<span class="sd">                             * sip - SIP endpoints related events</span>
+<span class="sd">                             * siptransp - SIP protocol level events</span>
+<span class="sd">                             * tftp - TFTP protocol events</span>
+<span class="sd">                             * tvs - Trust Verification Service client events</span>
+<span class="sd">                             * vapi - VAPI client handler events.</span>
+<span class="sd">                             * auto - incoming auto methods from camelot-pi.</span>
+<span class="sd">                               Enabled by default.</span>
+<span class="sd">                             * method - all incoming methods other than auto</span>
+<span class="sd">                               and config from camelot-pi. Enabled by default.</span>
+<span class="sd">                               Disabled if camelot  is started with -load</span>
+<span class="sd">                               option.</span>
+<span class="sd">                             * config - all incoming config methods from</span>
+<span class="sd">                               camelot-pi. Enabled by default.</span>
+<span class="sd">                               is started with -load option.</span>
+<span class="sd">                             * &#39;*&#39; - global filter</span>
+<span class="sd">                               Warning! enabling info level logging or lower</span>
+<span class="sd">                               may result in huge amount of log information and</span>
+<span class="sd">                               may impact server performance.</span>
+<span class="sd">                             * &#39;~&#39; - log messages that do not belong to any of</span>
+<span class="sd">                               the listed modules</span>
+
+<span class="sd">        :parameter level: the log level being applied to a specific module.</span>
+<span class="sd">                          Levels defined:\n</span>
+<span class="sd">                          * none - disable logging</span>
+<span class="sd">                          * error - error level log events</span>
+<span class="sd">                          * info - high level informational events</span>
+<span class="sd">                          * debug_1 through debug_5 - debug information \</span>
+<span class="sd">                            (debug_5 being the most detailed)</span>
+
+<span class="sd">        :parameter device: either file or console.</span>
+
+<span class="sd">        :parameter reset: reset all log settings.</span>
+
+<span class="sd">        :returns: When trying to apply new settings a status string is</span>
+<span class="sd">                  returned. On success Log Level Set is returned; otherwise an</span>
+<span class="sd">                  informative exception raised.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;moduleid&#39;</span><span class="p">:</span> <span class="n">moduleid</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;level&#39;</span><span class="p">:</span> <span class="n">level</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;device&#39;</span><span class="p">:</span> <span class="n">device</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;reset&#39;</span><span class="p">:</span> <span class="n">reset</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">LOG_MASK</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CamelotServer.log_dir"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.log_dir">[docs]</a>    <span class="k">def</span> <span class="nf">log_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns the server&#39;s execution logs directory path on</span>
+<span class="sd">        Camelot server.</span>
+
+<span class="sd">        :returns: The execution log folder&#39;s path.</span>
+
+<span class="sd">        &gt;&gt;&gt; serv = camelot.create_camelot_server(CamelotServerIp,</span>
+<span class="sd">                CamelotServerPort)</span>
+<span class="sd">        &gt;&gt;&gt; serv.log_dir()</span>
+<span class="sd">        &#39;/tmp/&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">LOG_DIR</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CamelotServer.log_filesz"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.log_filesz">[docs]</a>    <span class="k">def</span> <span class="nf">log_filesz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Set or get the current server log file size.</span>
+<span class="sd">        Default file value is 1024KB</span>
+
+<span class="sd">        :parameter size: size in kbytes</span>
+
+<span class="sd">        :returns: The current set log file size or 0 on error.</span>
+
+<span class="sd">        Fetching the current file size</span>
+
+<span class="sd">        &gt;&gt;&gt; serv = camelot.create_camelot_server(CamelotServerIp,</span>
+<span class="sd">         CamelotServerPort)</span>
+<span class="sd">        &gt;&gt;&gt; serv.log_filesz()</span>
+<span class="sd">        &#39;1024&#39;</span>
+
+<span class="sd">        Changing the current file size</span>
+
+<span class="sd">        &gt;&gt;&gt; serv.log_filesz(&#39;2048&#39;)</span>
+<span class="sd">        &#39;2048&#39;</span>
+
+<span class="sd">        Note: If Camelot server is started with json format enable. \</span>
+<span class="sd">               The output will be in Json format.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.log_filesz()</span>
+<span class="sd">        {&#39;file_size&#39;: &#39;1024&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="n">size</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">LOG_FILESZ</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CamelotServer.max_log_files"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.max_log_files">[docs]</a>    <span class="k">def</span> <span class="nf">max_log_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numfiles</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;The command sets a limit on the number of log files in log folder.</span>
+
+<span class="sd">        :parameter numfiles: number of files</span>
+
+<span class="sd">        :returns: The current log files limit</span>
+
+<span class="sd">        Note: If Camelot server is started with json format enable. \</span>
+<span class="sd">               The output will be in Json format.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.max_log_files()</span>
+<span class="sd">        {&#39;max_files&#39;: &#39;1024&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;numfiles&#39;</span><span class="p">:</span> <span class="n">numfiles</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">LOG_MAX_FILES</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CamelotServer.log_file_prefix"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.log_file_prefix">[docs]</a>    <span class="k">def</span> <span class="nf">log_file_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Changes the current log file name prefix.</span>
+
+<span class="sd">        The command sets or returns the log file prefix.</span>
+
+<span class="sd">        :parameter prefix: filename prefix.</span>
+
+<span class="sd">        :returns: The current log file name prefix.</span>
+
+<span class="sd">        Fetching the current file prefix</span>
+
+<span class="sd">        &gt;&gt;&gt; serv = camelot.create_camelot_server(CamelotServerIp,</span>
+<span class="sd">                                        CamelotServerPort)</span>
+<span class="sd">        &gt;&gt;&gt; serv.log_file_prefix()</span>
+<span class="sd">        &#39;&#39;</span>
+
+<span class="sd">        Changing the current file prefix</span>
+
+<span class="sd">        &gt;&gt;&gt; serv.log_file_prefix(&#39;log&#39;)</span>
+<span class="sd">        &#39;log&#39;</span>
+
+<span class="sd">        Note: If Camelot server is started with json format enable. \</span>
+<span class="sd">               The output will be in Json format.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.log_file_prefix()</span>
+<span class="sd">        {&#39;file_prefix&#39;: &#39;camlog&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="n">prefix</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">LOG_FILE_PREFIX</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CamelotServer.log_book_mark"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.log_book_mark">[docs]</a>    <span class="k">def</span> <span class="nf">log_book_mark</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">book_mark_text</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Insert a user defined bookmark string to the current log</span>
+<span class="sd">         file</span>
+
+<span class="sd">        :returns: An informative status message;</span>
+<span class="sd">         on success bookmark inserted is returned</span>
+
+<span class="sd">        Note: If Camelot server is started with json format enable. \</span>
+<span class="sd">               The output will be in Json format.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.log_book_mark()</span>
+<span class="sd">        {&#39;bookmark&#39;: &#39;bookmark inserted&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bookmark_text&#39;</span><span class="p">:</span> <span class="n">book_mark_text</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">LOG_BOOKMARK</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CamelotServer.load_prompt_cache"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.load_prompt_cache">[docs]</a>    <span class="k">def</span> <span class="nf">load_prompt_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cachepathargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Load prompt cache used for signature-based prompt detection.</span>
+
+<span class="sd">        :parameter cachepathargs: path to directory containing pre-chunked</span>
+<span class="sd">         prompts or paths to original prompts directory</span>
+<span class="sd">         _and_ directory to receive chunked prompts.</span>
+<span class="sd">         N.B. Relative paths are relative to directory containing</span>
+<span class="sd">         camserv.exe.  Include one or more --vs to increase</span>
+<span class="sd">         signature-specific debugging which will be written</span>
+<span class="sd">         to a file named &#39;widlog.txt&#39; in the same directory</span>
+<span class="sd">         as camserv.exe.    Include -fmt g711alaw to change</span>
+<span class="sd">         default wire format from g711ulaw (use with Unity&#39;s 16-bit</span>
+<span class="sd">         prompts in European telephony configurations).</span>
+
+<span class="sd">        :returns: a handle for cache on success and raises an error exception</span>
+<span class="sd">         otherwise.Cache handle is in turn supplied as --cache parameter to</span>
+<span class="sd">         startpromptdetector for signature-based (-type sig) prompt detection</span>
+<span class="sd">         on an audio stream.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">cachepathargs</span><span class="p">:</span>
+            <span class="n">out_msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> </span><span class="si">%s</span><span class="s1">@&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="s1">&#39;loadpromptcache&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">cachepathargs</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">out_msg</span> <span class="o">=</span> <span class="s1">&#39;loadpromptcache@&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_send_msg_to_server</span><span class="p">(</span><span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="n">out_msg</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_send_msg_to_server</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">msg_type</span><span class="p">,</span> <span class="n">outmsg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">outmsg</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">msg_type</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;No message type passed to send to server, Returning..&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">hex_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_message_length_hex</span><span class="p">(</span><span class="n">outmsg</span><span class="p">)</span>
+        <span class="n">send_msg</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:00000000:</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">msg_type</span><span class="p">,</span> <span class="n">hex_len</span><span class="p">,</span> <span class="n">outmsg</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camelot_query</span><span class="p">(</span><span class="n">send_msg</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">result</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;sending failed:&#39;</span><span class="p">)</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Coulndnt send the message to Camelot server&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_is_valid_decimal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dec_str</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">dec_str</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">_get_message_length_hex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">message</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;No message passed to get Hex length&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">msg_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">hex_val_in_str</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="n">msg_len</span><span class="p">)</span>
+        <span class="n">len_hex</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hex_val_in_str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">len_hex</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">hex_val_in_str</span> <span class="o">=</span> <span class="n">hex_val_in_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;0x&#39;</span><span class="p">,</span> <span class="s1">&#39;000&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">len_hex</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">hex_val_in_str</span> <span class="o">=</span> <span class="n">hex_val_in_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;0x&#39;</span><span class="p">,</span> <span class="s1">&#39;00&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">len_hex</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">hex_val_in_str</span> <span class="o">=</span> <span class="n">hex_val_in_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;0x&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span>
+        <span class="n">len_hex</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hex_val_in_str</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hex_val_in_str</span><span class="p">[(</span><span class="n">len_hex</span> <span class="o">-</span> <span class="mi">4</span><span class="p">):</span><span class="n">len_hex</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_send_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sendMsg</span><span class="p">,</span> <span class="n">functionStr</span><span class="p">):</span>
+        <span class="n">hex_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_message_length_hex</span><span class="p">(</span><span class="n">sendMsg</span><span class="p">)</span>
+        <span class="n">rawmessage</span> <span class="o">=</span> <span class="s1">&#39;f:00000000:</span><span class="si">{0}</span><span class="s1">:</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hex_len</span><span class="p">,</span> <span class="n">sendMsg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camelot_query</span><span class="p">(</span><span class="n">rawmessage</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_send_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sendMsg</span><span class="p">,</span> <span class="n">functionStr</span><span class="p">):</span>
+        <span class="n">hex_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_message_length_hex</span><span class="p">(</span><span class="n">sendMsg</span><span class="p">)</span>
+        <span class="n">rawmessage</span> <span class="o">=</span> <span class="s1">&#39;f:00000000:</span><span class="si">{0}</span><span class="s1">:</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hex_len</span><span class="p">,</span> <span class="n">sendMsg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camelot_query</span><span class="p">(</span><span class="n">rawmessage</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_camelot_query</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">encoded_msg</span><span class="p">):</span>
+        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">command_lock</span><span class="p">:</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">_send_and_receive</span><span class="p">(</span><span class="n">encoded_msg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ret</span><span class="o">.</span><span class="n">message</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ret</span><span class="o">.</span><span class="n">message</span>
+
+    <span class="k">def</span> <span class="nf">_query_camelot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">encoded_msg</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">execute_camelot_command</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span> <span class="n">encoded_msg</span><span class="p">,</span> <span class="n">request_type</span><span class="o">=</span><span class="s1">&#39;ep&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_create_tone_seq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">addr</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">tone_list</span><span class="p">,</span> <span class="n">codec</span><span class="o">=</span><span class="s1">&#39;g711ulaw&#39;</span><span class="p">,</span>
+                         <span class="n">leader</span><span class="o">=</span><span class="s1">&#39;~&#39;</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="s1">&#39;~&#39;</span><span class="p">,</span> <span class="n">trailer</span><span class="o">=</span><span class="s1">&#39;~&#39;</span><span class="p">):</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering method create_tone_seq()&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39; &#39;</span> <span class="ow">in</span> <span class="n">codec</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid codec name&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">leader</span> <span class="o">!=</span> <span class="s1">&#39;~&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_decimal</span><span class="p">(</span><span class="n">leader</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Invalid leader value&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">duration</span> <span class="o">!=</span> <span class="s1">&#39;~&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_decimal</span><span class="p">(</span><span class="n">duration</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Invalid duration value&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">trailer</span> <span class="o">!=</span> <span class="s1">&#39;~&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_decimal</span><span class="p">(</span><span class="n">trailer</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Invalid trailer value&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tone_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;No tone sequence provided in the tone_list&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">tone_seq_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">tone_seq</span> <span class="ow">in</span> <span class="n">tone_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">tone_seq</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">dict</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Tone sequence is not of type dict, returning..&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="n">tone_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;freq&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                         <span class="s1">&#39;offset&#39;</span><span class="p">:</span> <span class="s1">&#39;~&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="s1">&#39;~&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;volume&#39;</span><span class="p">:</span> <span class="s1">&#39;~&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;rise&#39;</span><span class="p">:</span> <span class="s1">&#39;~&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;fall&#39;</span><span class="p">:</span> <span class="s1">&#39;~&#39;</span><span class="p">,</span>
+                         <span class="s1">&#39;phase&#39;</span><span class="p">:</span> <span class="s1">&#39;~&#39;</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;freq&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_decimal</span><span class="p">(</span><span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;freq&#39;</span><span class="p">)):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Not a valid freq value, returning&#39;</span><span class="p">)</span>
+                    <span class="k">return</span>
+                <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tone_seq</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;freq is a mandatory parameter, returning&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="k">if</span> <span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;offset&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_decimal</span><span class="p">(</span><span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;offset&#39;</span><span class="p">)):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Not a valid offset value, returning&#39;</span><span class="p">)</span>
+                    <span class="k">return</span>
+                <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tone_seq</span><span class="p">[</span><span class="s1">&#39;offset&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;duration&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_decimal</span><span class="p">(</span><span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;duration&#39;</span><span class="p">)):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Not a valid duration value, returning&#39;</span><span class="p">)</span>
+                    <span class="k">return</span>
+                <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tone_seq</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;volume&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_decimal</span><span class="p">(</span><span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;volume&#39;</span><span class="p">)):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Not a valid volume value, returning&#39;</span><span class="p">)</span>
+                    <span class="k">return</span>
+                <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tone_seq</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rise&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_decimal</span><span class="p">(</span><span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;rise&#39;</span><span class="p">)):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Not a valid rise value, returning&#39;</span><span class="p">)</span>
+                    <span class="k">return</span>
+                <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;rise&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tone_seq</span><span class="p">[</span><span class="s1">&#39;rise&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fall&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_decimal</span><span class="p">(</span><span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;fall&#39;</span><span class="p">)):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Not a valid fall value, returning&#39;</span><span class="p">)</span>
+                    <span class="k">return</span>
+                <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;fall&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tone_seq</span><span class="p">[</span><span class="s1">&#39;fall&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;phase&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_decimal</span><span class="p">(</span><span class="n">tone_seq</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;phase&#39;</span><span class="p">)):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Not a valid phase value, returning&#39;</span><span class="p">)</span>
+                    <span class="k">return</span>
+                <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tone_seq</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span>
+
+            <span class="n">tone_str</span> <span class="o">=</span> <span class="s1">&#39; </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;freq&#39;</span><span class="p">],</span> <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;offset&#39;</span><span class="p">],</span> <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;volume&#39;</span><span class="p">],</span>
+                <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;rise&#39;</span><span class="p">],</span> <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;duration&#39;</span><span class="p">],</span> <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;fall&#39;</span><span class="p">],</span>
+                <span class="n">tone_dict</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">])</span>
+            <span class="n">tone_seq_str</span> <span class="o">+=</span> <span class="n">tone_str</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;codec&#39;</span><span class="p">:</span> <span class="n">codec</span><span class="p">,</span>
+                  <span class="s1">&#39;leader&#39;</span><span class="p">:</span> <span class="n">leader</span><span class="p">,</span>
+                  <span class="s1">&#39;duration&#39;</span><span class="p">:</span> <span class="n">duration</span><span class="p">,</span>
+                  <span class="s1">&#39;trailer&#39;</span><span class="p">:</span> <span class="n">trailer</span><span class="p">,</span>
+                  <span class="s1">&#39;length&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tone_list</span><span class="p">)),</span>
+                  <span class="s1">&#39;tone_seq_str&#39;</span><span class="p">:</span> <span class="n">tone_seq_str</span>
+                  <span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CREATE_TONE_SEQUENCE</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CamelotServer.register_event_callback"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.register_event_callback">[docs]</a>    <span class="k">def</span> <span class="nf">register_event_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Register a event callback that can be notified when a event</span>
+<span class="sd">        occurs on a currently running server. This calback will be</span>
+<span class="sd">        called when an event is received from camelot server for an</span>
+<span class="sd">        endpoint on which callback wasn&#39;t registered,</span>
+<span class="sd">        otherwise the python framework calls the callback on</span>
+<span class="sd">        an endpoint for which this event was sent.</span>
+
+<span class="sd">        event will be a dictionary with following falues:</span>
+<span class="sd">            :camelot_ip: Camelot server ip</span>
+<span class="sd">            :camelot_port: Camelot server port</span>
+<span class="sd">            :endpoint_id: Camelot endpoint id</span>
+<span class="sd">            :event_type: type of the event</span>
+<span class="sd">            :event_sub_type: sub type of the event</span>
+<span class="sd">            :message: following message from the even</span>
+
+<span class="sd">        :parameter callback: callback method which can be invoked by SDK</span>
+
+<span class="sd">        &gt;&gt;&gt; def event_callback(event):</span>
+<span class="sd">        ...     print &#39;Received Event: %s&#39; % event</span>
+<span class="sd">        ...</span>
+<span class="sd">        &gt;&gt;&gt; serv = camelot.create_camelot_server(&#39;10.12.10.180, &#39;5001&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; serv</span>
+<span class="sd">        &gt;&gt;&gt; &lt;camelot.camelot_server.CamelotServer object at 0x1445550&gt;</span>
+<span class="sd">        &gt;&gt;&gt; serv.register_event_callback(event_callback)</span>
+<span class="sd">        &gt;&gt;&gt; ep1 = serv.create_new_endpoint( &#39;sipx&#39;,</span>
+<span class="sd">        ...                                 &#39;SEPBAACBAAC7001&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; ep1</span>
+<span class="sd">        &lt;camelot.endpoint.CamelotEndpoint object at 0x29ed490&gt;</span>
+<span class="sd">        &gt;&gt;&gt; ep1.start_info_events()</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; ep1.start_station_events()</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; ep1.init()</span>
+<span class="sd">        &#39;outofservice&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ep1.inservice()</span>
+<span class="sd">        &#39;inservicepending&#39;</span>
+<span class="sd">        &gt;&gt;&gt; Received Event: {&#39;event_sub_type&#39;: &#39;ccmreg&#39;,</span>
+<span class="sd">                &#39;event_type&#39;: &#39;station&#39;,</span>
+<span class="sd">                &#39;camelot_ip&#39;: &#39;10.106.248.199&#39;, &#39;endpoint_id&#39;: &#39;00000003&#39;,</span>
+<span class="sd">                &#39;camelot_port&#39;: 5004, &#39;message&#39;:</span>
+<span class="sd">                &#39;17:27:33:314 ccmreg {registration ok} 10.20.1.21&#39;}</span>
+<span class="sd">            Received Event: {&#39;event_sub_type&#39;: None, &#39;event_type&#39;: &#39;state&#39;,</span>
+<span class="sd">                &#39;camelot_ip&#39;: &#39;10.106.248.199&#39;, &#39;endpoint_id&#39;: &#39;00000003&#39;,</span>
+<span class="sd">                &#39;camelot_port&#39;: 5004, &#39;message&#39;: &#39;&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="o">=</span> <span class="n">callback</span></div>
+
+<div class="viewcode-block" id="CamelotServer.load_sss"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.load_sss">[docs]</a>    <span class="k">def</span> <span class="nf">load_sss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">scripttype</span><span class="o">=</span><span class="s1">&#39;tcl&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;load script on to the current camelot server.</span>
+
+<span class="sd">        :parameter script: Path of the script file</span>
+<span class="sd">        :parameter scripttype: SSS script is written in tcl or python.\n</span>
+<span class="sd">                               Possible values are\n</span>
+<span class="sd">                                * tcl (default)</span>
+<span class="sd">                                * python</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">encoded_msg</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">LOAD_SSS</span><span class="p">,</span> <span class="n">script</span><span class="p">,</span> <span class="n">scripttype</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">execute_camelot_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">LOAD_SSS</span><span class="p">,</span> <span class="n">encoded_msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="CamelotServer.unload_sss"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.unload_sss">[docs]</a>    <span class="k">def</span> <span class="nf">unload_sss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shandle</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;unload sss script from the camelot server</span>
+
+<span class="sd">        :parameter shandle: script handled returned by loadsss</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">encoded_msg</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">UNLOAD_SSS</span><span class="p">,</span> <span class="n">shandle</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">execute_camelot_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">UNLOAD_SSS</span><span class="p">,</span> <span class="n">encoded_msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="CamelotServer.get_sss_list"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.get_sss_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_sss_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shandle</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get sss script info</span>
+
+<span class="sd">        :parameter shandle: script handled returned by loadsss</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">encoded_msg</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_SSS_LIST</span><span class="p">,</span> <span class="n">shandle</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">execute_camelot_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_SSS_LIST</span><span class="p">,</span> <span class="n">encoded_msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="CamelotServer.get_sss_script"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.get_sss_script">[docs]</a>    <span class="k">def</span> <span class="nf">get_sss_script</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shandle</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get sss script</span>
+
+<span class="sd">        :parameter shandle: script handled returned by loadsss</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">encoded_msg</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_SSS_SCRIPT</span><span class="p">,</span> <span class="n">shandle</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">execute_camelot_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_SSS_SCRIPT</span><span class="p">,</span> <span class="n">encoded_msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="CamelotServer.get_sss_load_state"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.get_sss_load_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_sss_load_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shandle</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get sss load state</span>
+
+<span class="sd">        :parameter shandle: script handled returned by loadsss</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">encoded_msg</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_SSS_LOAD_STATE</span><span class="p">,</span> <span class="n">shandle</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">execute_camelot_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_SSS_LOAD_STATE</span><span class="p">,</span> <span class="n">encoded_msg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="CamelotServer.get_endpoint"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.get_endpoint">[docs]</a>    <span class="k">def</span> <span class="nf">get_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ep_id_or_name</span><span class="p">,</span> <span class="n">get_from_server</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Find an endpoint</span>
+<span class="sd">        Returns information about a previously created endpoint.</span>
+<span class="sd">        The specified id can be a endpoint name or endpoint id.</span>
+<span class="sd">        If endpoint exists in camelot-pi current process , only</span>
+<span class="sd">        then it will be returned else an exception will be thrown.</span>
+<span class="sd">        If the requirement is to get the endpoint on a different process</span>
+<span class="sd">        either set get_from_server to True or refer attach_endpoint.</span>
+
+<span class="sd">        :parameter ep_id_or_name: epid of the endpoint. Possible values \n</span>
+<span class="sd">            * epid - Hex value as a string &#39;00000001&#39; ... &#39;0000000n&#39; is in</span>
+<span class="sd">              the sequence in which the endpoint were created.</span>
+<span class="sd">            * epname - arbitrary string set by ep.set_client_data(data)</span>
+<span class="sd">        :parameter get_from_server: to attach an endpoint in a different</span>
+<span class="sd">                                    process set it to True.</span>
+
+<span class="sd">        :returns object: endpoint object if exists is returned else</span>
+<span class="sd">                        an exception is thrown.</span>
+
+<span class="sd">        &gt;&gt;&gt; serv = camelot.create_camelot_server(&#39;10.12.10.180, &#39;5001&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; serv</span>
+<span class="sd">        &gt;&gt;&gt; &lt;camelot.camelot_server.CamelotServer object at 0x1445550&gt;</span>
+<span class="sd">        &gt;&gt;&gt; ep1 = serv.create_new_endpoint( &#39;sipx&#39;,</span>
+<span class="sd">        ...                                 &#39;SEPBAACBAAC7001&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; ep1</span>
+<span class="sd">        &lt;camelot.endpoint.CamelotEndpoint object at 0x29ed490&gt;</span>
+<span class="sd">        &gt;&gt;&gt; ep1.set_client_data(&#39;phone1&#39;)</span>
+<span class="sd">        &#39;phone1&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ret = serv.get_end_point(&#39;phone1&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; print ret</span>
+<span class="sd">        &lt;camelot.endpoint.CamelotEndpoint object at 0x29ed490&gt;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">get_from_server</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">attach_endpoint</span><span class="p">(</span><span class="n">ep_id_or_name</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">int</span><span class="p">(</span><span class="n">ep_id_or_name</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># epname or client data provided, so need to get the ep_id</span>
+            <span class="c1"># from server first.  The decode will then return the endpoint</span>
+            <span class="c1"># by calling _get_endpoint</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;get_endpoint: getting from camelot server:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
+            <span class="n">encoded_msg</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+                <span class="n">camelot</span><span class="o">.</span><span class="n">GET_ENDPOINT</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">ep_id_or_name</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">execute_camelot_command</span><span class="p">(</span>
+                <span class="n">camelot</span><span class="o">.</span><span class="n">GET_ENDPOINT</span><span class="p">,</span> <span class="n">encoded_msg</span><span class="p">,</span> <span class="n">request_type</span><span class="o">=</span><span class="s1">&#39;ep&#39;</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;get_endpoint: getting locally&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_endpoint</span><span class="p">(</span><span class="n">ep_id_or_name</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_default_event_callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="n">found_ep_callback</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;inside default callback: event: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">event</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;event epid: </span><span class="si">%s</span><span class="s2"> eventtype: </span><span class="si">%s</span><span class="s2"> </span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span>
+                  <span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">endpoint_id</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">event_type</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__endpoints</span> <span class="ow">and</span> <span class="n">event</span><span class="o">.</span><span class="n">endpoint_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__endpoints</span><span class="p">:</span>
+            <span class="n">ep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__endpoints</span><span class="p">[</span><span class="n">event</span><span class="o">.</span><span class="n">endpoint_id</span><span class="p">]</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">ep</span><span class="o">.</span><span class="n">_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">ep</span><span class="o">.</span><span class="n">_callback</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="n">found_ep_callback</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">event_type</span> <span class="o">+</span> <span class="s2">&quot;:&quot;</span> <span class="o">+</span> <span class="n">event</span><span class="o">.</span><span class="n">event_sub_type</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="n">ep</span><span class="o">.</span><span class="n">_callbackdict</span><span class="p">):</span>
+                    <span class="n">processThread</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span>
+                        <span class="n">target</span><span class="o">=</span><span class="n">ep</span><span class="o">.</span><span class="n">_callbackdict</span><span class="p">[</span><span class="n">key</span><span class="p">],</span>
+                        <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">event</span><span class="p">,</span> <span class="n">ep</span><span class="o">.</span><span class="n">_callbackarg</span><span class="p">))</span>
+                    <span class="n">processThread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+                    <span class="n">found_ep_callback</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">found_ep_callback</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; ep call back is registered&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;ep call back is not registered &quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">found_ep_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; ep event call back is not registered&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;calling server level callback&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_callback</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot; no callback registered on server side.. </span><span class="se">\</span>
+<span class="s2">                so ignoring the event&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CamelotServer.attach_endpoint"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.attach_endpoint">[docs]</a>    <span class="k">def</span> <span class="nf">attach_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ep_id_or_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Returns information about a previously created endpoint.</span>
+<span class="sd">        The specified id can be a endpoint name or endpoint id.</span>
+<span class="sd">        This queries camelot server and gets the endpoint.</span>
+
+<span class="sd">        :parameter ep_id_or_name: id of the endpoint. Possible values \n</span>
+<span class="sd">            * epid - Hex value as a string &#39;00000001&#39; ... &#39;0000000n&#39; is in</span>
+<span class="sd">              the sequence in which the endpoint were created.</span>
+<span class="sd">            * epname - arbitrary string set by ep.set_client_data(data)</span>
+
+<span class="sd">        :returns object: endpoint object on camelot server is returned else</span>
+<span class="sd">                        an exception is thrown.</span>
+
+<span class="sd">        &gt;&gt;&gt; serv = camelot.create_camelot_server(&#39;10.12.10.180, &#39;5001&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; serv</span>
+<span class="sd">        &gt;&gt;&gt; &lt;camelot.camelot_server.CamelotServer object at 0x1445550&gt;</span>
+<span class="sd">        &gt;&gt;&gt; ret = serv.attach_endpoint(&#39;phone1&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; print ret</span>
+<span class="sd">        &lt;camelot.endpoint.CamelotEndpoint object at 0x29ed490&gt;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># ep_id_or_name could be the actual ep index that camelot</span>
+        <span class="c1"># keeps, or the client data</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;in attach_endpoint method&#39;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Convert to int if possible</span>
+            <span class="n">ep_id_or_name</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">ep_id_or_name</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="c1"># epname or client data provided, so send as is</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s1">&#39;using endpoint name </span><span class="si">{}</span><span class="s1"> to attach&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ep_id_or_name</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;using endpoint id </span><span class="si">{}</span><span class="s1"> to attach&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ep_id_or_name</span><span class="p">))</span>
+
+        <span class="n">ep_class</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;ep_class&#39;</span><span class="p">,</span> <span class="n">CamelotEndpoint</span><span class="p">)</span>
+        <span class="n">ep_params</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;ep_params&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">ep_class</span><span class="p">,</span> <span class="n">CamelotEndpoint</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span>
+                   <span class="p">(</span><span class="s1">&#39;ep_class: </span><span class="si">%s</span><span class="s1"> not a subclass of CamelotEndpoint&#39;</span><span class="p">))</span>
+        <span class="n">encoded_msg</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">ATTACH_ENDPOINT</span><span class="p">,</span> <span class="n">ep_id_or_name</span><span class="p">)</span>
+        <span class="n">ep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_server_conn</span><span class="p">()</span><span class="o">.</span><span class="n">execute_camelot_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">ATTACH_ENDPOINT</span><span class="p">,</span> <span class="n">encoded_msg</span><span class="p">,</span> <span class="n">request_type</span><span class="o">=</span><span class="s1">&#39;ep&#39;</span><span class="p">,</span>
+            <span class="n">ep_class</span><span class="o">=</span><span class="n">ep_class</span><span class="p">,</span> <span class="n">ep_params</span><span class="o">=</span><span class="n">ep_params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__endpoints</span><span class="p">[</span><span class="n">ep</span><span class="o">.</span><span class="n">ep_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">ep</span>
+        <span class="k">return</span> <span class="n">ep</span></div>
+
+    <span class="k">def</span> <span class="nf">get_message_length_hex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">message</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s1">&#39;No message passed to get Hex length&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">msg_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="n">hex_val_in_str</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="n">msg_len</span><span class="p">)</span>
+        <span class="n">len_hex</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hex_val_in_str</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">len_hex</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">hex_val_in_str</span> <span class="o">=</span> <span class="n">hex_val_in_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;0x&#39;</span><span class="p">,</span> <span class="s1">&#39;000&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">len_hex</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="n">hex_val_in_str</span> <span class="o">=</span> <span class="n">hex_val_in_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;0x&#39;</span><span class="p">,</span> <span class="s1">&#39;00&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">len_hex</span> <span class="o">==</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">hex_val_in_str</span> <span class="o">=</span> <span class="n">hex_val_in_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;0x&#39;</span><span class="p">,</span> <span class="s1">&#39;0&#39;</span><span class="p">)</span>
+        <span class="n">len_hex</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hex_val_in_str</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hex_val_in_str</span><span class="p">[(</span><span class="n">len_hex</span> <span class="o">-</span> <span class="mi">4</span><span class="p">):</span><span class="n">len_hex</span><span class="p">]</span>
+
+<div class="viewcode-block" id="CamelotServer.create_out_action_set"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.create_out_action_set">[docs]</a>    <span class="k">def</span> <span class="nf">create_out_action_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Create a blank set of actions as a place holder for all the messages.</span>
+<span class="sd">        Then using different command one can keep on adding different action</span>
+<span class="sd">        for addition/deletion or modification of original message.</span>
+
+<span class="sd">        NOTE: This API can be used for Simulated Endpoints as well.</span>
+<span class="sd">              i.e., the endpoint need not to be RawEndpoint.</span>
+
+<span class="sd">        &gt;&gt;&gt; outActionObj = create_out_action_set()</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">createmsg</span> <span class="o">=</span> <span class="s1">&#39;createtemplatemessage NONE NONE@&#39;</span>
+
+        <span class="n">hex_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_message_length_hex</span><span class="p">(</span><span class="n">createmsg</span><span class="p">)</span>
+        <span class="n">rawmessage</span> <span class="o">=</span> <span class="s1">&#39;f:00000000:</span><span class="si">{0}</span><span class="s1">:</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hex_len</span><span class="p">,</span> <span class="n">createmsg</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">with_new_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camelot_query</span><span class="p">(</span><span class="n">rawmessage</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">with_new_line</span><span class="p">:</span>
+                <span class="n">actionObject</span> <span class="o">=</span> <span class="n">OutActionObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_new_line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">actionObject</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">actionObject</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Create out Action Object Failed reason:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span></div>
+
+<div class="viewcode-block" id="CamelotServer.delete_out_action_set"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.delete_out_action_set">[docs]</a>    <span class="k">def</span> <span class="nf">delete_out_action_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actionObj</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Deletes the outaction object created.</span>
+<span class="sd">        :parameter actionObj: actionObj returned by</span>
+<span class="sd">                                 create_out_action_set().</span>
+
+<span class="sd">        :returns: True Upon success, else Exception is thrown.</span>
+<span class="sd">        &gt;&gt;&gt; delete_out_action_set(actionObj)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">delmsg</span> <span class="o">=</span> <span class="s1">&#39;deletemessage </span><span class="si">{0}</span><span class="s1">@&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">actionObj</span><span class="o">.</span><span class="n">msgid</span><span class="p">)</span>
+        <span class="n">hex_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_message_length_hex</span><span class="p">(</span><span class="n">delmsg</span><span class="p">)</span>
+        <span class="n">rawmessage</span> <span class="o">=</span> <span class="s1">&#39;f:00000000:</span><span class="si">{0}</span><span class="s1">:</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hex_len</span><span class="p">,</span> <span class="n">delmsg</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">with_new_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camelot_query</span><span class="p">(</span><span class="n">rawmessage</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">with_new_line</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">with_new_line</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Delete Action Set Failed&#39;</span><span class="p">)</span>
+            <span class="k">return</span></div>
+
+<div class="viewcode-block" id="CamelotServer.create_in_action_set"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.create_in_action_set">[docs]</a>    <span class="k">def</span> <span class="nf">create_in_action_set</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Create a blank set of verification as a place holder</span>
+<span class="sd">        Then using different command one can keep on adding actions</span>
+<span class="sd">        for verification of original message.</span>
+
+<span class="sd">        NOTE: This API can be used for Simulated Endpoints as well.</span>
+<span class="sd">              i.e., the endpoint need not to be RawEndpoint.</span>
+
+<span class="sd">        &gt;&gt;&gt; inActionObj = create_in_action_set()</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">createmsg</span> <span class="o">=</span> <span class="s1">&#39;createtemplatemessage NONE NONE@&#39;</span>
+
+        <span class="n">hex_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_message_length_hex</span><span class="p">(</span><span class="n">createmsg</span><span class="p">)</span>
+        <span class="n">rawmessage</span> <span class="o">=</span> <span class="s1">&#39;f:00000000:</span><span class="si">{0}</span><span class="s1">:</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hex_len</span><span class="p">,</span> <span class="n">createmsg</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">with_new_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camelot_query</span><span class="p">(</span><span class="n">rawmessage</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">with_new_line</span><span class="p">:</span>
+                <span class="n">actionObj</span> <span class="o">=</span> <span class="n">InActionObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">with_new_line</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">actionObj</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">actionObj</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Create in Action Object Failed=</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span></div>
+
+<div class="viewcode-block" id="CamelotServer.delete_in_action_set"><a class="viewcode-back" href="../../api/camelot_server.html#camelot.camelot_server.CamelotServer.delete_in_action_set">[docs]</a>    <span class="k">def</span> <span class="nf">delete_in_action_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validationObj</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Deletes the inaction object created.</span>
+<span class="sd">        :parameter validationObj: inaction returned by</span>
+<span class="sd">                                 create_in_action_set().</span>
+
+<span class="sd">        :returns: True Upon success, else Exception is thrown.</span>
+<span class="sd">        &gt;&gt;&gt; delete_in_action_set(validationObj)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">delmsg</span> <span class="o">=</span> <span class="s1">&#39;deletemessage </span><span class="si">{0}</span><span class="s1">@&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">validationObj</span><span class="o">.</span><span class="n">msgid</span><span class="p">)</span>
+        <span class="n">hex_len</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_message_length_hex</span><span class="p">(</span><span class="n">delmsg</span><span class="p">)</span>
+        <span class="n">rawmessage</span> <span class="o">=</span> <span class="s1">&#39;f:00000000:</span><span class="si">{0}</span><span class="s1">:</span><span class="si">{1}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">hex_len</span><span class="p">,</span> <span class="n">delmsg</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">with_new_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_camelot_query</span><span class="p">(</span><span class="n">rawmessage</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">with_new_line</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">with_new_line</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Delete Action Set Failed&#39;</span><span class="p">)</span>
+            <span class="k">return</span></div>
+
+    <span class="k">def</span> <span class="nf">detach_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ep_id</span><span class="p">):</span>
+        <span class="n">ep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__endpoints</span><span class="p">[</span><span class="n">ep_id</span><span class="p">]</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__endpoints</span><span class="p">[</span><span class="n">ep_id</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">ep</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../camelot.html" >camelot</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

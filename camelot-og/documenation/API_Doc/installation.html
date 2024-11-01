@@ -1,0 +1,174 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Installation &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting Started" href="getting_started.html" />
+    <link rel="prev" title="Welcome" href="index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting Started"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>For the keen amongst you, the install process basically consists of checking out the latest source from <a class="reference external" href="https://bitbucket-eng-gpk1.cisco.com/bitbucket/projects/CAMELOTPI/repos/camelot-pi">gitorious</a> and installing using pip.
+We officially support all platforms.</p>
+<div class="section" id="any-platform">
+<h2>Any Platform<a class="headerlink" href="#any-platform" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="prerequisites">
+<h3>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>Ubuntu 12.04 or above / centos 7 or above</li>
+<li>Python 2.7 or above</li>
+<li>git</li>
+<li>Supported Camelot build: <cite>Download &lt;http://wwwin-vts.cisco.com/camelot/&gt;</cite></li>
+<li>pip</li>
+</ul>
+</div>
+<div class="section" id="installation-generic">
+<h3>Installation generic<a class="headerlink" href="#installation-generic" title="Permalink to this headline">¶</a></h3>
+<p>These commands will get you up-and-running with Camelot-pi right away:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">~</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">ssh</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="nd">@bitbucket</span><span class="o">-</span><span class="n">eng</span><span class="o">-</span><span class="n">gpk1</span><span class="o">.</span><span class="n">cisco</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">7999</span><span class="o">/</span><span class="n">camelotpi</span><span class="o">/</span><span class="n">camelot</span><span class="o">-</span><span class="n">pi</span><span class="o">.</span><span class="n">git</span> <span class="n">camelot</span><span class="o">-</span><span class="n">pi</span>
+<span class="n">cd</span> <span class="n">camelot</span><span class="o">-</span><span class="n">pi</span>
+<span class="n">sudo</span> <span class="o">./</span><span class="n">INSTALL</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="installation-with-virtualenv">
+<h3>Installation with virtualenv<a class="headerlink" href="#installation-with-virtualenv" title="Permalink to this headline">¶</a></h3>
+<p>These commands will get you up-and-running with python2.X or python3.X versions of camelot-pi right away:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sudo</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">virtualenv</span>
+<span class="c1"># assuming python3 has been already installed, and binary exists in /usr/bin/python3.7</span>
+<span class="c1"># donot use sudo for any of the below commands</span>
+<span class="n">virtualenv</span> <span class="o">-</span><span class="n">v</span> <span class="o">--</span><span class="n">python</span><span class="o">=/</span><span class="n">usr</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">python3</span><span class="o">.</span><span class="mi">7</span> <span class="o">~/</span><span class="n">camelot</span><span class="o">-</span><span class="n">pi</span><span class="o">-</span><span class="n">virtualenv</span>
+<span class="n">source</span> <span class="o">~/</span><span class="n">camelot</span><span class="o">-</span><span class="n">pi</span><span class="o">-</span><span class="n">virtualenv</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+<span class="n">cd</span> <span class="o">~</span>
+<span class="n">git</span> <span class="n">clone</span> <span class="n">ssh</span><span class="p">:</span><span class="o">//</span><span class="n">git</span><span class="nd">@bitbucket</span><span class="o">-</span><span class="n">eng</span><span class="o">-</span><span class="n">gpk1</span><span class="o">.</span><span class="n">cisco</span><span class="o">.</span><span class="n">com</span><span class="p">:</span><span class="mi">7999</span><span class="o">/</span><span class="n">camelotpi</span><span class="o">/</span><span class="n">camelot</span><span class="o">-</span><span class="n">pi</span><span class="o">.</span><span class="n">git</span> <span class="n">camelot</span><span class="o">-</span><span class="n">pi</span>
+<span class="n">cd</span> <span class="n">camelot</span><span class="o">-</span><span class="n">pi</span>
+<span class="o">./</span><span class="n">INSTALL</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>You need to have an activated <a class="reference external" href="https://bitbucket-eng-gpk1.cisco.com">bitbucket</a> account to be able to check out Camelot-pi</li>
+<li>For a new bitbucket account, click on “open a case” tab in <a class="reference external" href="https://bitbucket-eng-gpk1.cisco.com">bitbucket</a> and raise a case.</li>
+<li>Last command should be executed as super user</li>
+<li>Expected that you have a TNGpi installation up and running in the machine, in case of using with TNGpi</li>
+<li>Do not use SUDO with virtualenv commands.</li>
+<li>Recommendation is always to use virtualenv, so that OS dependent python does not get corrupted.</li>
+</ul>
+</div>
+<ul class="simple">
+<li>This will download and install Camelot-pi’s Python dependencies, and then install Camelot-pi itself.</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#any-platform">Any Platform</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li><a class="reference internal" href="#installation-generic">Installation generic</a></li>
+<li><a class="reference internal" href="#installation-with-virtualenv">Installation with virtualenv</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="next chapter">Getting Started</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/installation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting Started"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

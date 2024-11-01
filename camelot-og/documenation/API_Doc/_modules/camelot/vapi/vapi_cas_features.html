@@ -1,0 +1,276 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>camelot.vapi.vapi_cas_features &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../camelot.html" accesskey="U">camelot</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for camelot.vapi.vapi_cas_features</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">camelot</span>
+<span class="kn">from</span> <span class="nn">camelot.vapi</span> <span class="k">import</span> <span class="n">vapi_camelot_utils</span> <span class="k">as</span> <span class="n">v</span>
+<span class="kn">from</span> <span class="nn">camelot</span> <span class="k">import</span> <span class="n">camlogger</span><span class="p">,</span> <span class="n">CamelotError</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">camlogger</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">CamelotCasOperation</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">CamelotVapiUtils</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;Camelot Cas operations&#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">get_cas_call_time_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; This API applicable only for CAS endpoint.  This will display the</span>
+<span class="sd">        CAS call time statisticts.Time stats are based on Diva call states.</span>
+
+<span class="sd">        :parameter call_ref: valid call reference.</span>
+
+<span class="sd">        :returns: dictionary of call time statistics or error string.\n</span>
+<span class="sd">                    Possible error values are:\n</span>
+<span class="sd">                    * bad call reference</span>
+<span class="sd">                    * endpoint does not support this feature.</span>
+<span class="sd">                    * no data available.</span>
+
+<span class="sd">        :states: Please refer Diva SDK guide for more information on</span>
+<span class="sd">                 Diva call states.\n</span>
+<span class="sd">                    * DivaCallStateDialingTime: (Calling party)</span>
+<span class="sd">                    Time captured in DivaCallStateDialing.\n</span>
+<span class="sd">                    * DivaCallStateProceedingTime: (Calling Party)</span>
+<span class="sd">                    Time captured in DivaCallStateProceeding.\n</span>
+<span class="sd">                    * DivaCallStateRingingTime: (Calling party)</span>
+<span class="sd">                    Time captured in DivaCallStateRinging.\n</span>
+<span class="sd">                    * DivaCallStateOfferingTime: (Called Party)</span>
+<span class="sd">                    Time captured in DivaCallStateOffering.\n</span>
+<span class="sd">                    * DivaCallStateAnsweredTime: (Called Party)</span>
+<span class="sd">                    Time captured in DivaCallStateAnswered.\n</span>
+<span class="sd">                    * DivaCallStateConnectedTime: (Calling and Called Party)</span>
+<span class="sd">                    Time captured in DivaCallStateConnected.\n</span>
+<span class="sd">                    * DivaCallStateDisconnectingTime: (Calling and Called</span>
+<span class="sd">                    Party) Time cptured in DivaCallStateDisconnecting.\n</span>
+<span class="sd">                    * DivaCallStateDisconnectedTime: (Calling and Called Party)</span>
+<span class="sd">                    Time captured in DivaCallStateDisconnected.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.vapi.get_cas_call_time_statistics(&#39;0xf5722cac&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; {&#39;answered time&#39;: &#39;1501781535823&#39;,</span>
+<span class="sd">            &#39;connected time&#39;: &#39;1501781536250&#39;,</span>
+<span class="sd">            &#39;disconnected time&#39;: &#39;1501781546944&#39;,</span>
+<span class="sd">            &#39;offering time&#39;: &#39;1501781535191&#39;,</span>
+<span class="sd">            &#39;proceeding time&#39;: &#39;0&#39;,</span>
+<span class="sd">            &#39;disconnecting time&#39;: &#39;1501781546926&#39;,</span>
+<span class="sd">            &#39;dialing time&#39;: &#39;0&#39;,</span>
+<span class="sd">            &#39;ringing time&#39;: &#39;0&#39;}</span>
+
+<span class="sd">        :Note: The captured times are in Milliseconds. Example to</span>
+<span class="sd">               convert into printable format is as below.\n</span>
+
+<span class="sd">        &gt;&gt;&gt; In [1]: import datetime</span>
+<span class="sd">        &gt;&gt;&gt; In [2]: s = 1501781546926 / 1000.0</span>
+<span class="sd">        &gt;&gt;&gt; In [3]: t = datetime.datetime.fromtimestamp(s)</span>
+<span class="sd">        &gt;&gt;&gt; In [4]: t.strftime(&#39;%Y-%m-%d %H:%M:%S.%f&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; Out[4]: &#39;2017-08-03 23:02:26.926000&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">call_ref</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">call_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;call reference not valid&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering get_cas_call_time_statistics function&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_CAS_CALL_TIME_STATISTICS</span><span class="p">,</span>
+                                   <span class="n">call_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">start_detect_silence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">,</span> <span class="n">silence_dur</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Currently this API applicable only for CAS endpoint. This enables</span>
+<span class="sd">        user to start detecting silence on a particular call (on received audio</span>
+<span class="sd">        media).Once the silence is detected for the duration as provided in</span>
+<span class="sd">        this API as argument Camelot will notify user with a station-event</span>
+<span class="sd">        called &quot;silence_detected&quot; with duration and time-stamp.</span>
+
+<span class="sd">        :parameter call_ref: valid call reference</span>
+<span class="sd">        :parameter silence_dur: silence duration (in seconds)</span>
+
+<span class="sd">        :returns: True or False</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.vapi.start_detect_silence(&#39;0xf5722cac&#39;,2)</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">call_ref</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">call_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;start_detect_silence: call reference not valid&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">silence_dur</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;start_detect_silence:: invalid duration provided&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering start_detect_silence function&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">START_DETECT_SILENCE</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">,</span> <span class="n">silence_dur</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">send_voice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">is_continuous</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                   <span class="n">sampling_rate</span><span class="o">=</span><span class="n">camelot</span><span class="o">.</span>
+                   <span class="n">DivaSamplingRate</span><span class="o">.</span><span class="n">DivaSamplingRateNormal</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Currently this API applicable only for CAS endpoint. This enables</span>
+<span class="sd">        user to playing voice file on a particular call.</span>
+
+<span class="sd">        :parameter call_ref: valid call reference</span>
+<span class="sd">        :parameter file_path: the voice file name with absolute path</span>
+<span class="sd">        :parameter is_continuous: It is optional param. If it is True the voice</span>
+<span class="sd">         file will be played continuously untill stop_sending API is called.</span>
+<span class="sd">         If set to False then the file will be played only for the duration</span>
+<span class="sd">         of the file.</span>
+<span class="sd">         Default value will be True.</span>
+<span class="sd">        :parameter sampling_rate: optional parameter. It is sampling rate</span>
+<span class="sd">         used for playing voice file.</span>
+<span class="sd">         For more reference on use of API please check</span>
+<span class="sd">         &#39;https://wiki.cisco.com/display/CAMELOT/Analog+ATA-190+Voice+Support&#39;</span>
+
+<span class="sd">        :returns: True or False</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.vapi.send_voice(&#39;0xf5722cac&#39;,&quot;/tmp/Greeting.wav&quot;,False,</span>
+<span class="sd">        camelot.DivaSamplingRate.DivaSamplingRateNormal)</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">call_ref</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">call_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;send_voice: call reference not valid&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">file_path</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;send_voice: file path missing&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">is_continuous</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;yes&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s1">&#39;no&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sampling_rate</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;send_voice: sampling_rate missing&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sample</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sampling_rate</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering send_voice function&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">SEND_VOICE</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">,</span> <span class="n">file_path</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">sample</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stop_sending</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Currently this API applicable only for CAS endpoint. This enables</span>
+<span class="sd">        user to stop streaming media which is being streamed currently.</span>
+
+<span class="sd">        :parameter call_ref: valid call reference</span>
+
+<span class="sd">        :returns: True or False</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.vapi.stop_sending(&#39;0xf5722cac&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">call_ref</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">call_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;send_voice: call reference not valid&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering stop_sending function&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">STOP_SENDING</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">record_voice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span>
+                     <span class="n">audio_format</span><span class="o">=</span><span class="n">camelot</span><span class="o">.</span><span class="n">DivaAudioFormat</span><span class="o">.</span>
+                     <span class="n">DivaAudioFormat_Raw_aLaw8K8BitMono</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Currently this API applicable only for CAS endpoint. This enables</span>
+<span class="sd">        user to record voice in a particular call by calling</span>
+<span class="sd">        DivaRecordVoiceFile.</span>
+<span class="sd">        Please refer to following wiki:</span>
+<span class="sd">        &#39;https://wiki.cisco.com/display/CAMELOT/Analog+ATA-190+Voice+Support&#39;</span>
+
+<span class="sd">        :parameter call_ref: valid call reference</span>
+<span class="sd">        :parameter file_name: absolute path based filename where recording</span>
+<span class="sd">         to be stored.</span>
+<span class="sd">        :parameter audio_format: optional para for audio format to be used</span>
+
+<span class="sd">        :returns: True or False</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.vapi.record_voice(&#39;0xf5722cac&#39;,&#39;/tmp/myrecord.wav&#39;</span>
+<span class="sd">            audio_format=</span>
+<span class="sd">            camelot.DivaAudioFormat.DivaAudioFormat_Raw_aLaw8K8BitMono)</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">call_ref</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">call_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;record_voice: call reference not valid&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">file_name</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;record_voice: file name missing&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">audio_format</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;record_voice: audio_format missing&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">audioformat</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">audio_format</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering record_voice function&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">RECORD_VOICE</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">,</span> <span class="n">file_name</span><span class="p">,</span> <span class="n">audioformat</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../camelot.html" >camelot</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

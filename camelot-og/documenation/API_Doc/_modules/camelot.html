@@ -1,0 +1,815 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>camelot &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for camelot</h1><div class="highlight"><pre>
+<span></span><span class="c1"># Camelot Requests</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">RLock</span>
+<span class="kn">from</span> <span class="nn">camelot</span> <span class="k">import</span> <span class="n">camlogger</span>
+<span class="kn">import</span> <span class="nn">atexit</span>
+<span class="kn">from</span> <span class="nn">camelot.utils.vapi_ei_utils</span> <span class="k">import</span> <span class="n">VAPIEIUtils</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="k">import</span> <span class="n">Enum</span>
+
+<span class="n">GET_SERVER_OS</span> <span class="o">=</span> <span class="s1">&#39;server_os&#39;</span>
+<span class="n">GET_SERVER_VERSION</span> <span class="o">=</span> <span class="s1">&#39;server_version&#39;</span>
+<span class="n">GET_COMPAT_VERSIONS</span> <span class="o">=</span> <span class="s1">&#39;compat_versions&#39;</span>
+<span class="n">GET_VAPIEI_VERSION</span> <span class="o">=</span> <span class="s1">&#39;vapiei_version&#39;</span>
+<span class="n">NEW_ENDPOINT</span> <span class="o">=</span> <span class="s1">&#39;new_ep&#39;</span>
+<span class="n">ATTACH_ENDPOINT</span> <span class="o">=</span> <span class="s1">&#39;attachendpoint&#39;</span>
+<span class="n">CONFIG</span> <span class="o">=</span> <span class="s1">&#39;config&#39;</span>
+<span class="n">INIT</span> <span class="o">=</span> <span class="s1">&#39;init&#39;</span>
+<span class="n">IN_SERVICE</span> <span class="o">=</span> <span class="s1">&#39;inservice&#39;</span>
+<span class="n">CLIENT_SUSPEND</span> <span class="o">=</span> <span class="s1">&#39;client_suspend&#39;</span>
+<span class="n">CLIENT_FOREGROUND</span> <span class="o">=</span> <span class="s1">&#39;client_foreground&#39;</span>
+<span class="n">RELEASE_EP</span> <span class="o">=</span> <span class="s1">&#39;releaseep&#39;</span>
+<span class="n">UNINIT</span> <span class="o">=</span> <span class="s1">&#39;uninit&#39;</span>
+<span class="n">OUT_OF_SERVICE</span> <span class="o">=</span> <span class="s1">&#39;outofservice&#39;</span>
+<span class="n">GET_INFO</span> <span class="o">=</span> <span class="s1">&#39;getinfo&#39;</span>
+<span class="n">GET_TFTP_INFO</span> <span class="o">=</span> <span class="s1">&#39;gettftpinfo&#39;</span>
+<span class="n">GET_LOCATION</span> <span class="o">=</span> <span class="s1">&#39;getlocation&#39;</span>
+<span class="n">GET_SIP_REGISTER</span> <span class="o">=</span> <span class="s1">&#39;getsipregister&#39;</span>
+<span class="n">GET_INFO_EXT</span> <span class="o">=</span> <span class="s1">&#39;getinfoext&#39;</span>
+<span class="n">GET_SRST_INFO</span> <span class="o">=</span> <span class="s1">&#39;getsrstinfo&#39;</span>
+<span class="n">GET_BFCP_INFO</span> <span class="o">=</span> <span class="s1">&#39;getbfcpinfo&#39;</span>
+<span class="n">GET_CALL_CRYPTO_INFO</span> <span class="o">=</span> <span class="s1">&#39;getcallcryptoinfo&#39;</span>
+<span class="n">GET_EDGE_INFO</span> <span class="o">=</span> <span class="s1">&#39;getedgeinfo&#39;</span>
+<span class="n">GET_VMWS_INFO</span> <span class="o">=</span> <span class="s1">&#39;getvmwsinfo&#39;</span>
+<span class="n">GET_SUPPORTED_CONVERSATION_INFO</span> <span class="o">=</span> <span class="s1">&#39;getsupportedconversationsinfo&#39;</span>
+<span class="n">GET_RTCP_STREAM_INFO</span> <span class="o">=</span> <span class="s1">&#39;getrtcpstreaminfo&#39;</span>
+<span class="n">GET_STREAM_ICE</span> <span class="o">=</span> <span class="s1">&#39;getstreamice&#39;</span>
+<span class="n">GET_SERVICE_INFO</span> <span class="o">=</span> <span class="s1">&#39;getserviceinfo&#39;</span>
+<span class="n">GET_SERVICE_INFO_EXT</span> <span class="o">=</span> <span class="s1">&#39;getserviceinfoext&#39;</span>
+<span class="n">GET_SERVICES_URLS</span> <span class="o">=</span> <span class="s1">&#39;getservicesurls&#39;</span>
+<span class="n">GET_SSO_INFO</span> <span class="o">=</span> <span class="s1">&#39;getssoinfo&#39;</span>
+<span class="n">GET_SSO_STATS</span> <span class="o">=</span> <span class="s1">&#39;getssostats&#39;</span>
+<span class="n">GET_TIMING_STATS</span> <span class="o">=</span> <span class="s1">&#39;gettimingstats&#39;</span>
+<span class="n">GET_IMP_INFO</span> <span class="o">=</span> <span class="s1">&#39;getimpinfo&#39;</span>
+<span class="n">GET_LINES</span> <span class="o">=</span> <span class="s1">&#39;getlines&#39;</span>
+<span class="n">GET_CALLS</span> <span class="o">=</span> <span class="s1">&#39;getcalls&#39;</span>
+<span class="n">GET_STREAMS</span> <span class="o">=</span> <span class="s1">&#39;getstreams&#39;</span>
+<span class="n">GET_CONFID_LIST</span> <span class="o">=</span> <span class="s1">&#39;getconfidlist&#39;</span>
+<span class="n">CLEAR_INACTIVE_CONFERENCE</span> <span class="o">=</span> <span class="s1">&#39;clearinactiveconference&#39;</span>
+<span class="n">GET_CONF_CALLS</span> <span class="o">=</span> <span class="s1">&#39;getconfcalls&#39;</span>
+<span class="n">GET_CONF_STREAMS</span> <span class="o">=</span> <span class="s1">&#39;getconfstreams&#39;</span>
+<span class="n">GET_STREAM_INFO</span> <span class="o">=</span> <span class="s1">&#39;getstreaminfo&#39;</span>
+<span class="n">GET_XULPFECUC_INFO</span> <span class="o">=</span> <span class="s1">&#39;getxulpfecucinfo&#39;</span>
+<span class="n">GET_STREAM_INFO_EXT</span> <span class="o">=</span> <span class="s1">&#39;getstreaminfoext&#39;</span>
+<span class="n">GET_CALL_INFO</span> <span class="o">=</span> <span class="s1">&#39;getcallinfo&#39;</span>
+<span class="n">GET_CALL_INFO_EXT</span> <span class="o">=</span> <span class="s1">&#39;getcallinfoext&#39;</span>
+<span class="n">GET_CUSTOM_DATA</span> <span class="o">=</span> <span class="s1">&#39;getcustomdata&#39;</span>
+<span class="n">SET_CUSTOM_DATA</span> <span class="o">=</span> <span class="s1">&#39;setcustomdata&#39;</span>
+<span class="n">GET_CALL_STATS</span> <span class="o">=</span> <span class="s1">&#39;getcallstats&#39;</span>
+<span class="n">PLACE_CALL</span> <span class="o">=</span> <span class="s1">&#39;placecall&#39;</span>
+<span class="n">DIAL</span> <span class="o">=</span> <span class="s1">&#39;dial&#39;</span>
+<span class="n">ANSWER_CALL</span> <span class="o">=</span> <span class="s1">&#39;answer&#39;</span>
+<span class="n">END_CALL</span> <span class="o">=</span> <span class="s1">&#39;endcall&#39;</span>
+<span class="n">END_NULL</span> <span class="o">=</span> <span class="s1">&#39;null@&#39;</span>
+<span class="n">HOLD</span> <span class="o">=</span> <span class="s1">&#39;hold&#39;</span>
+<span class="n">RESUME</span> <span class="o">=</span> <span class="s1">&#39;resume&#39;</span>
+<span class="n">HEDGE_REVOKE_OAUTH</span> <span class="o">=</span> <span class="s1">&#39;hedgerevokeoauth&#39;</span>
+<span class="n">FAX_SWITCHTO</span> <span class="o">=</span> <span class="s1">&#39;faxswitchto&#39;</span>
+<span class="n">START_CAPF</span> <span class="o">=</span> <span class="s1">&#39;startcapf&#39;</span>
+<span class="n">STOP_CAPF</span> <span class="o">=</span> <span class="s1">&#39;stopcapf&#39;</span>
+<span class="n">GET_CAPF_INFO</span> <span class="o">=</span> <span class="s1">&#39;getcapfinfo&#39;</span>
+<span class="n">TRANSFER</span> <span class="o">=</span> <span class="s1">&#39;transfer&#39;</span>
+<span class="n">CONFERENCE</span> <span class="o">=</span> <span class="s1">&#39;conference&#39;</span>
+<span class="n">SET_CLIENT_DATA</span> <span class="o">=</span> <span class="s1">&#39;setclientdata&#39;</span>
+<span class="n">GET_CLIENT_DATA</span> <span class="o">=</span> <span class="s1">&#39;getclientdata&#39;</span>
+<span class="n">GET_ENDPOINT</span> <span class="o">=</span> <span class="s1">&#39;getendpoint&#39;</span>
+<span class="n">SET_CLIENT_DESC</span> <span class="o">=</span> <span class="s1">&#39;setclientdesc&#39;</span>
+<span class="n">GET_CLIENT_DESC</span> <span class="o">=</span> <span class="s1">&#39;getclientdesc&#39;</span>
+<span class="n">GET_INFO_TRANSACTION</span> <span class="o">=</span> <span class="s1">&#39;getinfotransaction&#39;</span>
+<span class="n">GET_ONBOARDING</span> <span class="o">=</span> <span class="s1">&#39;getonboarding&#39;</span>
+<span class="c1"># sip msg</span>
+<span class="n">DELETE_SIP_MESSAGES</span> <span class="o">=</span> <span class="s1">&#39;deletesipmessages&#39;</span>
+<span class="n">GET_SIP_MESSAGES</span> <span class="o">=</span> <span class="s1">&#39;getsipmessages&#39;</span>
+<span class="n">GET_SIP_HEADERS</span> <span class="o">=</span> <span class="s1">&#39;getsipheaders&#39;</span>
+<span class="n">GET_CONTENT_BODY_LIST</span> <span class="o">=</span> <span class="s1">&#39;getcontentbodylist&#39;</span>
+<span class="n">GET_CONTENT_BODY_OBJ</span> <span class="o">=</span> <span class="s1">&#39;getcontentbodyobj&#39;</span>
+<span class="n">GET_CONTENT_BODY</span> <span class="o">=</span> <span class="s1">&#39;getcontentbody&#39;</span>
+<span class="n">GET_SIP_HEADER</span> <span class="o">=</span> <span class="s1">&#39;getsipheader&#39;</span>
+<span class="c1"># Events</span>
+<span class="n">CALL_INFO_EVENT</span> <span class="o">=</span> <span class="s1">&#39;callinfoevent&#39;</span>
+<span class="n">STREAM_INFO_EVENT</span> <span class="o">=</span> <span class="s1">&#39;streaminfoevent&#39;</span>
+<span class="n">TRANSPORT_INFO_EVENT</span> <span class="o">=</span> <span class="s1">&#39;transportinfoevent&#39;</span>
+<span class="n">START_STATION_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;startstationevents&#39;</span>
+<span class="n">STOP_STATION_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;stopstationevents&#39;</span>
+<span class="n">START_INFO_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;startinfoevents&#39;</span>
+<span class="n">STOP_INFO_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;stopinfoevents&#39;</span>
+<span class="n">START_CALL_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;callevent on&#39;</span>
+<span class="n">STOP_CALL_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;callevent off&#39;</span>
+<span class="n">START_CALLBACK_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;callbackevent on&#39;</span>
+<span class="n">STOP_CALLBACK_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;callbackevent off&#39;</span>
+<span class="n">START_STREAM_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;streamevent on&#39;</span>
+<span class="n">STOP_STREAM_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;streamevent off&#39;</span>
+<span class="n">START_USER_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;userevent on&#39;</span>
+<span class="n">STOP_USER_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;userevent off&#39;</span>
+<span class="n">START_TRACE_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;starttraceevents&#39;</span>
+<span class="n">STOP_TRACE_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;stoptraceevents&#39;</span>
+<span class="n">START_TRANSPORT_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;starttransportevents&#39;</span>
+<span class="n">STOP_TRANSPORT_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;stoptransportevents&#39;</span>
+<span class="n">GET_TRANSPORT_INFO</span> <span class="o">=</span> <span class="s1">&#39;gettransportinfo&#39;</span>
+<span class="n">GET_TRANSPORTS</span> <span class="o">=</span> <span class="s1">&#39;gettransports&#39;</span>
+<span class="n">START_TONE_DETECTOR</span> <span class="o">=</span> <span class="s1">&#39;starttonedetector&#39;</span>
+<span class="n">STOP_TONE_DETECTOR</span> <span class="o">=</span> <span class="s1">&#39;stoptonedetector&#39;</span>
+<span class="n">START_CADENCE_DETECTOR</span> <span class="o">=</span> <span class="s1">&#39;startcadencedetector&#39;</span>
+<span class="n">STOP_CADENCE_DETECTOR</span> <span class="o">=</span> <span class="s1">&#39;stopcadencedetector&#39;</span>
+<span class="n">CREATE_TONE_SEQUENCE</span> <span class="o">=</span> <span class="s1">&#39;createtoneseq&#39;</span>
+<span class="n">START_TONE_PLAYER</span> <span class="o">=</span> <span class="s1">&#39;starttoneplayer&#39;</span>
+<span class="n">STOP_TONE_PLAYER</span> <span class="o">=</span> <span class="s1">&#39;stoptoneplayer&#39;</span>
+<span class="n">START_TRAFFIC_PLAYER</span> <span class="o">=</span> <span class="s1">&#39;starttrafficplayer&#39;</span>
+<span class="n">STOP_TRAFFIC_PLAYER</span> <span class="o">=</span> <span class="s1">&#39;stoptrafficplayer&#39;</span>
+<span class="n">GET_UDS_INFO</span> <span class="o">=</span> <span class="s1">&#39;getudsinfo&#39;</span>
+<span class="n">GET_SECURE_UDS_USERS_ACCESS_URL_INFO</span> <span class="o">=</span> <span class="s1">&#39;get_secure_uds_users_access_url_info&#39;</span>
+<span class="n">GET_WEB_SERVICE_INFO</span> <span class="o">=</span> <span class="s1">&#39;get_web_service_info&#39;</span>
+<span class="n">STOP_RECORD</span> <span class="o">=</span> <span class="s1">&#39;stoprecord&#39;</span>
+<span class="n">ENABLE_AUTO_ANSWER</span> <span class="o">=</span> <span class="s1">&#39;enableautoanswer&#39;</span>
+<span class="n">DISABLE_AUTO_ANSWER</span> <span class="o">=</span> <span class="s1">&#39;diableautoanswer&#39;</span>
+<span class="n">AUTO_ANSWER_INFO</span> <span class="o">=</span> <span class="s1">&#39;autoanswerinfo&#39;</span>
+<span class="n">DEESCALATE</span> <span class="o">=</span> <span class="s1">&#39;deescalate&#39;</span>
+<span class="n">ESCALATE</span> <span class="o">=</span> <span class="s1">&#39;escalate&#39;</span>
+<span class="n">CONFIG_HEADER</span> <span class="o">=</span> <span class="s1">&#39;configheader&#39;</span>
+<span class="n">UPDATE_CALL</span> <span class="o">=</span> <span class="s1">&#39;updatecall&#39;</span>
+<span class="n">GET_INFO_EXT_CLEAR_MWI</span> <span class="o">=</span> <span class="s1">&#39;getinfoext clearmwistats&#39;</span>
+
+<span class="c1"># auto commands for cell pickup</span>
+<span class="n">DISABLE_AUTO_CELL_PICKUP</span> <span class="o">=</span> <span class="s1">&#39;disableautocellpickup&#39;</span>
+<span class="n">GET_AUTO_CELL_PICKUP_DELAY</span> <span class="o">=</span> <span class="s1">&#39;getautocellpickupdelay&#39;</span>
+<span class="n">GET_AUTO_CELL_PICKUP_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautocellpickupstatus&#39;</span>
+<span class="n">ENABLE_AUTO_CELL_PICKUP</span> <span class="o">=</span> <span class="s1">&#39;enableautocellpickup&#39;</span>
+<span class="c1"># auto dial commands</span>
+<span class="n">ENABLE_AUTO_DIAL</span> <span class="o">=</span> <span class="s1">&#39;enableautodial&#39;</span>
+<span class="n">DISABLE_AUTO_DIAL</span> <span class="o">=</span> <span class="s1">&#39;disableautodial&#39;</span>
+<span class="n">GET_AUTO_DIAL_CALLED_LIST</span> <span class="o">=</span> <span class="s1">&#39;getautodialcalledlist&#39;</span>
+<span class="n">GET_AUTO_DIAL_EVENT</span> <span class="o">=</span> <span class="s1">&#39;getautodialevent&#39;</span>
+<span class="n">GET_AUTO_DIAL_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautodialstatus&#39;</span>
+<span class="c1"># auto conference commands</span>
+<span class="n">ENABLE_AUTO_CONFERENCE</span> <span class="o">=</span> <span class="s1">&#39;enableautoconference&#39;</span>
+<span class="n">DISABLE_AUTO_CONFERENCE</span> <span class="o">=</span> <span class="s1">&#39;disableautoconference&#39;</span>
+<span class="n">GET_AUTO_CONFERENCE_MODE</span> <span class="o">=</span> <span class="s1">&#39;getautoconferencemode&#39;</span>
+<span class="n">GET_AUTO_CONFERENCE_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautoconferencestatus&#39;</span>
+<span class="n">GET_AUTO_CONFERENCE_TALK_TIME</span> <span class="o">=</span> <span class="s1">&#39;getautconferencetalktime&#39;</span>
+<span class="n">GET_AUTO_CONFERENCE_TARGET</span> <span class="o">=</span> <span class="s1">&#39;getautoconferencetarget&#39;</span>
+<span class="c1"># auto transfer commands</span>
+<span class="n">ENABLE_AUTO_TRANSFER</span> <span class="o">=</span> <span class="s1">&#39;enableautotransfer&#39;</span>
+<span class="n">DISABLE_AUTO_TRANSFER</span> <span class="o">=</span> <span class="s1">&#39;disableautotransfer&#39;</span>
+<span class="n">GET_AUTO_TRANSFER_MODE</span> <span class="o">=</span> <span class="s1">&#39;getautotransfermode&#39;</span>
+<span class="n">GET_AUTO_TRANSFER_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautotransferstatus&#39;</span>
+<span class="n">GET_AUTO_TRANSFER_TALK_TIME</span> <span class="o">=</span> <span class="s1">&#39;getautotransfertalktime&#39;</span>
+<span class="n">GET_AUTO_TRANSFER_TARGET</span> <span class="o">=</span> <span class="s1">&#39;getautotransfertarget&#39;</span>
+<span class="c1"># auto park commands</span>
+<span class="n">ENABLE_AUTO_PARK</span> <span class="o">=</span> <span class="s1">&#39;enableautopark&#39;</span>
+<span class="n">DISABLE_AUTO_PARK</span> <span class="o">=</span> <span class="s1">&#39;disableautopark&#39;</span>
+<span class="n">GET_AUTO_PARK</span> <span class="o">=</span> <span class="s1">&#39;getautoparkstatus&#39;</span>
+<span class="n">ENABLE_AUTO_PARK_RET</span> <span class="o">=</span> <span class="s1">&#39;enableautoparkretrieve&#39;</span>
+<span class="n">DISABLE_AUTO_PARK_RET</span> <span class="o">=</span> <span class="s1">&#39;disableautoparkretrieve&#39;</span>
+<span class="n">GET_AUTO_PARK_RET</span> <span class="o">=</span> <span class="s1">&#39;getautoparkretrievestatus&#39;</span>
+<span class="c1"># autoresume commands</span>
+<span class="n">ENABLE_AUTO_RESUME</span> <span class="o">=</span> <span class="s1">&#39;enableautoresume&#39;</span>
+<span class="n">DISABLE_AUTO_RESUME</span> <span class="o">=</span> <span class="s1">&#39;disableautoresume&#39;</span>
+<span class="n">GET_AUTO_RESUME_HOLD_TIME</span> <span class="o">=</span> <span class="s1">&#39;getautoresumeholdtime&#39;</span>
+<span class="n">GET_AUTO_RESUME_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautoresumestatus&#39;</span>
+<span class="c1"># vvm commands</span>
+<span class="n">SHOW_VVM_IDS</span> <span class="o">=</span> <span class="s1">&#39;showvvmids&#39;</span>
+<span class="n">SHOW_VVM_INFO</span> <span class="o">=</span> <span class="s1">&#39;showvvminfo&#39;</span>
+<span class="n">FETCH_VVM</span> <span class="o">=</span> <span class="s1">&#39;fetchvvm&#39;</span>
+<span class="n">VVM_QUERY_RESPONSE</span> <span class="o">=</span> <span class="s1">&#39;vvmqueryresponse&#39;</span>
+<span class="n">SEND_VVM</span> <span class="o">=</span> <span class="s1">&#39;sendvvm&#39;</span>
+<span class="n">RECORD_VVM</span> <span class="o">=</span> <span class="s1">&#39;recordvvm&#39;</span>
+<span class="n">RUN_CONVERSATION</span> <span class="o">=</span> <span class="s1">&#39;runconversation&#39;</span>
+<span class="n">ADD_RECIPIENT_VVM</span> <span class="o">=</span> <span class="s1">&#39;addrecipient&#39;</span>
+<span class="n">PLAY_VVM</span> <span class="o">=</span> <span class="s1">&#39;playvvm&#39;</span>
+<span class="n">DELETE_VVM</span> <span class="o">=</span> <span class="s1">&#39;deletevvm&#39;</span>
+<span class="n">VVM_CLEAR_RESPONSE</span> <span class="o">=</span> <span class="s1">&#39;vvmclearresponse&#39;</span>
+<span class="n">ENABLE_AUTO_DISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;enableautodisconnect&#39;</span>
+<span class="n">DISABLE_AUTO_DISCONNECT</span> <span class="o">=</span> <span class="s1">&#39;diableautodisconnect&#39;</span>
+<span class="n">AUTO_DISCONNECT_STATUS</span> <span class="o">=</span> <span class="s1">&#39;autodisconnectstatus&#39;</span>
+<span class="n">AUTO_DISCONNECT_DELAY</span> <span class="o">=</span> <span class="s1">&#39;autodisconnectdelay&#39;</span>
+<span class="n">ISENDPOINTBCGREADY</span> <span class="o">=</span> <span class="s1">&#39;isendpointbcgready&#39;</span>
+<span class="n">ISENDPOINTVMONREADY</span> <span class="o">=</span> <span class="s1">&#39;isendpointvmonready&#39;</span>
+<span class="n">SEND_REINVITE</span> <span class="o">=</span> <span class="s1">&#39;sendreinvite&#39;</span>
+<span class="n">LOAD_SSS</span> <span class="o">=</span> <span class="s1">&#39;loadsss&#39;</span>
+<span class="n">UNLOAD_SSS</span> <span class="o">=</span> <span class="s1">&#39;unloadsss&#39;</span>
+<span class="n">PLACE_SCRIPT</span> <span class="o">=</span> <span class="s1">&#39;placescript&#39;</span>
+<span class="n">ENABLE_AUTO_SSS</span> <span class="o">=</span> <span class="s1">&#39;autosss&#39;</span>
+<span class="n">GET_SSS_LOAD_STATE</span> <span class="o">=</span> <span class="s1">&#39;getsssloadstate&#39;</span>
+<span class="n">GET_SSS_LIST</span> <span class="o">=</span> <span class="s1">&#39;getssslist&#39;</span>
+<span class="n">GET_SSS_SCRIPT</span> <span class="o">=</span> <span class="s1">&#39;getsssscript&#39;</span>
+<span class="n">GET_SCRIPT_INFO</span> <span class="o">=</span> <span class="s1">&#39;getscriptinfo&#39;</span>
+<span class="n">GET_RPID</span> <span class="o">=</span> <span class="s1">&#39;getrpid&#39;</span>
+<span class="n">GET_CALL_HISTORY</span> <span class="o">=</span> <span class="s1">&#39;get_call_history&#39;</span>
+<span class="n">GET_CONN_INFO</span> <span class="o">=</span> <span class="s1">&#39;get_conn_info&#39;</span>
+
+<span class="n">DND</span> <span class="o">=</span> <span class="s1">&#39;dnd&#39;</span>
+<span class="n">GET_FAX_STATS</span> <span class="o">=</span> <span class="s1">&#39;getfaxstats&#39;</span>
+<span class="n">REFRESH_REGISTER</span> <span class="o">=</span> <span class="s1">&#39;refreshregister&#39;</span>
+<span class="n">INITIAL_REGISTER</span> <span class="o">=</span> <span class="s1">&#39;initialregister&#39;</span>
+<span class="n">REFRESH_SUBSCRIBE</span> <span class="o">=</span> <span class="s1">&#39;refreshsubscribe&#39;</span>
+<span class="n">GET_METHODS</span> <span class="o">=</span> <span class="s1">&#39;getmethods&#39;</span>
+<span class="n">GET_ALL_SUBSCRIBE_CUBE</span> <span class="o">=</span> <span class="s1">&#39;getallsubscribescube&#39;</span>
+<span class="n">RELEASE_CALLS</span> <span class="o">=</span> <span class="s1">&#39;releasecalls&#39;</span>
+<span class="n">RELEASE_STREAMS</span> <span class="o">=</span> <span class="s1">&#39;releasestreams&#39;</span>
+<span class="n">OFFHOOK</span> <span class="o">=</span> <span class="s1">&#39;offhook&#39;</span>
+<span class="n">ONHOOK</span> <span class="o">=</span> <span class="s1">&#39;onhook&#39;</span>
+<span class="n">NEWCALL</span> <span class="o">=</span> <span class="s1">&#39;newcall&#39;</span>
+<span class="n">SELECT_LINE</span> <span class="o">=</span> <span class="s1">&#39;selectline&#39;</span>
+<span class="n">SELECT_PLK</span> <span class="o">=</span> <span class="s1">&#39;selectplk&#39;</span>
+<span class="n">REJECT</span> <span class="o">=</span> <span class="s1">&#39;reject&#39;</span>
+<span class="n">DIAL_VIA_OFFICE</span> <span class="o">=</span> <span class="s1">&#39;dialviaoffice&#39;</span>
+<span class="n">SET_PREF_MODE</span> <span class="o">=</span> <span class="s1">&#39;setprefmode&#39;</span>
+<span class="n">SET_CALL_TYPE</span> <span class="o">=</span> <span class="s1">&#39;setcalltype&#39;</span>
+<span class="n">SET_CALL_SUBJECT</span> <span class="o">=</span> <span class="s1">&#39;setcallsubject&#39;</span>
+<span class="n">GET_CALL_SUBJECT</span> <span class="o">=</span> <span class="s1">&#39;getcallsubject&#39;</span>
+<span class="n">SEND_USER_ANSWER</span> <span class="o">=</span> <span class="s1">&#39;senduseranswer&#39;</span>
+<span class="n">GET_MOBILE_IDENTITY</span> <span class="o">=</span> <span class="s1">&#39;getmobileidentity&#39;</span>
+<span class="n">DMC_HANDIN</span> <span class="o">=</span> <span class="s1">&#39;dmchandin&#39;</span>
+<span class="n">ENABLE_MOBILE_CONNECT</span> <span class="o">=</span> <span class="s1">&#39;enablemobileconnect&#39;</span>
+<span class="n">GET_CALL_TIME_STATS</span> <span class="o">=</span> <span class="s1">&#39;getcalltimestats&#39;</span>
+<span class="n">GET_CAS_VOICE_STATS</span> <span class="o">=</span> <span class="s1">&#39;getcasvoicestats&#39;</span>
+<span class="n">START_BLF_STATUS</span> <span class="o">=</span> <span class="s1">&#39;startblfstatus&#39;</span>
+<span class="n">STOP_BLF_STATUS</span> <span class="o">=</span> <span class="s1">&#39;stopblfstatus&#39;</span>
+<span class="n">SET_TRAFFIC</span> <span class="o">=</span> <span class="s1">&#39;settraffic&#39;</span>
+<span class="n">GET_BLF_INFO</span> <span class="o">=</span> <span class="s1">&#39;getblfinfo&#39;</span>
+<span class="n">GET_FAX_INFO</span> <span class="o">=</span> <span class="s1">&#39;getfaxinfo&#39;</span>
+<span class="n">GET_ICE_INFO</span> <span class="o">=</span> <span class="s1">&#39;geticeinfo&#39;</span>
+<span class="n">GET_ICE_DETAILS</span> <span class="o">=</span> <span class="s1">&#39;geticedetails&#39;</span>
+<span class="n">BLIND_TRANSFER</span> <span class="o">=</span> <span class="s1">&#39;blindtransfer&#39;</span>
+<span class="n">CME_HW_CONFERENCE</span> <span class="o">=</span> <span class="s1">&#39;cmehwconference&#39;</span>
+<span class="n">GET_UNITY_INFO</span> <span class="o">=</span> <span class="s1">&#39;getunityinfo&#39;</span>
+<span class="n">PARK</span> <span class="o">=</span> <span class="s1">&#39;park&#39;</span>
+<span class="n">PICKUP</span> <span class="o">=</span> <span class="s1">&#39;pickup&#39;</span>
+<span class="n">GPICKUP</span> <span class="o">=</span> <span class="s1">&#39;gpickup&#39;</span>
+<span class="n">CELL_PICKUP</span> <span class="o">=</span> <span class="s1">&#39;cellpickup&#39;</span>
+<span class="n">OPICKUP</span> <span class="o">=</span> <span class="s1">&#39;opickup&#39;</span>
+<span class="n">RMLSTC</span> <span class="o">=</span> <span class="s1">&#39;rmlstc&#39;</span>
+<span class="n">MEETME</span> <span class="o">=</span> <span class="s1">&#39;meetme&#39;</span>
+<span class="n">REDIAL</span> <span class="o">=</span> <span class="s1">&#39;redial&#39;</span>
+<span class="n">CFWDALL</span> <span class="o">=</span> <span class="s1">&#39;cfwdall&#39;</span>
+<span class="n">IDIVERT</span> <span class="o">=</span> <span class="s1">&#39;idivert&#39;</span>
+<span class="n">BARGE</span> <span class="o">=</span> <span class="s1">&#39;barge&#39;</span>
+<span class="n">CBARGE</span> <span class="o">=</span> <span class="s1">&#39;cbarge&#39;</span>
+<span class="n">GET_SINGLE_BUTTON_BARGE</span> <span class="o">=</span> <span class="s1">&#39;getsinglebuttonbarge&#39;</span>
+<span class="n">GET_SIP_CALL_FEATURES</span> <span class="o">=</span> <span class="s1">&#39;getsipcallfeatures&#39;</span>
+<span class="n">SELECT</span> <span class="o">=</span> <span class="s1">&#39;select&#39;</span>
+<span class="n">PRIVACY</span> <span class="o">=</span> <span class="s1">&#39;privacy&#39;</span>
+<span class="n">JOIN</span> <span class="o">=</span> <span class="s1">&#39;join&#39;</span>
+<span class="n">DIRECT_TRANSFER</span> <span class="o">=</span> <span class="s1">&#39;directtransfer&#39;</span>
+<span class="n">CALL_BACK</span> <span class="o">=</span> <span class="s1">&#39;callback&#39;</span>
+<span class="n">CONFLIST</span> <span class="o">=</span> <span class="s1">&#39;conflist&#39;</span>
+<span class="n">FLASH</span> <span class="o">=</span> <span class="s1">&#39;flash&#39;</span>
+<span class="n">HLOG</span> <span class="o">=</span> <span class="s1">&#39;hlog&#39;</span>
+<span class="n">LIVE_RECORD</span> <span class="o">=</span> <span class="s1">&#39;liverecord&#39;</span>
+<span class="n">RECORD</span> <span class="o">=</span> <span class="s1">&#39;record&#39;</span>
+<span class="n">STOP_RECORD</span> <span class="o">=</span> <span class="s1">&#39;stoprecord&#39;</span>
+<span class="n">TRANSFER_VM</span> <span class="o">=</span> <span class="s1">&#39;transfervm&#39;</span>
+<span class="n">LOGIN</span> <span class="o">=</span> <span class="s1">&#39;login&#39;</span>
+<span class="n">START_FAX_SEND</span> <span class="o">=</span> <span class="s1">&#39;startfaxsend&#39;</span>
+<span class="n">START_FAX_RECEIVE</span> <span class="o">=</span> <span class="s1">&#39;startfaxreceive&#39;</span>
+<span class="n">RELEASE_CALLREF</span> <span class="o">=</span> <span class="s1">&#39;releasecallref&#39;</span>
+<span class="n">RELEASE_STREAM_REF</span> <span class="o">=</span> <span class="s1">&#39;releasestreamref&#39;</span>
+<span class="n">REFRESH_TEMPLATE_MESSAGE</span> <span class="o">=</span> <span class="s1">&#39;refreshtemplatemessage&#39;</span>
+<span class="n">MOVE_TO_MOBILE</span> <span class="o">=</span> <span class="s1">&#39;movetomobile&#39;</span>
+<span class="n">BLFCALLPARK</span> <span class="o">=</span> <span class="s1">&#39;blfcallpark&#39;</span>
+<span class="n">EXEC_MEDIATOR_CMD</span> <span class="o">=</span> <span class="s2">&quot;execmediatorcmd&quot;</span>
+<span class="n">INTERCOM</span> <span class="o">=</span> <span class="s1">&#39;intercom&#39;</span>
+<span class="n">TALK_BACK</span> <span class="o">=</span> <span class="s1">&#39;talkback&#39;</span>
+<span class="n">MOVE</span> <span class="o">=</span> <span class="s1">&#39;move&#39;</span>
+<span class="n">GET_URIS</span> <span class="o">=</span> <span class="s1">&#39;geturis&#39;</span>
+<span class="n">GET_RTP_RX_STAT</span> <span class="o">=</span> <span class="s1">&#39;getrtprxstats&#39;</span>
+<span class="n">GET_RTP_TX_STAT</span> <span class="o">=</span> <span class="s1">&#39;getrtptxstats&#39;</span>
+<span class="n">GET_BUDDY_LIST</span> <span class="o">=</span> <span class="s1">&#39;getbuddylist&#39;</span>
+<span class="n">GET_BUDDIES_BY_GROUP</span> <span class="o">=</span> <span class="s1">&#39;getbuddiesbygroup&#39;</span>
+<span class="n">GET_UDS_USER</span> <span class="o">=</span> <span class="s1">&#39;get_uds_user&#39;</span>
+<span class="n">GET_JABBER_PROFILE</span> <span class="o">=</span> <span class="s1">&#39;getjabberprofile&#39;</span>
+<span class="n">GET_USER_INFO</span> <span class="o">=</span> <span class="s1">&#39;getuserinfo&#39;</span>
+<span class="n">ENABLE_AUTO_CALL_GUARD</span> <span class="o">=</span> <span class="s1">&#39;enableautocallguard&#39;</span>
+<span class="n">DISABLE_AUTO_CALL_GUARD</span> <span class="o">=</span> <span class="s1">&#39;disableautocallguard&#39;</span>
+<span class="n">GET_AUTO_CALL_GUARD_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautocallguardstatus&#39;</span>
+<span class="n">GET_AUTO_CALL_GUARD_DELAY</span> <span class="o">=</span> <span class="s1">&#39;getautocallguarddelay&#39;</span>
+<span class="c1"># auto conf path command</span>
+<span class="n">ENABLE_AUTO_PATH_CONF</span> <span class="o">=</span> <span class="s1">&#39;enableautopathconf&#39;</span>
+<span class="n">DISABLE_AUTO_PATH_CONF</span> <span class="o">=</span> <span class="s1">&#39;disableautopathconf&#39;</span>
+<span class="n">GET_AUTO_PATH_CONF_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautopathconfstatus&#39;</span>
+<span class="n">GET_AUTO_PATH_CONF_DELAY</span> <span class="o">=</span> <span class="s1">&#39;getautopathconfdelay&#39;</span>
+<span class="n">GET_AUTO_PATH_CONF_MODE</span> <span class="o">=</span> <span class="s1">&#39;getautopathconfmode&#39;</span>
+<span class="n">ENABLE_AUTO_PATH_CONF_VIDEO</span> <span class="o">=</span> <span class="s1">&#39;enableautopathconfvideo&#39;</span>
+<span class="c1"># autorecord commands</span>
+<span class="n">ENABLE_AUTO_RECORD</span> <span class="o">=</span> <span class="s1">&#39;enableautorecord&#39;</span>
+<span class="n">DISABLE_AUTO_RECORD</span> <span class="o">=</span> <span class="s1">&#39;disableautorecord&#39;</span>
+<span class="n">GET_AUTO_RECORD_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautorecordstatus&#39;</span>
+<span class="n">GET_AUTO_RECORD_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;getautorecordprefix&#39;</span>
+<span class="c1"># auto hold command</span>
+<span class="n">ENABLE_AUTO_HOLD</span> <span class="o">=</span> <span class="s1">&#39;enableautohold&#39;</span>
+<span class="n">DISABLE_AUTO_HOLD</span> <span class="o">=</span> <span class="s1">&#39;disableautohold&#39;</span>
+<span class="n">GET_AUTO_HOLD_HOLD_TIME</span> <span class="o">=</span> <span class="s1">&#39;getautoholdholdtime&#39;</span>
+<span class="n">GET_AUTO_HOLD_TALK_TIME</span> <span class="o">=</span> <span class="s1">&#39;getautoholdtalktime&#39;</span>
+<span class="n">GET_AUTO_HOLD_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautoholdstatus&#39;</span>
+<span class="n">GET_AUTO_HOLD_HOLD_TIME</span> <span class="o">=</span> <span class="s1">&#39;getautoholdholdtime&#39;</span>
+<span class="n">GET_AUTO_HOLD_TALK_TIME</span> <span class="o">=</span> <span class="s1">&#39;getautoholdtalktime&#39;</span>
+<span class="n">AUTO_SELECT_JOIN_STR</span> <span class="o">=</span> <span class="s1">&#39;autoselectjoin&#39;</span>
+<span class="n">ENABLE_AUTO_SELECT_JOIN</span> <span class="o">=</span> <span class="s1">&#39;enableautoselectjoin&#39;</span>
+<span class="n">DISABLE_AUTO_SELECT_JOIN</span> <span class="o">=</span> <span class="s1">&#39;disableautoselectjoin&#39;</span>
+<span class="n">GET_AUTO_SELECT_JOIN_CALLED_LIST</span> <span class="o">=</span> <span class="s1">&#39;getautoselectjoincalledlist&#39;</span>
+<span class="n">GET_AUTO_SELECT_JOIN_DELAY</span> <span class="o">=</span> <span class="s1">&#39;getautoselectjoindelay&#39;</span>
+<span class="n">GET_AUTO_SELECT_JOIN_MODE</span> <span class="o">=</span> <span class="s1">&#39;getautoselectjoinmode&#39;</span>
+<span class="n">GET_AUTO_SELECT_JOIN_NO_OF_CALLS</span> <span class="o">=</span> <span class="s1">&#39;getautoselectjoinnoofcalls&#39;</span>
+<span class="n">GET_AUTO_SELECT_JOIN_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautoselectjoinstatus&#39;</span>
+<span class="n">GET_AUTO_SELECT_JOIN_TIME_OUT</span> <span class="o">=</span> <span class="s1">&#39;getautoselectjointimeout&#39;</span>
+<span class="n">GET_AUTO_SELECT_JOIN_TIME_OUT_ACTION</span> <span class="o">=</span> <span class="s1">&#39;getautoselectjointimeraction&#39;</span>
+<span class="n">ENABLE_AUTO_RELEASE</span> <span class="o">=</span> <span class="s1">&#39;enableautorelease&#39;</span>
+<span class="n">DISABLE_AUTO_RELEASE</span> <span class="o">=</span> <span class="s1">&#39;disableautorelease&#39;</span>
+<span class="n">AUTO_RELEASE_STATUS</span> <span class="o">=</span> <span class="s1">&#39;autoreleasestatus&#39;</span>
+<span class="n">ENABLE_AUTO_FAX</span> <span class="o">=</span> <span class="s1">&#39;enableautofax&#39;</span>
+<span class="n">DISABLE_AUTO_FAX</span> <span class="o">=</span> <span class="s1">&#39;disableautofax&#39;</span>
+<span class="n">ENABLE_AUTO_VOICE</span> <span class="o">=</span> <span class="s1">&#39;enableautovoice&#39;</span>
+<span class="n">DISABLE_AUTO_VOICE</span> <span class="o">=</span> <span class="s1">&#39;disableautovoice&#39;</span>
+<span class="n">GET_AUTO_FAX_MODE</span> <span class="o">=</span> <span class="s1">&#39;getautofaxmode&#39;</span>
+<span class="n">GET_AUTO_FAX_URL</span> <span class="o">=</span> <span class="s1">&#39;getautofaxurl&#39;</span>
+<span class="n">GET_AUTO_FAX_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautofaxstatus&#39;</span>
+<span class="n">ENABLE_AUTO_EM_SERVICE</span> <span class="o">=</span> <span class="s1">&#39;enableautoemservice&#39;</span>
+<span class="n">DISABLE_AUTO_EM_SERVICE</span> <span class="o">=</span> <span class="s1">&#39;disableautoemservice&#39;</span>
+<span class="n">GET_AUTO_EM_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautoemstatus&#39;</span>
+<span class="n">ENABLE_AUTO_SCRIPT</span> <span class="o">=</span> <span class="s1">&#39;enableautoscript&#39;</span>
+<span class="n">DISABLE_AUTO_SCRIPT</span> <span class="o">=</span> <span class="s1">&#39;disableautoscript&#39;</span>
+<span class="n">GET_AUTO_SCRIPT_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautoscriptstatus&#39;</span>
+<span class="n">GET_AUTO_SCRIPT_SCRIPT</span> <span class="o">=</span> <span class="s1">&#39;getautoscriptscript&#39;</span>
+<span class="n">ENABLE_AUTO_MOVE</span> <span class="o">=</span> <span class="s1">&#39;enableautomove&#39;</span>
+<span class="n">DISABLE_AUTO_MOVE</span> <span class="o">=</span> <span class="s1">&#39;disableautomove&#39;</span>
+<span class="n">GET_AUTO_MOVE_DISPLAY</span> <span class="o">=</span> <span class="s1">&#39;getautomovedisplay&#39;</span>
+<span class="n">ENABLE_AUTO_TRAFFIC</span> <span class="o">=</span> <span class="s1">&#39;enableautotraffic&#39;</span>
+<span class="n">DISABLE_AUTO_TRAFFIC</span> <span class="o">=</span> <span class="s1">&#39;disableautotraffic&#39;</span>
+<span class="n">GET_AUTO_TRAFFIC_STATUS</span> <span class="o">=</span> <span class="s1">&#39;getautotrafficstatus&#39;</span>
+<span class="n">GET_AUTO_TRAFFIC_MODE</span> <span class="o">=</span> <span class="s1">&#39;getautotrafficmode&#39;</span>
+<span class="n">GEN_CERT_KEY</span> <span class="o">=</span> <span class="s1">&#39;gencertkey&#39;</span>
+<span class="n">GET_CERT_INFO</span> <span class="o">=</span> <span class="s1">&#39;getcertinfo&#39;</span>
+<span class="n">GET_HEDGE_INFO</span> <span class="o">=</span> <span class="s1">&#39;gethedgeinfo&#39;</span>
+<span class="n">GET_HEADSET</span> <span class="o">=</span> <span class="s1">&#39;getheadset&#39;</span>
+<span class="n">GET_HEADSET_CC_AGENTSTATE</span> <span class="o">=</span> <span class="s1">&#39;get_headset_cc_agentstate&#39;</span>
+<span class="n">CHANGE_HEADSET_STATUS</span> <span class="o">=</span> <span class="s1">&#39;change_headset_status&#39;</span>
+<span class="n">HEADSET_CC_AGENTSTATE</span> <span class="o">=</span> <span class="s1">&#39;changeheadsetccagentstate&#39;</span>
+<span class="n">HTTP_RESPONSE</span> <span class="o">=</span> <span class="s1">&#39;httpresponse&#39;</span>
+<span class="n">GET_DEVICE_CONFIG</span> <span class="o">=</span> <span class="s1">&#39;getdeviceconfig&#39;</span>
+<span class="n">GET_HLOG_STATUS</span> <span class="o">=</span> <span class="s1">&#39;gethlogstatus&#39;</span>
+<span class="n">GET_TOKEN</span> <span class="o">=</span> <span class="s1">&#39;gettoken&#39;</span>
+<span class="n">ADD_BUDDY</span> <span class="o">=</span> <span class="s2">&quot;addbuddy&quot;</span>
+<span class="n">ADD_BUDDY_TO_GROUPS</span> <span class="o">=</span> <span class="s2">&quot;addbuddytogroups&quot;</span>
+<span class="n">MOVE_BUDDY_TO_GROUPS</span> <span class="o">=</span> <span class="s2">&quot;movebuddytogroups&quot;</span>
+<span class="n">REMOVE_BUDDY_FROM_GROUPS</span> <span class="o">=</span> <span class="s2">&quot;removebuddyfromgroups&quot;</span>
+<span class="n">REMOVE_BUDDY</span> <span class="o">=</span> <span class="s2">&quot;removebuddy&quot;</span>
+<span class="n">ADD_GROUP</span> <span class="o">=</span> <span class="s2">&quot;addgroup&quot;</span>
+<span class="n">REMOVE_GROUP</span> <span class="o">=</span> <span class="s2">&quot;removegroup&quot;</span>
+<span class="n">REMOVE_ALL_BUDDIES</span> <span class="o">=</span> <span class="s2">&quot;removeallbuddies&quot;</span>
+<span class="n">SHOW_GROUPS</span> <span class="o">=</span> <span class="s2">&quot;showgroups&quot;</span>
+<span class="n">SEND_IM</span> <span class="o">=</span> <span class="s2">&quot;sendim&quot;</span>
+<span class="n">IM_CLEAR_RESPONSE</span> <span class="o">=</span> <span class="s2">&quot;imclearresponse&quot;</span>
+<span class="n">IM_QUERY_RESPONSE</span> <span class="o">=</span> <span class="s1">&#39;getimqueryresponse&#39;</span>
+<span class="n">GET_PRESENCE</span> <span class="o">=</span> <span class="s2">&quot;getpresence&quot;</span>
+<span class="n">SET_PRESENCE</span> <span class="o">=</span> <span class="s2">&quot;setpresence&quot;</span>
+<span class="n">PRESENCE_QUERY_RESPONSE</span> <span class="o">=</span> <span class="s1">&#39;presencequeryresponse&#39;</span>
+<span class="n">PRESENCE_CLEAR_RESPONSE</span> <span class="o">=</span> <span class="s1">&#39;presenceclearresponse&#39;</span>
+<span class="n">GET_IM_INFO</span> <span class="o">=</span> <span class="s2">&quot;getiminfo&quot;</span>
+<span class="n">IMP_QUERY_RESPONSE</span> <span class="o">=</span> <span class="s2">&quot;impqueryresponse&quot;</span>
+<span class="n">IMP_CLEAR_RESPONSE</span> <span class="o">=</span> <span class="s2">&quot;impclearresponse&quot;</span>
+<span class="n">HTTP_QUERY_REQ</span> <span class="o">=</span> <span class="s2">&quot;httpqueryreq&quot;</span>
+<span class="n">HTTP_QUERY_RESPONSE</span> <span class="o">=</span> <span class="s2">&quot;httpqueryresponse&quot;</span>
+<span class="n">HTTP_CLEAR_RESPONSE</span> <span class="o">=</span> <span class="s2">&quot;httpclearresponse&quot;</span>
+<span class="n">XMPP_CLOSE_IM</span> <span class="o">=</span> <span class="s1">&#39;closeim&#39;</span>
+<span class="n">EMLOGOUT</span> <span class="o">=</span> <span class="s1">&#39;emlogout&#39;</span>
+<span class="n">EMSERVICE</span> <span class="o">=</span> <span class="s1">&#39;emservice&#39;</span>
+<span class="n">SSO_LOGIN</span> <span class="o">=</span> <span class="s1">&#39;ssologin&#39;</span>
+<span class="n">SET_OUTPUT_FORMAT</span> <span class="o">=</span> <span class="s1">&#39;outputformat&#39;</span>
+<span class="c1"># dtmf commands</span>
+<span class="n">SET_REINVITE_RESPONSE</span> <span class="o">=</span> <span class="s1">&#39;setreinviteresponse&#39;</span>
+<span class="n">START_DTMF_DETECTOR</span> <span class="o">=</span> <span class="s1">&#39;startdtmfdetector&#39;</span>
+<span class="n">START_DTMF_PLAYER</span> <span class="o">=</span> <span class="s1">&#39;startdtmfplayer&#39;</span>
+<span class="n">STOP_DTMF_DETECTOR</span> <span class="o">=</span> <span class="s1">&#39;stopdtmfdetector&#39;</span>
+<span class="n">STOP_DTMF_PLAYER</span> <span class="o">=</span> <span class="s1">&#39;stop_dtmf_player&#39;</span>
+<span class="n">DTMF_CONFERENCE</span> <span class="o">=</span> <span class="s1">&#39;dtmfconference&#39;</span>
+<span class="n">DTMF_DUST</span> <span class="o">=</span> <span class="s1">&#39;dtmfdust&#39;</span>
+<span class="n">DTMF_EXCLUSIVE_HOLD</span> <span class="o">=</span> <span class="s1">&#39;dtmfexclusive_hold&#39;</span>
+<span class="n">DTMF_HOLD</span> <span class="o">=</span> <span class="s1">&#39;dtmfhold&#39;</span>
+<span class="n">DTMF_RESUME</span> <span class="o">=</span> <span class="s1">&#39;dtmfresume&#39;</span>
+<span class="n">DTMF_TRANSFER</span> <span class="o">=</span> <span class="s1">&#39;dtmftransfer&#39;</span>
+<span class="n">CTI_GET_RESPONSE_STATUS</span> <span class="o">=</span> <span class="s1">&#39;get_cti_response&#39;</span>
+<span class="n">CTI_CLEAR_RESPONSE</span> <span class="o">=</span> <span class="s1">&#39;cticlearresponse&#39;</span>
+
+<span class="n">GET_ICE_CONFIG</span> <span class="o">=</span> <span class="s1">&#39;geticeconfig&#39;</span>
+<span class="n">CONF_ICE_CAND</span> <span class="o">=</span> <span class="s1">&#39;configicecandidateorder&#39;</span>
+<span class="n">GET_TURN_CONFIG</span> <span class="o">=</span> <span class="s1">&#39;getturnconfig&#39;</span>
+
+<span class="n">GET_IPPS_MULTIMEDIA</span> <span class="o">=</span> <span class="s1">&#39;getippsmultimedia&#39;</span>
+<span class="n">GET_IPPS_RTP_STREAM</span> <span class="o">=</span> <span class="s1">&#39;getippsrtpstream&#39;</span>
+<span class="n">START_MEDIA_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;startmediaevents&#39;</span>
+<span class="n">STOP_MEDIA_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;stopmediaevents&#39;</span>
+<span class="n">START_MEDIA_PLAYER</span> <span class="o">=</span> <span class="s1">&#39;startmediaplayer&#39;</span>
+<span class="n">STOP_MEDIA_PLAYER</span> <span class="o">=</span> <span class="s1">&#39;stopmediaplayer&#39;</span>
+<span class="n">START_MEDIA_RECORDER</span> <span class="o">=</span> <span class="s1">&#39;startmediarecorder&#39;</span>
+<span class="n">STOP_MEDIA_RECORDER</span> <span class="o">=</span> <span class="s1">&#39;stopmediarecorder&#39;</span>
+<span class="n">START_PROMPT_DETECTOR</span> <span class="o">=</span> <span class="s1">&#39;startpromptdetector&#39;</span>
+<span class="n">STOP_PROMPT_DETECTOR</span> <span class="o">=</span> <span class="s1">&#39;stoppromptdetector&#39;</span>
+<span class="n">START_SHARE</span> <span class="o">=</span> <span class="s1">&#39;startshare&#39;</span>
+<span class="n">STOP_SHARE</span> <span class="o">=</span> <span class="s1">&#39;stopshare&#39;</span>
+<span class="n">START_RAW_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;startrawevents&#39;</span>
+<span class="n">STOP_RAW_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;stoprawevents&#39;</span>
+
+<span class="c1"># BCG commands</span>
+<span class="n">NEW_BCG</span> <span class="o">=</span> <span class="s1">&#39;new_bcg&#39;</span>
+<span class="n">ADD_TO_BCG</span> <span class="o">=</span> <span class="s1">&#39;add_to_bcg&#39;</span>
+<span class="n">SET_CAMELOT_API</span> <span class="o">=</span> <span class="s1">&#39;set_camelot_api&#39;</span>
+<span class="n">SET_BCG</span> <span class="o">=</span> <span class="s1">&#39;set_bcg&#39;</span>
+<span class="n">REMOVE_FROM_BCG</span> <span class="o">=</span> <span class="s1">&#39;remove_from_bcg&#39;</span>
+<span class="n">GET_BCG_NAME</span> <span class="o">=</span> <span class="s1">&#39;get_bcg_name&#39;</span>
+<span class="n">GET_BCG_MEMBERS</span> <span class="o">=</span> <span class="s1">&#39;get_bcg_members&#39;</span>
+<span class="n">GET_BCG_STATE</span> <span class="o">=</span> <span class="s1">&#39;get_bcg_state&#39;</span>
+<span class="n">START_BCG</span> <span class="o">=</span> <span class="s1">&#39;start_bcg&#39;</span>
+<span class="n">STOP_BCG</span> <span class="o">=</span> <span class="s1">&#39;stop_bcg&#39;</span>
+<span class="n">DELETE_BCG</span> <span class="o">=</span> <span class="s1">&#39;delete_bcg&#39;</span>
+<span class="n">GET_BCG_INFO</span> <span class="o">=</span> <span class="s1">&#39;get_bcg_info&#39;</span>
+<span class="n">GET_BCG_STATS</span> <span class="o">=</span> <span class="s1">&#39;get_bcg_stats&#39;</span>
+<span class="n">GET_BCGS</span> <span class="o">=</span> <span class="s1">&#39;get_bcgs&#39;</span>
+<span class="c1"># button</span>
+<span class="n">GET_BUTTON</span> <span class="o">=</span> <span class="s1">&#39;getbutton&#39;</span>
+<span class="n">GET_BUTTON_BLF</span> <span class="o">=</span> <span class="s1">&#39;getbuttonblf&#39;</span>
+<span class="n">PRESS_BUTTON</span> <span class="o">=</span> <span class="s1">&#39;pressbutton&#39;</span>
+<span class="c1"># VMON commands</span>
+<span class="n">ADD_TO_MONITOR</span> <span class="o">=</span> <span class="s1">&#39;add_to_monitor&#39;</span>
+<span class="n">GET_MONITOR_INFO</span> <span class="o">=</span> <span class="s1">&#39;get_monitor_info&#39;</span>
+<span class="n">GET_MONITOR_MEMBERS</span> <span class="o">=</span> <span class="s1">&#39;get_monitor_members&#39;</span>
+<span class="n">GET_MONITORS</span> <span class="o">=</span> <span class="s1">&#39;get_monitors&#39;</span>
+<span class="n">RELEASE_MONITOR</span> <span class="o">=</span> <span class="s1">&#39;release_monitor&#39;</span>
+<span class="n">SET_MONITOR</span> <span class="o">=</span> <span class="s1">&#39;set_monitor&#39;</span>
+<span class="n">CLEAR_MONITOR</span> <span class="o">=</span> <span class="s1">&#39;clear_monitor&#39;</span>
+<span class="n">START_MONITOR</span> <span class="o">=</span> <span class="s1">&#39;start_monitor&#39;</span>
+<span class="n">NEW_MONITOR</span> <span class="o">=</span> <span class="s1">&#39;new_monitor&#39;</span>
+<span class="n">STOP_MONITOR</span> <span class="o">=</span> <span class="s1">&#39;stop_monitor&#39;</span>
+<span class="n">REMOVE_FROM_MONITOR</span> <span class="o">=</span> <span class="s1">&#39;remove_from_monitor&#39;</span>
+<span class="n">DELETE_MONITOR</span> <span class="o">=</span> <span class="s1">&#39;delete_monitor&#39;</span>
+<span class="n">SEND_LOCATION_INFO</span> <span class="o">=</span> <span class="s1">&#39;sendlocationinfo&#39;</span>
+
+<span class="n">SEND_TONES</span> <span class="o">=</span> <span class="s1">&#39;sendtones&#39;</span>
+<span class="n">SETUP_LINE</span> <span class="o">=</span> <span class="s1">&#39;setupline&#39;</span>
+<span class="n">DETECT_TONES</span> <span class="o">=</span> <span class="s1">&#39;detecttones&#39;</span>
+<span class="n">SET_EPTIMING</span> <span class="o">=</span> <span class="s1">&#39;set_eptiming&#39;</span>
+<span class="n">SEND_DTMF</span> <span class="o">=</span> <span class="s1">&#39;senddtmf&#39;</span>
+<span class="n">GET_CAS_CALL_INFO</span> <span class="o">=</span> <span class="s1">&#39;getcascallinfo&#39;</span>
+<span class="n">GET_CAS_LLSA_INFO</span> <span class="o">=</span> <span class="s1">&#39;getcasllsainfo&#39;</span>
+<span class="n">GET_CAS_CALL_TIME_STATISTICS</span> <span class="o">=</span> <span class="s1">&#39;getcascalltimestatistics&#39;</span>
+<span class="n">START_DETECT_SILENCE</span> <span class="o">=</span> <span class="s1">&#39;startdetectsilence&#39;</span>
+<span class="n">SEND_VOICE</span> <span class="o">=</span> <span class="s1">&#39;sendvoice&#39;</span>
+<span class="n">STOP_SENDING</span> <span class="o">=</span> <span class="s1">&#39;stopsending&#39;</span>
+<span class="n">RECORD_VOICE</span> <span class="o">=</span> <span class="s1">&#39;recordvoice&#39;</span>
+<span class="n">SETUP_FAX_LINE</span> <span class="o">=</span> <span class="s1">&#39;setupfaxline&#39;</span>
+<span class="n">SETUP_FAX_CALL_OPTIONS</span> <span class="o">=</span> <span class="s1">&#39;setupfaxcalloptions&#39;</span>
+<span class="n">CTI_SEND_DTMF</span> <span class="o">=</span> <span class="s1">&#39;send_cti_dtmf&#39;</span>
+<span class="c1"># raw requests</span>
+<span class="n">SEND_RAW_REQUEST</span> <span class="o">=</span> <span class="s1">&#39;rawsendrequest&#39;</span>
+<span class="n">VERIFY_REQ_SEND_RESP</span> <span class="o">=</span> <span class="s1">&#39;verifyRequestsendResponse&#39;</span>
+<span class="n">CREATE_TEMPLATE_MSG</span> <span class="o">=</span> <span class="s1">&#39;createtemplatemessage&#39;</span>
+<span class="n">REMOVE_INACTION_OBJ</span> <span class="o">=</span> <span class="s1">&#39;removeinactionobject&#39;</span>
+<span class="c1"># Sip Custom Headers</span>
+<span class="n">SIP_CUSTOM_HEADERS</span> <span class="o">=</span> <span class="s1">&#39;sipcustomheaders&#39;</span>
+<span class="n">CLEAR_CUSTOM_HEADERS</span> <span class="o">=</span> <span class="s1">&#39;clearsipcustomheaders&#39;</span>
+<span class="n">SIP_MESSAGE_DETAILED</span> <span class="o">=</span> <span class="s1">&#39;sipmessagedetailed&#39;</span>
+<span class="c1"># Server-level and Endpoint-level logging</span>
+<span class="n">LOG_MASK</span> <span class="o">=</span> <span class="s1">&#39;logmask&#39;</span>
+<span class="n">LOG_DIR</span> <span class="o">=</span> <span class="s1">&#39;logdir&#39;</span>
+<span class="n">LOG_FILESZ</span> <span class="o">=</span> <span class="s1">&#39;logfilesz&#39;</span>
+<span class="n">LOG_MAX_FILES</span> <span class="o">=</span> <span class="s1">&#39;maxlogfiles&#39;</span>
+<span class="n">LOG_FILE_PREFIX</span> <span class="o">=</span> <span class="s1">&#39;logfileprefix&#39;</span>
+<span class="n">LOG_BOOKMARK</span> <span class="o">=</span> <span class="s1">&#39;logbookmark&#39;</span>
+
+
+<span class="c1"># TVS Commands</span>
+<span class="n">GET_TVS_INFO</span> <span class="o">=</span> <span class="s1">&#39;gettvsinfo&#39;</span>
+<span class="n">GET_TVS_CLIENTSTATS</span> <span class="o">=</span> <span class="s1">&#39;gettvsclientstats&#39;</span>
+<span class="n">GET_TVS_SERVERSTATS</span> <span class="o">=</span> <span class="s1">&#39;gettvsserverstats&#39;</span>
+<span class="n">DISP_TVS_CACHE</span> <span class="o">=</span> <span class="s1">&#39;disptvscache&#39;</span>
+<span class="n">RESET_TVS_CACHE</span> <span class="o">=</span> <span class="s1">&#39;resettvscache&#39;</span>
+<span class="n">DISP_TVS_TRUSTLIST</span> <span class="o">=</span> <span class="s1">&#39;disptvstrustlist&#39;</span>
+
+<span class="c1"># Auto HTTP commands</span>
+<span class="n">ENABLE_AUTO_HTTP</span> <span class="o">=</span> <span class="s1">&#39;enableautohttp&#39;</span>
+<span class="n">DISABLE_AUTO_HTTP</span> <span class="o">=</span> <span class="s1">&#39;disableautohttp&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">EpTimer</span><span class="p">:</span>
+    <span class="k">class</span> <span class="nc">EpTimerType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">retryafter</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="nb">all</span> <span class="o">=</span> <span class="mi">2</span>
+
+
+<span class="k">class</span> <span class="nc">Tones</span><span class="p">:</span>
+    <span class="k">class</span> <span class="nc">ToneType</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">continuousTone</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">multiFrequencyTone</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">singleTone</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">dualTone</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="nb">all</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">none</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="k">class</span> <span class="nc">DivaMF</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+        <span class="n">tone0</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">tone1</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">tone2</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">tone3</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">tone4</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">tone5</span> <span class="o">=</span> <span class="mi">5</span>
+        <span class="n">tone6</span> <span class="o">=</span> <span class="mi">6</span>
+        <span class="n">tone7</span> <span class="o">=</span> <span class="mi">7</span>
+        <span class="n">tone8</span> <span class="o">=</span> <span class="mi">8</span>
+        <span class="n">tone9</span> <span class="o">=</span> <span class="mi">9</span>
+        <span class="n">toneStart</span> <span class="o">=</span> <span class="mi">11</span>
+        <span class="n">toneStop</span> <span class="o">=</span> <span class="mi">12</span>
+
+
+<div class="viewcode-block" id="DivaFaxOptions"><a class="viewcode-back" href="../api/camelot.html#camelot.DivaFaxOptions">[docs]</a><span class="k">class</span> <span class="nc">DivaFaxOptions</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">DivaFaxOptionsDefault</span> <span class="o">=</span> <span class="mh">0x00000000</span>
+    <span class="n">DivaFaxOptionDisableHighResolution</span> <span class="o">=</span> <span class="mh">0x00000001</span>
+    <span class="n">DivaFaxOptionDisableMR</span> <span class="o">=</span> <span class="mh">0x00000002</span>
+    <span class="n">DivaFaxOptionDisableMMR</span> <span class="o">=</span> <span class="mh">0x00000004</span>
+    <span class="n">DivaFaxOptionDisableECM</span> <span class="o">=</span> <span class="mh">0x00000008</span>
+    <span class="n">DivaFaxOptionEnablePolling</span> <span class="o">=</span> <span class="mh">0x00000100</span>
+    <span class="n">DivaFaxOptionRequestPolling</span> <span class="o">=</span> <span class="mh">0x00000200</span>
+    <span class="n">DivaFaxOptionReverseSession</span> <span class="o">=</span> <span class="mh">0x00000400</span>
+    <span class="n">DivaFaxOptionMultipleDocument</span> <span class="o">=</span> <span class="mh">0x00000800</span>
+    <span class="n">DivaFaxOptionEnableColor</span> <span class="o">=</span> <span class="mh">0x00001000</span>
+    <span class="n">DivaFaxOptionEnableInterrupt</span> <span class="o">=</span> <span class="mh">0x00010000</span>
+    <span class="n">DivaFaxOptionRequestInterrupt</span> <span class="o">=</span> <span class="mh">0x00020000</span></div>
+
+
+<div class="viewcode-block" id="DivaFaxMaxSpeed"><a class="viewcode-back" href="../api/camelot.html#camelot.DivaFaxMaxSpeed">[docs]</a><span class="k">class</span> <span class="nc">DivaFaxMaxSpeed</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">DivaFaxMaxSpeedAutomatic</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">DivaFaxMaxSpeed2400</span> <span class="o">=</span> <span class="mi">2400</span>
+    <span class="n">DivaFaxMaxSpeed4800</span> <span class="o">=</span> <span class="mi">4800</span>
+    <span class="n">DivaFaxMaxSpeed7200</span> <span class="o">=</span> <span class="mi">7200</span>
+    <span class="n">DivaFaxMaxSpeed9600</span> <span class="o">=</span> <span class="mi">9600</span>
+    <span class="n">DivaFaxMaxSpeed14400</span> <span class="o">=</span> <span class="mi">14400</span>
+    <span class="n">DivaFaxMaxSpeed33600</span> <span class="o">=</span> <span class="mi">33600</span></div>
+
+
+<span class="k">class</span> <span class="nc">FaxProfile</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_number</span> <span class="o">=</span> <span class="s1">&#39;-1&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_sub_address</span> <span class="o">=</span> <span class="s1">&#39;-1&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">local_fax_id</span> <span class="o">=</span> <span class="s1">&#39;-1&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fax_headline</span> <span class="o">=</span> <span class="s1">&#39;camelot&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_fax_speed</span> <span class="o">=</span> <span class="n">DivaFaxMaxSpeed</span><span class="o">.</span><span class="n">DivaFaxMaxSpeedAutomatic</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diva_fax_options</span> <span class="o">=</span> <span class="p">[</span><span class="n">DivaFaxOptions</span><span class="o">.</span><span class="n">DivaFaxOptionsDefault</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="DivaSamplingRate"><a class="viewcode-back" href="../api/camelot.html#camelot.DivaSamplingRate">[docs]</a><span class="k">class</span> <span class="nc">DivaSamplingRate</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">DivaSamplingRateMin</span> <span class="o">=</span> <span class="mi">1250</span>
+    <span class="n">DivaSamplingRateNormal</span> <span class="o">=</span> <span class="mi">8000</span>
+    <span class="n">DivaSamplingRateMax</span> <span class="o">=</span> <span class="mi">51200</span></div>
+
+
+<div class="viewcode-block" id="DivaAudioFormat"><a class="viewcode-back" href="../api/camelot.html#camelot.DivaAudioFormat">[docs]</a><span class="k">class</span> <span class="nc">DivaAudioFormat</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">DivaAudioFormat_aLaw8K8BitMono</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">DivaAudioFormat_uLaw8K8BitMono</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">DivaAudioFormat_PCM_8K8BitMono</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">DivaAudioFormat_PCM_8K16BitMono</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">DivaAudioFormat_GSM_610</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">DivaAudioFormat_G723_6_4</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">DivaAudioFormat_G723_5_3</span> <span class="o">=</span> <span class="mi">13</span>
+    <span class="n">DivaAudioFormat_Raw_aLaw8K8BitMono</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">DivaAudioFormat_Raw_uLaw8K8BitMono</span> <span class="o">=</span> <span class="mi">101</span>
+    <span class="n">DivaAudioFormat_Raw_PCM_8K8BitMono</span> <span class="o">=</span> <span class="mi">102</span>
+    <span class="n">DivaAudioFormat_Raw_PCM_8K16BitMono</span> <span class="o">=</span> <span class="mi">103</span>
+    <span class="n">DivaAudioFormat_Raw_ADPCM_8K4BitMono</span> <span class="o">=</span> <span class="mi">104</span>
+    <span class="n">DivaAudioFormat_Raw_ADPCM_6K4BitMono</span> <span class="o">=</span> <span class="mi">105</span>
+    <span class="n">DivaAudioFormat_Raw_GSM_610</span> <span class="o">=</span> <span class="mi">106</span>
+    <span class="n">DivaAudioFormat_Raw_G729</span> <span class="o">=</span> <span class="mi">107</span>
+    <span class="n">DivaAudioFormat_Raw_ILBC</span> <span class="o">=</span> <span class="mi">108</span>
+    <span class="n">DivaAudioFormat_Raw_AMR_4_75</span> <span class="o">=</span> <span class="mi">109</span>
+    <span class="n">DivaAudioFormat_Raw_AMR_5_15</span> <span class="o">=</span> <span class="mi">110</span>
+    <span class="n">DivaAudioFormat_Raw_AMR_5_9</span> <span class="o">=</span> <span class="mi">111</span>
+    <span class="n">DivaAudioFormat_Raw_AMR_6_7</span> <span class="o">=</span> <span class="mi">112</span>
+    <span class="n">DivaAudioFormat_Raw_AMR_7_4</span> <span class="o">=</span> <span class="mi">113</span>
+    <span class="n">DivaAudioFormat_Raw_AMR_7_95</span> <span class="o">=</span> <span class="mi">114</span>
+    <span class="n">DivaAudioFormat_Raw_AMR_10_2</span> <span class="o">=</span> <span class="mi">115</span>
+    <span class="n">DivaAudioFormat_Raw_AMR_12_2</span> <span class="o">=</span> <span class="mi">116</span>
+    <span class="n">DivaAudioFormat_Raw_G723_6_4</span> <span class="o">=</span> <span class="mi">212</span>
+    <span class="n">DivaAudioFormat_Raw_G723_5_3</span> <span class="o">=</span> <span class="mi">213</span>
+    <span class="n">DivaAudioFormat_Raw_G722</span> <span class="o">=</span> <span class="mi">214</span>
+    <span class="n">DivaAudioFormat_Raw_PCM_16K16Bit</span> <span class="o">=</span> <span class="mi">215</span>
+    <span class="n">DivaAudioFormat_Raw_PCM_32K16Bit</span> <span class="o">=</span> <span class="mi">217</span>
+    <span class="n">DivaAudioFormat_Raw_PCM_48K16Bit</span> <span class="o">=</span> <span class="mi">216</span></div>
+
+
+<span class="c1"># creating enumerations using class</span>
+<div class="viewcode-block" id="AgentStatusEnum"><a class="viewcode-back" href="../api/camelot.html#camelot.AgentStatusEnum">[docs]</a><span class="k">class</span> <span class="nc">AgentStatusEnum</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+    <span class="n">LOGIN</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">LOGOUT</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">NOT_READY</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">READY</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">TALKING</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">WORK</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">WORK_READY</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">BUSY_OTHER</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">RESERVED</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">UNKNOWN</span> <span class="o">=</span> <span class="mi">9</span>
+    <span class="n">HOLD</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">ACTIVE</span> <span class="o">=</span> <span class="mi">11</span>
+    <span class="n">PAUSED</span> <span class="o">=</span> <span class="mi">12</span>
+    <span class="n">INTERRUPTED</span> <span class="o">=</span> <span class="mi">13</span>
+    <span class="n">RESERVED_OUTBOUND</span> <span class="o">=</span> <span class="mi">15</span>
+    <span class="n">RESERVED_OUTBOUND_PREVIEW</span> <span class="o">=</span> <span class="mi">16</span></div>
+
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">camlogger</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">__camelot_servers</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">_connections_lock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
+<span class="n">_camelot_servers_lock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
+<span class="c1"># camlogger.basicConfig()</span>
+<span class="n">camlogger</span><span class="o">.</span><span class="n">enable_logging</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">__exit_handler</span><span class="p">():</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Cleaning up Camelot-pi&#39;</span><span class="p">)</span>
+    <span class="n">stop_all</span><span class="p">()</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;Exiting Camelot-pi&#39;</span><span class="p">)</span>
+
+<span class="n">atexit</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">__exit_handler</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_get_camelot_connection</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">version</span><span class="p">):</span>
+    <span class="n">connection_key</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">camelot.protocol.tcp.camelot_connection</span> <span class="k">import</span> <span class="n">Connection</span>
+    <span class="k">with</span> <span class="n">_connections_lock</span><span class="p">:</span>
+
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">connection_key</span><span class="p">,</span> <span class="n">version</span><span class="p">)</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">init_connection</span><span class="p">(</span><span class="n">connection_key</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">conn</span>
+
+
+<span class="k">class</span> <span class="nc">CamelotMessage</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="CamelotError"><a class="viewcode-back" href="../api/camelot.html#camelot.CamelotError">[docs]</a><span class="k">class</span> <span class="nc">CamelotError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">e_type</span><span class="o">=</span><span class="s1">&#39;External&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CamelotError</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">e_type</span> <span class="o">=</span> <span class="n">e_type</span></div>
+
+
+<div class="viewcode-block" id="get_camelot_server"><a class="viewcode-back" href="../api/camelot.html#camelot.get_camelot_server">[docs]</a><span class="k">def</span> <span class="nf">get_camelot_server</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    returns the existing handle for camelot server object</span>
+<span class="sd">    for given  ip and port.</span>
+
+<span class="sd">    :parameter ip: ip address of Camelot server</span>
+<span class="sd">    :parameter port: listening port of Camelot server</span>
+
+<span class="sd">    :returns: on success returns camelot server handle else \</span>
+<span class="sd">        throws CamelotError</span>
+
+<span class="sd">    &gt;&gt;&gt; serv = camelot.get_camelot_server(&#39;10.1.2.56&#39;, 9988)</span>
+<span class="sd">    &gt;&gt;&gt; serv</span>
+<span class="sd">    &lt;camelot.camelot_server.CamelotServer object at 0xb3a550&gt;</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">server_key</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">server_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">__camelot_servers</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;camserv not found&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">__camelot_servers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">server_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_camelot_server"><a class="viewcode-back" href="../api/camelot.html#camelot.create_camelot_server">[docs]</a><span class="k">def</span> <span class="nf">create_camelot_server</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    returns new handle for camelot server object if the</span>
+<span class="sd">    camelot server is running on provided ip and port.</span>
+<span class="sd">    otherwise thorws CamelotError.</span>
+
+<span class="sd">    :parameter ip: ip address of Camelot server</span>
+<span class="sd">    :parameter port: listening port of Camelot server</span>
+<span class="sd">    :parameter server_class: custom type which is subclass of CamelotServer.</span>
+<span class="sd">     Default value is CamelotServer</span>
+
+<span class="sd">    :returns: on success returns camelot server handle else throws CamelotError</span>
+
+<span class="sd">    &gt;&gt;&gt; serv = camelot.create_camelot_server(&#39;10.12.10.180&#39;, &#39;6666&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; serv</span>
+<span class="sd">    &lt;camelot.camelot_server.CamelotServer object at 0x21deb10&gt;</span>
+
+<span class="sd">    &gt;&gt;&gt; serv = camelot.create_camelot_server(&#39;10.12.10.180&#39;, &#39;6666&#39;)</span>
+<span class="sd">    CamelotError: camserv exists.Use get_camelot_server instead</span>
+
+<span class="sd">    &gt;&gt;&gt; serv_parms = { &#39;ip&#39;:&#39;10.12.10.180&#39;, &#39;port&#39;:&#39;5001&#39;}</span>
+<span class="sd">    kwargs = {&#39;server_class&#39;:myClass, &#39;server_parms&#39;:serv_parms}</span>
+<span class="sd">    camelot.create_camelot_server(&#39;10.12.10.180&#39;, &#39;5001&#39;, **kwargs)</span>
+<span class="sd">    Out[9]: &lt;__main__.myClass at 0x2c32450&gt;</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="kn">from</span> <span class="nn">camelot.camelot_server</span> <span class="k">import</span> <span class="n">CamelotServer</span>
+
+    <span class="n">server_class</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;server_class&#39;</span><span class="p">,</span> <span class="n">CamelotServer</span><span class="p">)</span>
+    <span class="n">serv_params</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;server_params&#39;</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="n">VAPIEIUtils</span><span class="o">.</span><span class="n">CLIENT_VERSION</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">server_class</span><span class="p">,</span> <span class="n">CamelotServer</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;server_class not subclass of CamelotServer&#39;</span><span class="p">)</span>
+
+    <span class="n">server_key</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">:</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="n">serv</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">with</span> <span class="n">_camelot_servers_lock</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ip</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">port</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;either ip or port is invalid&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">server_key</span> <span class="ow">in</span> <span class="n">__camelot_servers</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">CamelotError</span><span class="p">(</span>
+                <span class="s1">&#39;camserv exists.Use get_camelot_server instead&#39;</span><span class="p">,</span> <span class="s1">&#39;Internal&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">serv</span> <span class="o">=</span> <span class="n">server_class</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">server_key</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">version</span><span class="p">,</span>
+                                <span class="o">**</span><span class="n">serv_params</span><span class="p">)</span>
+            <span class="n">__camelot_servers</span><span class="p">[</span><span class="n">server_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">serv</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">serv</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;Camelot server not created </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">serv</span></div>
+
+
+<span class="k">def</span> <span class="nf">stop_all</span><span class="p">():</span>
+    <span class="k">with</span> <span class="n">_camelot_servers_lock</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">s_key</span><span class="p">,</span> <span class="n">serv</span> <span class="ow">in</span> <span class="n">__camelot_servers</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">serv</span><span class="o">.</span><span class="n">clean_up_eps</span><span class="p">()</span>
+            <span class="n">serv</span><span class="o">.</span><span class="n">_server_conn</span><span class="o">.</span><span class="n">close_event_channel</span><span class="p">()</span>
+
+        <span class="n">__camelot_servers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

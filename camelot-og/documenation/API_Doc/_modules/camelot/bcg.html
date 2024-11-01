@@ -1,0 +1,483 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>camelot.bcg &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../camelot.html" accesskey="U">camelot</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for camelot.bcg</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">RLock</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">import</span> <span class="nn">camelot</span>
+<span class="kn">from</span> <span class="nn">camelot.endpoint</span> <span class="k">import</span> <span class="n">CamelotEndpoint</span>
+<span class="kn">from</span> <span class="nn">camelot.encoder</span> <span class="k">import</span> <span class="n">encoder</span>
+<span class="kn">from</span> <span class="nn">camelot.bcg.bcg_connection</span> <span class="k">import</span> <span class="n">Connection</span>
+<span class="kn">from</span> <span class="nn">camelot.bcg.bcg_instance</span> <span class="k">import</span> <span class="n">BcgInstance</span>
+<span class="kn">from</span> <span class="nn">camelot</span> <span class="k">import</span> <span class="n">camlogger</span>
+
+<span class="n">connections</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">_connections_lock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
+<span class="n">_server_callbacks</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">camlogger</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">bcginstances</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="Bcg"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.Bcg">[docs]</a><span class="k">class</span> <span class="nc">Bcg</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;BCG instance representation</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># This should mirror the instance ref</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bcgname</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span> <span class="o">=</span> <span class="n">ip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span> <span class="o">=</span> <span class="n">port</span>
+
+<div class="viewcode-block" id="Bcg.start"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.Bcg.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Start the bcg server to schedule calls</span>
+
+<span class="sd">        &gt;&gt;&gt; bcgobj.start()</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span>
+        <span class="p">)</span>
+        <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">START_BCG</span><span class="p">,</span> <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Bcg.stop"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.Bcg.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Stop the bcg server to schedule calls</span>
+
+<span class="sd">        &gt;&gt;&gt; bcgobj.stop()</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span>
+        <span class="p">)</span>
+        <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">STOP_BCG</span><span class="p">,</span> <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Bcg.add_endpoint"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.Bcg.add_endpoint">[docs]</a>    <span class="k">def</span> <span class="nf">add_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">autocmd_type</span><span class="o">=</span><span class="s1">&#39;call&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; add endpoint to the bcg queue</span>
+
+<span class="sd">        :parameter endpoint: endpoint object created</span>
+<span class="sd">                             by camelot.create_new_endpoint()</span>
+<span class="sd">        :parameter type: operation type. Possible values:\n</span>
+<span class="sd">                         * call - invoke placecall from BCG</span>
+<span class="sd">                         * script - invoke placescript from BCG</span>
+<span class="sd">                         * camelot_api - invoke any camelot API.The API</span>
+<span class="sd">                           should be specified using &quot;set_camelot_api&quot; method</span>
+<span class="sd">                           in BCG level.</span>
+
+<span class="sd">        &gt;&gt;&gt; bcgobj.add_endpoint(ep)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span>
+        <span class="p">)</span>
+        <span class="n">epref</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">endpoint</span><span class="o">.</span><span class="n">ip</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">ep_id</span><span class="p">)</span>
+        <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span>
+            <span class="s1">&#39;epref&#39;</span><span class="p">:</span> <span class="n">epref</span><span class="p">,</span>
+            <span class="s1">&#39;autocmd_type&#39;</span><span class="p">:</span> <span class="n">autocmd_type</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">ADD_TO_BCG</span><span class="p">,</span> <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Bcg.set_camelot_api"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.Bcg.set_camelot_api">[docs]</a>    <span class="k">def</span> <span class="nf">set_camelot_api</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">api_name</span><span class="p">,</span> <span class="n">api_args</span><span class="o">=</span><span class="p">{}):</span>
+        <span class="sd">&#39;&#39;&#39;It is used for specifying a particular camelot API which</span>
+<span class="sd">        will be invoked by BCG according to configured rate.\n</span>
+
+<span class="sd">        :parameter endpoint: endpoint object created</span>
+<span class="sd">                             by camelot.create_new_endpoint()</span>
+<span class="sd">        :parameter api_name: name of the API to be invoked</span>
+<span class="sd">        :parameter api_args: valid arguments of the API in dictionary</span>
+<span class="sd">                            format.</span>
+
+<span class="sd">        &gt;&gt;&gt; bcgobj.set_camelot_api(ep, &#39;http_query_request&#39;,</span>
+<span class="sd">                {&#39;ip&#39;:&#39;10.12.10.74&#39;, &#39;port&#39;:&#39;8443&#39;,</span>
+<span class="sd">                 &#39;url&#39;:&#39;/cucm-uds/clusterUser?username=JABBEREP1300000&#39;,</span>
+<span class="sd">                 &#39;secure&#39;:True})</span>
+
+<span class="sd">        Note: Before calling this method we must invoke BCG command</span>
+<span class="sd">        &quot;add_endpoint&quot; which should have &quot;camelot_api&quot; as second parm.</span>
+<span class="sd">        For example:</span>
+
+<span class="sd">        &gt;&gt;&gt; bcgobj.add_endpoint(ep, &#39;camelot_api&#39;)</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span>
+        <span class="p">)</span>
+        <span class="n">epref</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">endpoint</span><span class="o">.</span><span class="n">ip</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">ep_id</span><span class="p">)</span>
+        <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span>
+            <span class="s1">&#39;epref&#39;</span><span class="p">:</span> <span class="n">epref</span><span class="p">,</span>
+            <span class="s1">&#39;cmd&#39;</span><span class="p">:</span> <span class="n">api_name</span><span class="p">,</span>
+            <span class="s1">&#39;args&#39;</span><span class="p">:</span> <span class="n">api_args</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">SET_CAMELOT_API</span><span class="p">,</span> <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Bcg.remove_endpoint"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.Bcg.remove_endpoint">[docs]</a>    <span class="k">def</span> <span class="nf">remove_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; remove endpoint from the bcg queue</span>
+
+<span class="sd">        :parameters endpoint: endpoint object created by create_new_endpoint()</span>
+
+<span class="sd">        &gt;&gt;&gt; bcgobj.remove_endpoint(ep)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span>
+        <span class="p">)</span>
+        <span class="n">epref</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">endpoint</span><span class="o">.</span><span class="n">ip</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">ep_id</span><span class="p">)</span>
+        <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span>
+            <span class="s1">&#39;epref&#39;</span><span class="p">:</span> <span class="n">epref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">REMOVE_FROM_BCG</span><span class="p">,</span> <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Bcg.set_name"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.Bcg.set_name">[docs]</a>    <span class="k">def</span> <span class="nf">set_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; set the name to the bcg instance</span>
+
+<span class="sd">        :parameter name: name of the bcg</span>
+
+<span class="sd">        &gt;&gt;&gt; bcgobj.set_name()</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bcgname</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span>
+            <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgname</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">SET_BCG</span><span class="p">,</span> <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">set_rate_sample_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sampleperiod</span><span class="p">):</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span>
+        <span class="p">)</span>
+        <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span>
+            <span class="s1">&#39;sampleperiod&#39;</span><span class="p">:</span> <span class="n">sampleperiod</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">SET_BCG</span><span class="p">,</span> <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Bcg.get_name"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.Bcg.get_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get the name of bcg instance</span>
+
+<span class="sd">        :returns: name of the bcg</span>
+
+<span class="sd">        &gt;&gt;&gt; bcgobj.get_name()</span>
+<span class="sd">        &#39;bcg1&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span>
+        <span class="p">)</span>
+        <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_BCG_NAME</span><span class="p">,</span> <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Bcg.get_info"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.Bcg.get_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get the bcg information</span>
+
+<span class="sd">        :returns: dictionary of bcg information as shown below \n</span>
+
+<span class="sd">        &gt;&gt;&gt; bcgobj.get_info()</span>
+<span class="sd">        {&#39;endpoints queued&#39;: &#39;199&#39;, &#39;state&#39;: &#39;running&#39;,</span>
+<span class="sd">        &#39;actual rate&#39;: &#39;4.94&#39;, &#39;set rate&#39;: &#39;5.0&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span>
+        <span class="p">)</span>
+        <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_BCG_INFO</span><span class="p">,</span> <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Bcg.get_stats"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.Bcg.get_stats">[docs]</a>    <span class="k">def</span> <span class="nf">get_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get the bcg statistics information</span>
+
+<span class="sd">        :returns: dictionary of bcg statistics shown below \n</span>
+
+<span class="sd">        &gt;&gt;&gt; bcgobj.get_stats()</span>
+<span class="sd">        {&#39;aborted endpoint&#39;: &#39;&#39;, &#39;aborted reason&#39;: &#39;&#39;,</span>
+<span class="sd">        &#39;attempts&#39;: &#39;92&#39;, &#39;aborts&#39;: &#39;0&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span>
+        <span class="p">)</span>
+        <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_BCG_STATS</span><span class="p">,</span> <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Bcg.get_members"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.Bcg.get_members">[docs]</a>    <span class="k">def</span> <span class="nf">get_members</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        get the members from bcg server list.  It will return a</span>
+<span class="sd">        list of endpoint references</span>
+
+<span class="sd">        returns: list of endpoint references added</span>
+
+<span class="sd">        &gt;&gt;&gt; bcgobj.get_members()</span>
+<span class="sd">        [&#39;192.168.1.109:5000:00000004&#39;. &#39;192.168.1.109:5000:00000005&#39;,...]</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span>
+        <span class="p">)</span>
+        <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_BCG_MEMBERS</span><span class="p">,</span> <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">get_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span>
+        <span class="p">)</span>
+        <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_BCG_STATE</span><span class="p">,</span> <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Bcg.set_rate"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.Bcg.set_rate">[docs]</a>    <span class="k">def</span> <span class="nf">set_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rate</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; set the bcg cps rate</span>
+
+<span class="sd">        :parameter rate:  calls per second rate</span>
+
+<span class="sd">        &gt;&gt;&gt; bcgobj.set_rate(2.0)</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span>
+        <span class="p">)</span>
+        <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span>
+            <span class="s1">&#39;bcgrate&#39;</span><span class="p">:</span> <span class="n">rate</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">SET_BCG</span><span class="p">,</span> <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_get_bcg_connection</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">bcgref</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">connection_key</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">bcgref</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">bcginstances</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">bcgref</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span>
+            <span class="s2">&quot;Invalid bcg instance </span><span class="si">{}</span><span class="s2"> at (</span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bcgref</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">_connections_lock</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">connections</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">connection_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+            <span class="n">connections</span><span class="p">[</span><span class="n">connection_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">conn</span>
+
+    <span class="n">server_conn</span> <span class="o">=</span> <span class="n">connections</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">connection_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">server_conn</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span>
+            <span class="s2">&quot;Unable to create Connection object to BCG server at (</span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">)&quot;</span>
+            <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">server_conn</span>
+
+
+<div class="viewcode-block" id="create_new_bcg"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.create_new_bcg">[docs]</a><span class="k">def</span> <span class="nf">create_new_bcg</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Create a new bcg instance&#39;</span>
+
+<span class="sd">    :parameter ip: ip of the bcg server</span>
+<span class="sd">    :parameter port: port of the bcg server</span>
+
+<span class="sd">    :returns: bcg reference</span>
+
+<span class="sd">    &gt;&gt;&gt; bcgobj = camelot.bcg.create_new_bcg(&#39;10.12.10.188&#39;,30101)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">bcg_class</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bcg_class&#39;</span><span class="p">,</span> <span class="n">Bcg</span><span class="p">)</span>
+    <span class="n">bcgInstance_class</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bcginstance&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">bcg_params</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;bcg_params&#39;</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">bcg_class</span><span class="p">,</span> <span class="n">Bcg</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;bcg_class not subclass of Bcg&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ip</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;ip is not specified&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">port</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;port is not specified&#39;</span><span class="p">)</span>
+
+    <span class="n">IP</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+    <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span><span class="n">IP</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">NEW_BCG</span><span class="p">,</span>
+                                               <span class="n">bcgInstance_class</span><span class="p">,</span>
+                                               <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;create bcg failed&#39;</span><span class="p">)</span>
+    <span class="n">newbcg</span> <span class="o">=</span> <span class="n">bcg_class</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="n">newbcg</span><span class="o">.</span><span class="n">bcgref</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span>
+    <span class="n">bcginstances</span><span class="p">[</span><span class="n">newbcg</span><span class="o">.</span><span class="n">bcgref</span><span class="p">]</span> <span class="o">=</span> <span class="n">newbcg</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;created bcg </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">newbcg</span><span class="o">.</span><span class="n">bcgref</span><span class="p">,</span> <span class="n">newbcg</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">newbcg</span></div>
+
+
+<div class="viewcode-block" id="delete_bcg"><a class="viewcode-back" href="../../api/bcg.html#camelot.bcg.delete_bcg">[docs]</a><span class="k">def</span> <span class="nf">delete_bcg</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">bcgref</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Delete requested bcg instance&#39;</span>
+
+<span class="sd">    :parameter ip: ip of the bcg server</span>
+<span class="sd">    :parameter port: port of the bcg server</span>
+
+<span class="sd">    :returns: bcg reference</span>
+
+<span class="sd">    &gt;&gt;&gt; camelot.bcg.delete_bcg(&#39;10.12.10.188&#39;, 30101)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">IP</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+    <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_bcg_connection</span><span class="p">(</span><span class="n">IP</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="n">bcg_params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;bcgref&#39;</span><span class="p">:</span> <span class="n">bcgref</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_bcg_command</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">DELETE_BCG</span><span class="p">,</span>
+                                               <span class="n">bcg_params</span><span class="o">=</span><span class="n">bcg_params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+    <span class="k">del</span> <span class="n">bcginstances</span><span class="p">[</span><span class="n">bcgref</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">bcgref</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_bcgs</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">bcginstances</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">stop_all</span><span class="p">():</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Closing all BCG connections&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">_connections_lock</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">conn</span> <span class="ow">in</span> <span class="n">connections</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close_event_channel</span><span class="p">()</span>
+        <span class="n">connections</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../camelot.html" >camelot</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

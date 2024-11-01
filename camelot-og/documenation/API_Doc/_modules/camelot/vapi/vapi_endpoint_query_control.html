@@ -1,0 +1,1853 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>camelot.vapi.vapi_endpoint_query_control &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../camelot.html" accesskey="U">camelot</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for camelot.vapi.vapi_endpoint_query_control</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">camelot</span>
+<span class="kn">from</span> <span class="nn">camelot.vapi</span> <span class="k">import</span> <span class="n">vapi_camelot_utils</span> <span class="k">as</span> <span class="n">v</span>
+<span class="kn">from</span> <span class="nn">camelot</span> <span class="k">import</span> <span class="n">camlogger</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">camlogger</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">CamelotEndpointControl</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">CamelotVapiUtils</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;CamelotVapiUtils representation</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">DnD</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Sends StationSoftKeyEventMessage to CCM to activate or deactivate</span>
+<span class="sd">        DnD softkey when pressed in idle state.</span>
+
+<span class="sd">        When pressed during incoming state, sends a StationSoftKeyEventMessage</span>
+<span class="sd">        to CCM to STOP RINGING.</span>
+
+<span class="sd">        :parameter call_ref: call reference of incoming call, fetch call</span>
+<span class="sd">                         reference :py:meth:`CamelotTCPFront.get_calls`</span>
+
+<span class="sd">        :returns: True upon success</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.dial(ep2)</span>
+<span class="sd">        &lt;Call &lt;Device RT 10.20.1.72&gt; &lt;-&gt; &lt;Device TNP 10.20.1.81&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; ep2.DnD(ep2.get_calls()[0][&#39;Ref&#39;])</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering function DnD&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">call_ref</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">call_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;call reference not valid&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary_to_boolean</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">DND</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">get_sip_call_features</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;returns all the current values of the sipCallFeatures</span>
+<span class="sd">        block (or its defaults) as a dictionary.</span>
+<span class="sd">        sip.phone.sip_call_features parms can be modified using</span>
+<span class="sd">        config command. (config command has higher priority than</span>
+<span class="sd">        parsing from the configuration file)</span>
+
+<span class="sd">        :returns: following fields-\n</span>
+<span class="sd">            * cnf_join_enabled - the value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.cnf_join_enabled. This is</span>
+<span class="sd">              of type integer. Possible values 1 or 0. Default value</span>
+<span class="sd">              is 1.</span>
+<span class="sd">            * call_forward_uri - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.call_forward_uri.</span>
+<span class="sd">              This is of type string. Default value is None.</span>
+<span class="sd">            * call_pickup_uri - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.call_pickup_uri.</span>
+<span class="sd">              This is of type string. Default value is None.</span>
+<span class="sd">            * call_pickup_list_uri - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.call_pickup_list_uri.</span>
+<span class="sd">              This is of type string. Default value is None.</span>
+<span class="sd">            * call_pickup_group_uri - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.call_pickup_group_uri.</span>
+<span class="sd">              This is of type string. Default value is None.</span>
+<span class="sd">            * meetme_service_uri - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.meetme_service_uri.</span>
+<span class="sd">              This is of type string. Default value is None.</span>
+<span class="sd">            * abbreviated_dial_uri - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.abbreviated_dial_uri.</span>
+<span class="sd">              This is of type string. Default value is None.</span>
+<span class="sd">            * rfc2543hold - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.rfc2543hold. This is</span>
+<span class="sd">              of type integer. Possible values 1 or 0. Default</span>
+<span class="sd">              value is 0.</span>
+<span class="sd">            * call_hold_ringback - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.call_hold_ringback.</span>
+<span class="sd">              This is of type integer. Default value is 255.</span>
+<span class="sd">            * uri_dialing_display_preference - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.uri_dialing_display</span>
+<span class="sd">              preference. valid values are 0(URI) and 1(DN).</span>
+<span class="sd">              This is of type integer. Default value is 255.</span>
+<span class="sd">            * local_cfwd_enable - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.local_cfwd_enable.</span>
+<span class="sd">              valid values are 0 and 1. This is of type integer.</span>
+<span class="sd">              Default value is 1.</span>
+<span class="sd">            * semi_attended_transfer - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.semi_attended_transfer.</span>
+<span class="sd">              valid values are 0 and 1. This is of type integer.</span>
+<span class="sd">              Default value is 1.</span>
+<span class="sd">            * anonymous_call_block - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.anonymous_call_block.</span>
+<span class="sd">              This is of type integer. Default value is 255.</span>
+<span class="sd">            * callerid_blocking - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.callerid_blocking.</span>
+<span class="sd">              This is of type integer. Default value is 255.</span>
+<span class="sd">            * dnd_control - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.dnd_control.</span>
+<span class="sd">              This is of type integer. Default value is 255.</span>
+<span class="sd">            * remotecc_enable - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.remotecc_enable.</span>
+<span class="sd">              valid values are 0 and 1. This is of type integer.</span>
+<span class="sd">              Default value is 1.</span>
+<span class="sd">            * retain_forward_information - value extracted from</span>
+<span class="sd">              sip.phone.sip_call_features.retain_forward_information.</span>
+<span class="sd">              valid values are 0 and 1. This is of type integer.</span>
+<span class="sd">              Default value is 1.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.vapi.get_sip_call_features()</span>
+<span class="sd">        {</span>
+<span class="sd">         &#39;cnf_join_enabled&#39;: 1,</span>
+<span class="sd">         &#39;call_forward_uri&#39;: &#39;x-cisco-serviceuri-cfwdall&#39;,</span>
+<span class="sd">         &#39;call_pickup_uri&#39;: &#39;x-cisco-serviceuri-pickup&#39;,</span>
+<span class="sd">         &#39;call_pickup_list_uri&#39;: &#39;x-cisco-serviceuri-opickup&#39;,</span>
+<span class="sd">         &#39;call_pickup_group_uri&#39;: &#39;x-cisco-serviceuri-gpickup&#39;,</span>
+<span class="sd">         &#39;meetme_service_uri&#39;: &#39;x-cisco-serviceuri-meetme&#39;,</span>
+<span class="sd">         &#39;abbreviated_dial_uri&#39;: &#39;x-cisco-serviceuri-abbrdial&#39;,</span>
+<span class="sd">         &#39;rfc2543hold&#39;: 0,</span>
+<span class="sd">         &#39;call_hold_ringback&#39;: 2,</span>
+<span class="sd">         &#39;uri_dialing_display_preference&#39;: 1,</span>
+<span class="sd">         &#39;local_cfwd_enable&#39;: 1,</span>
+<span class="sd">         &#39;semi_attended_transfer&#39;: 1,</span>
+<span class="sd">         &#39;anonymous_call_block&#39;: 2,</span>
+<span class="sd">         &#39;callerid_blocking&#39;: 2,</span>
+<span class="sd">         &#39;dnd_control&#39;: 0,</span>
+<span class="sd">         &#39;remotecc_enable&#39;: 1,</span>
+<span class="sd">         &#39;retain_forward_information&#39;: 0,</span>
+<span class="sd">        }</span>
+<span class="sd">        &gt;&gt;&gt; ep1.vapi.get_sip_call_features()</span>
+<span class="sd">        {</span>
+<span class="sd">         &#39;cnf_join_enabled&#39;: 1,</span>
+<span class="sd">         &#39;call_forward_uri&#39;: None,</span>
+<span class="sd">         &#39;call_pickup_uri&#39;: None,</span>
+<span class="sd">         &#39;call_pickup_list_uri&#39;: None,</span>
+<span class="sd">         &#39;call_pickup_group_uri&#39;: None,</span>
+<span class="sd">         &#39;meetme_service_uri&#39;: None,</span>
+<span class="sd">         &#39;abbreviated_dial_uri&#39;: None,</span>
+<span class="sd">         &#39;rfc2543hold&#39;: 0,</span>
+<span class="sd">         &#39;call_hold_ringback&#39;: 255,</span>
+<span class="sd">         &#39;uri_dialing_display_preference&#39;: 255,</span>
+<span class="sd">         &#39;local_cfwd_enable&#39;: 1,</span>
+<span class="sd">         &#39;semi_attended_transfer&#39;: 1,</span>
+<span class="sd">         &#39;anonymous_call_block&#39;: 255,</span>
+<span class="sd">         &#39;callerid_blocking&#39;: 255,</span>
+<span class="sd">         &#39;dnd_control&#39;: 255,</span>
+<span class="sd">         &#39;remotecc_enable&#39;: 1,</span>
+<span class="sd">         &#39;retain_forward_information&#39;: 1,</span>
+<span class="sd">        }</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering method get_sip_call_features().&#39;</span><span class="p">)</span>
+        <span class="n">ret_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_SIP_CALL_FEATURES</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary_to_boolean</span><span class="p">(</span><span class="n">ret_val</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">blf_call_park</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Allows directed call parking using blf</span>
+<span class="sd">        BLF directed call park allows user to park a call on a preconfigured</span>
+<span class="sd">        park number which can exist on a set of phone.To retrieve a parked call</span>
+<span class="sd">        user need to dial confiured retrieval prefix followed by the park</span>
+<span class="sd">        number The call_reference parameter is used to perform call parking.</span>
+<span class="sd">        If none is given as callrefrence it will allow retreiving existing</span>
+<span class="sd">        parked call if any otherwise if no call is parked it will throw error</span>
+
+<span class="sd">        :parameter call_ref: call reference</span>
+
+<span class="sd">        :returns: True if successful else False</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.blfcallpark(ep2.get_number(ep1 callref))</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; ep1.blfcallpark(ep2.get_number())</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering method blf_call_park().&#39;</span><span class="p">)</span>
+        <span class="n">ret_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">BLFCALLPARK</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary_to_boolean</span><span class="p">(</span><span class="n">ret_val</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_rtcp_stream_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Get RTCP information on a media stream.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: A variable sized list of dictionary with {field  value}</span>
+<span class="sd">         pairs containing extended information about the stream.</span>
+
+<span class="sd">         The current fields supported:\n</span>
+<span class="sd">         * rtcpaddress - ip:port of receive end if inbound RTCP stream, or</span>
+<span class="sd">           address to send to if outbound RTCP stream.</span>
+<span class="sd">         * cname - Canonical endpoint identifier. CNAME will be same for a set</span>
+<span class="sd">           of related RTP sessions i.e audio &amp; video streams of the same call(</span>
+<span class="sd">           outbound streams only).</span>
+<span class="sd">         * last report time - time stamp, hh:mm:ss:mmm of last RTCP report(for</span>
+<span class="sd">           inbound stream shows timestamp of last report received, for</span>
+<span class="sd">           outbound stream shows timestamp of last report sent)</span>
+<span class="sd">         * compound reports sent - Number of  RTCP messages sent since call</span>
+<span class="sd">           connected (outbound streams only). A single RTCP message can carry</span>
+<span class="sd">           multiple RTCP reports like RR, SR, SDES, APP, BYE etc.</span>
+<span class="sd">         * receiver reports sent - Number of receiver reports sent since call</span>
+<span class="sd">           connected (outbound streams only). Refer RFC 3550 for details on</span>
+<span class="sd">           RTCP receiver report (RR).</span>
+<span class="sd">         * sender reports sent - Number of sender reports sent since call</span>
+<span class="sd">           connected (outbound streams only). Refer RFC 3550 for details on</span>
+<span class="sd">           RTCP sender report (SR).</span>
+<span class="sd">         * sdes reports sent - Number of source description reports sent since</span>
+<span class="sd">           call connected (outbound streams only). Refer RFC 3550 for details</span>
+<span class="sd">           on RTCP source description report (SDES).</span>
+<span class="sd">         * app reports sent - Number of application-defined reports sent since</span>
+<span class="sd">           call connected (outbound streams only). Refer RFC 3550 for details</span>
+<span class="sd">           on Application-defined RTCP report (APP). Applicable only for</span>
+<span class="sd">           Telepresence endpoints.</span>
+<span class="sd">         * compound reports received - Number of  RTCP messages received since</span>
+<span class="sd">           call connected (inbound streams only). A single RTCP message can</span>
+<span class="sd">           carry multiple RTCP reports like RR, SR, SDES, APP, BYE etc.</span>
+<span class="sd">         * error reports received - Number of  malformed RTCP messages received</span>
+<span class="sd">           and dropped since call connected (inbound streams only).</span>
+<span class="sd">         * receiver reports received - Number of receiver reports received</span>
+<span class="sd">           since call connected (inbound streams only). Refer RFC 3550 for</span>
+<span class="sd">           details on RTCP receiver report (RR).</span>
+<span class="sd">         * sender reports received - Number of sender reports received since</span>
+<span class="sd">           call connected (inbound streams only). Refer RFC 3550 for details</span>
+<span class="sd">           on RTCP sender report (SR).</span>
+<span class="sd">         * sdes reports received - Number of source description reports</span>
+<span class="sd">           received since call connected (inbound streams only). Refer RFC</span>
+<span class="sd">           3550 for details on RTCP source description report (SDES).</span>
+<span class="sd">         * app reports received - Number of application-defined reports</span>
+<span class="sd">           received since call connected (inbound streams only). Refer</span>
+<span class="sd">           RFC 3550 for details on Application-defined RTCP report (APP).</span>
+<span class="sd">           Applicable only for Telepresence endpoints.</span>
+<span class="sd">         * bye reports received - Number of bye reports received since call</span>
+<span class="sd">           connected (inbound streams only). Refer RFC 3550 for details on BYE</span>
+<span class="sd">           RTCP report.</span>
+<span class="sd">         * x-cisco-cts sent - Number of x-cisco-cts sent since call connected</span>
+<span class="sd">           (outbound video streams only).</span>
+<span class="sd">         * x-cisco-cts received - Number of x-cisco-cts received since call</span>
+<span class="sd">           connected (inbound video streams only).</span>
+<span class="sd">         * pli received - Number of PLI (Picture Loss Indication) request</span>
+<span class="sd">           received since call connected (inbound video streams only).</span>
+<span class="sd">           Refer RFC 4585 for details on PLI.</span>
+<span class="sd">         * fir received - Number of FIR (Full Intra Request) requests received</span>
+<span class="sd">           since call connected (inbound video streams only). Refer RFC 5104</span>
+<span class="sd">           for details on FIR.</span>
+<span class="sd">         * tmmbr received - Number of TMMBR received since call connected</span>
+<span class="sd">           (inbound video streams only). Refer RFC 5104 for details on TMMBR.</span>
+<span class="sd">         * tmmbn sent - Number of TMMBN sent since call connected (outbound</span>
+<span class="sd">           video streams only). Refer RFC 5104 for details on TMMBN.</span>
+<span class="sd">         * mux-ctrl received - Number of MUX Control packet received during MUX</span>
+<span class="sd">           Negotiation. (inbound video streams only).</span>
+<span class="sd">         * mux-ctrl sent - Number of MUX Control packet sent during MUX</span>
+<span class="sd">           Negotiation. (outbound video streams only).</span>
+<span class="sd">         * mux-mediaopt received - Number of MUX Media Option packet received</span>
+<span class="sd">           during and after MUX Negotiation. (inbound video streams only).</span>
+<span class="sd">         * mux-mediaopt sent - Number of MUX Media Option packet sent during</span>
+<span class="sd">           MUX Negotiation. (outbound video streams only).</span>
+<span class="sd">         * mux-echo received - Number of MUX echo packet received.</span>
+<span class="sd">           (inbound video streams only).</span>
+<span class="sd">         * mux-echo sent - Number of MUX echo packet sent.</span>
+<span class="sd">           (outbound video streams only).</span>
+<span class="sd">         * mux-refresh received - Number of MUX video refresh packet received.</span>
+<span class="sd">           (inbound video streams only).</span>
+<span class="sd">         * mux-txflowctrl received - Number of MUX Tx Flow Control packet</span>
+<span class="sd">           received. (inbound video streams only).</span>
+<span class="sd">         * last report - A list of lists that displays protocol fields of last</span>
+<span class="sd">           RTCP message sent/ received. Each list is an RTCP report of type</span>
+<span class="sd">           sender, receiver or     SDES report. A one sentence summary of</span>
+<span class="sd">           fields is provided here. Refer RFC 3550 for detailed decription.\n</span>
+<span class="sd">           * sender report - Incoming/ outgoing sender report.\n</span>
+<span class="sd">             * ssrc - Synchronization source is a 32-bit integer that</span>
+<span class="sd">               uniquely identifies an audio/ video stream. Corresponds to the</span>
+<span class="sd">               sender of the report.</span>
+<span class="sd">             * rtp timestamp - Timestamp of report in the same unit as</span>
+<span class="sd">               used by RTP in its timestamps.</span>
+<span class="sd">             * sent packets - The total number of RTP data packets</span>
+<span class="sd">               transmitted by the sender since starting transmission</span>
+<span class="sd">               up until the time this SR packet was generated</span>
+<span class="sd">             * sent octets - The total number of RTP payload octets</span>
+<span class="sd">               transmitted by the sender since starting transmission</span>
+<span class="sd">               up until the time this SR packet was generated.</span>
+<span class="sd">           * receiver report - Incoming/ outgoing receiver report.\n</span>
+<span class="sd">             * ssrc - The SSRC identifier of the source about which</span>
+<span class="sd">               the information in this reception report block pertains.</span>
+<span class="sd">             * fraction lost - The fraction of RTP data packets from</span>
+<span class="sd">               the source lost since the previous SR or RR packet was</span>
+<span class="sd">               sent.Not implemented.</span>
+<span class="sd">             * cum lost packets - The total number of RTP data packets</span>
+<span class="sd">               from source that have been lost since the beginning of</span>
+<span class="sd">               reception.</span>
+<span class="sd">             * high seq num - The low 16 bits contain the highest</span>
+<span class="sd">               sequence number received in an RTP data packet from</span>
+<span class="sd">               source and the most significant 16 bits extend that</span>
+<span class="sd">               sequence number with the corresponding count of</span>
+<span class="sd">               sequence number cycles. Not implemented.</span>
+<span class="sd">             * jitter - Average jitter of RTP packets.</span>
+<span class="sd">             * last sr timestamp - The middle 32 bits out of 64 in</span>
+<span class="sd">               the NTP timestamp received as part of the most recent</span>
+<span class="sd">               RTCP sender report (SR) packet from source.</span>
+<span class="sd">             * sr rr delay - Delay in milliseconds between receiving</span>
+<span class="sd">               the last SR packet from source and sending this receiver</span>
+<span class="sd">               report.</span>
+<span class="sd">           * sdes report - Incoming/ outgoing source description report.\n</span>
+<span class="sd">             * cname - Canonical endpoint identifier for the RTP session</span>
+<span class="sd">         * rtcp-fb negotiated - A list of negotiated RTCP-feedback attributes</span>
+<span class="sd">           (inbound/outbound video streams only). Please refer sip.phone</span>
+<span class="sd">           configuration section for supported RTCP-feedback types(</span>
+<span class="sd">           rtcpfb.X.typeY).</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.dial(ep2)</span>
+<span class="sd">        &gt;&gt;&gt; ep1.get_streams()</span>
+<span class="sd">        [{&#39;CallId&#39;: &#39;0xf1541c18&#39;,</span>
+<span class="sd">          &#39;Direction&#39;: &#39;Rx&#39;,</span>
+<span class="sd">          &#39;RcvrCodec&#39;: &#39;g711u&#39;,</span>
+<span class="sd">          &#39;RemoteAddr&#39;: &#39;10.20.1.3:50943&#39;,</span>
+<span class="sd">          &#39;StreamStatus&#39;: &#39;Active&#39;,</span>
+<span class="sd">          &#39;StrmID&#39;: &#39;0x0b515908&#39;},</span>
+<span class="sd">         {&#39;CallId&#39;: &#39;0xf1541c18&#39;,</span>
+<span class="sd">          &#39;Direction&#39;: &#39;Tx&#39;,</span>
+<span class="sd">          &#39;RemoteAddr&#39;: &#39;10.20.1.3:60324&#39;,</span>
+<span class="sd">          &#39;SenderCodec&#39;: &#39;g711u&#39;,</span>
+<span class="sd">          &#39;StreamStatus&#39;: &#39;Active&#39;,</span>
+<span class="sd">          &#39;StrmID&#39;: &#39;0x0b944568&#39;}]</span>
+<span class="sd">        &gt;&gt;&gt; ep1.get_rtcp_stream_info(ep1.get_streams()[1][&#39;StrmID&#39;])</span>
+<span class="sd">        {&#39;rtcpaddress&#39;: &#39;10.12.10.121:38501&#39;,</span>
+<span class="sd">         &#39;cname&#39;: &#39;e93af034@10.12.10.227&#39;,</span>
+<span class="sd">         &#39;last report time&#39;: &#39;18:10:56:520&#39;,</span>
+<span class="sd">         &#39;compound reports sent&#39;: &#39;3&#39;,</span>
+<span class="sd">         &#39;receiver reports sent&#39;: &#39;2&#39;,</span>
+<span class="sd">         &#39;sender reports sent&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;sdes reports sent&#39;: &#39;2&#39;,</span>
+<span class="sd">         &#39;app reports sent&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;x-cisco-cts sent&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;tmmbn sent&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;mux-ctrl sent&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;mux-mediaopt sent&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;mux-echo sent&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;rtcp-fb negotiated&#39;: &#39;&#39;,</span>
+<span class="sd">         &#39;last report&#39;: {</span>
+<span class="sd">             &#39;sender ssrc&#39;: &#39;4056167420&#39;,</span>
+<span class="sd">             &#39;sender report&#39;: {</span>
+<span class="sd">                 &#39;rtp timestamp&#39;: &#39;0&#39;,</span>
+<span class="sd">                 &#39;sent packets&#39;: &#39;0&#39;,</span>
+<span class="sd">                 &#39;sent octets&#39;: &#39;0&#39;},</span>
+<span class="sd">             &#39;receiver report&#39;: {</span>
+<span class="sd">                 &#39;ssrc&#39;: &#39;0&#39;,</span>
+<span class="sd">                 &#39;fraction lost&#39;: &#39;0&#39;,</span>
+<span class="sd">                 &#39;cum lost packets&#39;: &#39;0&#39;,</span>
+<span class="sd">                 &#39;high seq num&#39;: &#39;0&#39;,</span>
+<span class="sd">                 &#39;jitter&#39;: &#39;0&#39;,</span>
+<span class="sd">                 &#39;last sr timestamp&#39;: &#39;0&#39;,</span>
+<span class="sd">                 &#39;sr rr delay&#39;: &#39;0&#39;},</span>
+<span class="sd">             &#39;sdes report&#39;: {</span>
+<span class="sd">                 &#39;cname&#39;: &#39;e93af034@10.12.10.227&#39;}</span>
+<span class="sd">             }</span>
+<span class="sd">         }</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stream_ref</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_RTCP_STREAM_INFO</span><span class="p">,</span>
+                                   <span class="n">stream_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_stream_ice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;provides detailed information for each stream for just the selected</span>
+<span class="sd">        (nominated) candidates as well as current state of the ICE checklist</span>
+<span class="sd">        for the stream.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference can be retrieved</span>
+<span class="sd">         from get_streams()</span>
+
+<span class="sd">        :returns: A variable sized list of dictionary with {field  value}</span>
+<span class="sd">         pairs containing ice information about the stream.</span>
+
+<span class="sd">         The current fields supported:\n</span>
+<span class="sd">         * role - specifies the role of the ICE agent, either</span>
+<span class="sd">           controlling or controlled</span>
+<span class="sd">         * ice_vqmetrics- ice vqmetrics information for audio stream</span>
+<span class="sd">           in the format of mmm:xxx:nnn:tttt e.g ice:host:0:0</span>
+<span class="sd">           if endpoint is not ice enabled value is none.</span>
+<span class="sd">           where:\n</span>
+<span class="sd">            * mmm: Mode. One of ice|lite|none|unk.Default value is unk</span>
+<span class="sd">            * xxx: Type of candidate selected host/relay/srflx/prflx</span>
+<span class="sd">            * nnn: max time(ms)for connectivity check on that path.Default</span>
+<span class="sd">              value is 0</span>
+<span class="sd">            * ttt: time(ms)for the full ICE negotiation to complete.Default</span>
+<span class="sd">              value is 0</span>
+<span class="sd">         * index - index of the mline inside the SDP, with the first mline = 1</span>
+<span class="sd">         * media - media type of the mline</span>
+<span class="sd">         * rtp - this defines a dictionary that contains ICE information for</span>
+<span class="sd">           the RTP portion of the media stream</span>
+<span class="sd">         * rtcp - a dictionary that contains ICE information for the RTCP</span>
+<span class="sd">           portion of the media stream.If RTCP is not enable for the</span>
+<span class="sd">           endpoint, the dictionary will be empty.  Attempting to access</span>
+<span class="sd">           a key will result in exception KeyError.</span>
+<span class="sd">         * state - the state of the ice checklist state for the session created</span>
+<span class="sd">           for each media stream (defined in ice_session.h,</span>
+<span class="sd">           pj_ice_sess_checklist_state).It can have one of the following</span>
+<span class="sd">           values:</span>
+<span class="sd">             * idle: The checklist is not yet running.</span>
+<span class="sd">             * running: In this state, ICE checks are still in progress for</span>
+<span class="sd">               this media stream.</span>
+<span class="sd">             * completed: In this state, ICE checks have completed for this</span>
+<span class="sd">               media stream, either successfully or with failure.</span>
+<span class="sd">         * result - final result of the ice checklist after reaching the</span>
+<span class="sd">           completed state.  Values will be either success or failed. If</span>
+<span class="sd">           failure, the error that caused the failure will be in</span>
+<span class="sd">           the &#39;error&#39; key.</span>
+<span class="sd">         * selected_pair - a dictionary that contains the candidate pair</span>
+<span class="sd">           selected by ICE for sending and receiving media.  Each of its</span>
+<span class="sd">           candidates is called the selected candidate</span>
+<span class="sd">         * local - a dictionary containing information about the selected</span>
+<span class="sd">           candidate that an agent has obtained and included in an offer</span>
+<span class="sd">           or answer it sent.</span>
+<span class="sd">         * remote - a dictionary containing information about the selected</span>
+<span class="sd">           candidate that an agent has obtained and included in an offer or</span>
+<span class="sd">           answer it sent.</span>
+<span class="sd">         * address - ip address of selected candidate</span>
+<span class="sd">         * port - port of selected candidate.</span>
+<span class="sd">         * type - type of the selected candidate:</span>
+<span class="sd">             * host: Host Candidate</span>
+<span class="sd">             * srflx: Server Reflexive Candidate</span>
+<span class="sd">             * prflx: Peer Reflexive Candidate</span>
+<span class="sd">             * relay: Relayed Candidate</span>
+<span class="sd">         * error - if the ICE session or checklist failed,</span>
+<span class="sd">           this will contain the error.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.get_streams()</span>
+<span class="sd">        [{&#39;CallId&#39;: &#39;0xf1541c18&#39;,</span>
+<span class="sd">          &#39;Direction&#39;: &#39;Rx&#39;,</span>
+<span class="sd">          &#39;RcvrCodec&#39;: &#39;g711u&#39;,</span>
+<span class="sd">          &#39;RemoteAddr&#39;: &#39;10.20.1.3:50943&#39;,</span>
+<span class="sd">          &#39;StreamStatus&#39;: &#39;Active&#39;,</span>
+<span class="sd">          &#39;StrmID&#39;: &#39;0x0b515908&#39;},</span>
+<span class="sd">         {&#39;CallId&#39;: &#39;0xf1541c18&#39;,</span>
+<span class="sd">          &#39;Direction&#39;: &#39;Tx&#39;,</span>
+<span class="sd">          &#39;RemoteAddr&#39;: &#39;10.20.1.3:60324&#39;,</span>
+<span class="sd">          &#39;SenderCodec&#39;: &#39;g711u&#39;,</span>
+<span class="sd">          &#39;StreamStatus&#39;: &#39;Active&#39;,</span>
+<span class="sd">          &#39;StrmID&#39;: &#39;0x0b944568&#39;}]</span>
+<span class="sd">        &gt;&gt;&gt; ep1.get_stream_ice(ep1.get_streams()[1][&#39;StrmID&#39;])</span>
+<span class="sd">        {&#39;role&#39;: &#39;controlling&#39;,</span>
+<span class="sd">         &#39;index&#39;: 1,</span>
+<span class="sd">         &#39;media&#39;: &#39;audio&#39;,</span>
+<span class="sd">         ice_vqmetrics&#39;: u&#39;ice:none:0:0</span>
+<span class="sd">         &#39;rtp&#39;: {</span>
+<span class="sd">          &#39;state&#39;: &#39;completed&#39;,</span>
+<span class="sd">          &#39;result&#39;: &#39;success&#39;,</span>
+<span class="sd">          &#39;selected_pair&#39;: {</span>
+<span class="sd">            &#39;local&#39;: {&#39;address&#39;:&#39;10.104.45.107&#39;, &#39;port&#39;: 8002, &#39;type&#39;: &#39;host&#39;},</span>
+<span class="sd">            &#39;remote&#39;: {&#39;address&#39;:&#39;72.163.212.37&#39;, &#39;port&#39;: 2328, &#39;type&#39;: &#39;host&#39;}</span>
+<span class="sd">            },</span>
+<span class="sd">          &#39;error&#39;: &#39;&#39;</span>
+<span class="sd">          },</span>
+<span class="sd">         &#39;rtcp&#39;: {</span>
+<span class="sd">          &#39;state&#39;: &#39;completed&#39;,</span>
+<span class="sd">          &#39;result&#39;: &#39;success&#39;,</span>
+<span class="sd">          &#39;selected_pair&#39;: {</span>
+<span class="sd">            &#39;local&#39;: {&#39;address&#39;:&#39;10.104.45.107&#39;, &#39;port&#39;: 8003, &#39;type&#39;: &#39;host&#39;},</span>
+<span class="sd">            &#39;remote&#39;: {&#39;address&#39;:&#39;72.163.212.37&#39;, &#39;port&#39;: 2329, &#39;type&#39;: &#39;host&#39;}</span>
+<span class="sd">            },</span>
+<span class="sd">          &#39;error&#39;: &#39;&#39;</span>
+<span class="sd">          }</span>
+<span class="sd">         }</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stream_ref</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_STREAM_ICE</span><span class="p">,</span>
+                                   <span class="n">stream_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">update_media</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">,</span> <span class="n">option</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        once the call is established update_media() helps, to</span>
+<span class="sd">        escalate/deescalate the media by using option parameter.</span>
+
+<span class="sd">        :parameter call_ref: reference of the call</span>
+<span class="sd">        :parameter option: it is string type parameter\n</span>
+<span class="sd">            * if option parameter value is &quot;all&quot;, camelot will send reinvite</span>
+<span class="sd">              with all configured m-lines with non zero port.</span>
+<span class="sd">            * if option parameter value is &quot;none&quot;,  camelot will send reinvite</span>
+<span class="sd">              with all configured m-lines with zero port.</span>
+<span class="sd">            * option parameter value can be any combination of the</span>
+<span class="sd">              following tokens:\n</span>
+<span class="sd">                * audio</span>
+<span class="sd">                * video</span>
+<span class="sd">                * bfcp</span>
+<span class="sd">                * slides</span>
+<span class="sd">                * fecc</span>
+<span class="sd">                * ix</span>
+<span class="sd">        Tokens in the option value should be separated with</span>
+<span class="sd">        the character &#39;+&#39;.</span>
+
+<span class="sd">         * if &quot;the number of tokens in the opiton value is matching with</span>
+<span class="sd">           the number of active media&quot; and &quot;the tokens in the option value</span>
+<span class="sd">           are matching with the active media&quot;</span>
+<span class="sd">           then camelot will throw an error with &quot;can&#39;t update media&quot;.</span>
+
+<span class="sd">         * For example if the initial call is</span>
+<span class="sd">             &quot;audio+video+fecc+bfcp+slides&quot;</span>
+<span class="sd">             and option = &quot;audio+video+fecc+ix&quot; then</span>
+<span class="sd">             SDP in the reinvite shall have audio, video, fecc,</span>
+<span class="sd">             ix m-lines with non zero port and</span>
+<span class="sd">             bfcp, slides m-lines with zero port</span>
+
+
+<span class="sd">        :returns: True on success  otherwise False is returned.</span>
+<span class="sd">                 For error the CamelotError exception is raised</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">call_ref</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;call reference is not available&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">option</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;option is not available&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">call_ref</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;Invalid call reference&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary_to_boolean</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">ESCALATE</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">,</span> <span class="n">option</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">get_service_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a dictionary reflecting the status of the last user</span>
+<span class="sd">        initiated service.\n</span>
+<span class="sd">        The following field/values are defined:\n</span>
+<span class="sd">            * type - the type of service attempted. Currently only &quot;extension</span>
+<span class="sd">              mobility&quot; is supported.</span>
+<span class="sd">            * state - the state of the service. Upon termination the service</span>
+<span class="sd">              can be in either the completed or error states ; otherwise a</span>
+<span class="sd">              service specific interim state is returned.</span>
+<span class="sd">            * error - the last error message associated with the service</span>
+<span class="sd">            * transport - the transport type used by the service. secured</span>
+<span class="sd">              in case secured URL used or nonsecured.</span>
+<span class="sd">            * start - em_service or em_logout initiation date and time</span>
+<span class="sd">              stamp in GMT format</span>
+<span class="sd">            * end - em_service or em_logout completion date and time</span>
+<span class="sd">              stamp in GMT format</span>
+<span class="sd">            * total attempts - total number of service invocations on</span>
+<span class="sd">              that endpoint</span>
+<span class="sd">            * total completes - total number of services completed on that</span>
+<span class="sd">              endpoint</span>
+<span class="sd">            * total errors - total number of service attempts which had</span>
+<span class="sd">              terminated with an error</span>
+
+<span class="sd">        :returns: Returns a dictionary reflecting the status of the last</span>
+<span class="sd">                 user initiated service.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.get_service_info()</span>
+<span class="sd">            {&#39;end&#39;: &#39;2016-12-13T17:49:50.197-05:30 &#39;,</span>
+<span class="sd">             &#39;error&#39;: &#39;&#39;,</span>
+<span class="sd">             &#39;start&#39;: &#39;2016-12-13T17:49:50.30-05:30 &#39;,</span>
+<span class="sd">             &#39;state&#39;: &#39;completed&#39;,</span>
+<span class="sd">             &#39;total attempts&#39;: &#39;2&#39;,</span>
+<span class="sd">             &#39;total completes&#39;: &#39;2&#39;,</span>
+<span class="sd">             &#39;total errors&#39;: &#39;0&#39;,</span>
+<span class="sd">             &#39;transport&#39;: &#39;nonsecured&#39;,</span>
+<span class="sd">             &#39;type&#39;: &#39;extension mobility&#39;</span>
+<span class="sd">            }</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_SERVICE_INFO</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_service_info_ext</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns a dictionary reflecting the status of the last user</span>
+<span class="sd">        initiated service.</span>
+
+<span class="sd">        The following field/values are defined:\n</span>
+<span class="sd">            * action - the URI of the profile used during sign-in</span>
+<span class="sd">            * pin - the PIN used to access the service</span>
+<span class="sd">            * profile uri - the URI of the profile used during sign-in</span>
+<span class="sd">            * requested action - in case emlogout was invoked sign-out</span>
+<span class="sd">              will be set otherwise &quot;none&quot; is set</span>
+<span class="sd">            * service name - the name of the service accessed</span>
+<span class="sd">            * user - the user id used to access the service</span>
+
+<span class="sd">        :returns: Returns a dictionary reflecting the status of the last</span>
+<span class="sd">                 user initiated service.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.get_service_info_ext()</span>
+<span class="sd">        {&#39;action&#39;: &#39;sign-in&#39;,</span>
+<span class="sd">         &#39;pin&#39;: &#39;12345&#39;,</span>
+<span class="sd">         &#39;profile uri&#39;: &#39;&#39;,</span>
+<span class="sd">         &#39;requested action&#39;: &#39;none&#39;,</span>
+<span class="sd">         &#39;service name&#39;: &#39;Extension Mobility&#39;,</span>
+<span class="sd">         &#39;user&#39;: &#39;EMCC_24_997124011&#39;</span>
+<span class="sd">        }</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_SERVICE_INFO_EXT</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_services_urls</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns the list of services extracted by the Camelot endpoints.</span>
+<span class="sd">           Only a subset of the services as configured on the Unified</span>
+<span class="sd">           Call Manager are returned.</span>
+<span class="sd">           As of the current release Extension Mobility related services</span>
+<span class="sd">           are returned.</span>
+
+<span class="sd">        :returns: A Tcl list of lists of the following format:</span>
+<span class="sd">            {{name {service name}}{url url-string} {secured-url url-string}}...</span>
+<span class="sd">            {{name {service name}} {url url-string} {secured-url url-string}}.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_SERVICES_URLS</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_sso_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sso_service</span><span class="o">=</span><span class="s1">&#39;cucm&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;It returns the current ssologin information, like home</span>
+<span class="sd">        node cluster, auththoken, jsessionid, etc., as shown in the</span>
+<span class="sd">        Returns section. For code grant flow, since there is no</span>
+<span class="sd">        separate login for unity, for sso_service of unity it will return</span>
+<span class="sd">        same info of cucm.</span>
+
+<span class="sd">        :parameter sso_service: The services supported for</span>
+<span class="sd">             sso login currently are: cucm and unity_connection.</span>
+<span class="sd">            this parameter can take two values: &#39;cucm&#39; and &#39;unity&#39;.</span>
+<span class="sd">            Defaults to &#39;cucm&#39;.</span>
+
+<span class="sd">        :returns: A variable sized list of dictionaries with {field value}</span>
+<span class="sd">            pairs containing extended information about the sso login.\n</span>
+<span class="sd">            The following fields are supported:\n</span>
+<span class="sd">            * state -  SSO Login state. Possible values are loggedin,</span>
+<span class="sd">              loggedout and loggingin.</span>
+<span class="sd">            * homenode url - UDS home node url</span>
+<span class="sd">            * remote sso enabled - True of False. Indicates the sso status</span>
+<span class="sd">              at CUCM</span>
+<span class="sd">            * central-uds server - Central Uds server discovered</span>
+<span class="sd">            * jsessionid - jsession id of the sso login successful session</span>
+<span class="sd">            * jsessionidsso - jsessionidsso of the successful sso login</span>
+<span class="sd">              session.</span>
+<span class="sd">            * authtoken - auth token of the successful sso login session</span>
+<span class="sd">              or code grant flow login session.</span>
+<span class="sd">            * refresh token- refresh token of the successful sso login session</span>
+<span class="sd">              or code grant flow login session.</span>
+<span class="sd">            * login response time : The time taken for sso login in milli</span>
+<span class="sd">              seconds.</span>
+<span class="sd">            * last successful login time: last successful sso login time.</span>
+<span class="sd">            * error code - http error code incase of sso login fails.</span>
+<span class="sd">            * failure reason - describes the failure reason for ssologin</span>
+<span class="sd">            * auth token refresh - status of auth token refresh for cucm or</span>
+<span class="sd">              unity. Below are the possible values:\n</span>
+<span class="sd">                * &quot;&quot; - initial value</span>
+<span class="sd">                * pending - refresh is started</span>
+<span class="sd">                * success - refresh is successfully completed</span>
+<span class="sd">                * failed - refresh is failed</span>
+<span class="sd">            * refresh token expiry: refresh token expiry time recevied in</span>
+<span class="sd">              code grant.</span>
+<span class="sd">            * authtoken expiry: auth token expiry time recevied in code grant.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.get_sso_info()</span>
+<span class="sd">        {&#39;authtoken&#39;: &#39;eyJhblU3OC1DR1&#39;,</span>
+<span class="sd">         &#39;central-uds server&#39;: &#39;cam-ccm-11&#39;,</span>
+<span class="sd">         &#39;self contained token&#39;: &#39;true&#39;,</span>
+<span class="sd">         &#39;authtoken expiry&#39;: &#39;900&#39;,</span>
+<span class="sd">         &#39;homenode url&#39;: &#39;cam-ccm-11&#39;,</span>
+<span class="sd">         &#39;remote sso enabled&#39;: &#39;false&#39;,</span>
+<span class="sd">         &#39;idp ciphers&#39;: &#39;AES256-SHA&#39;,</span>
+<span class="sd">         &#39;jsessionid&#39;: &#39;88132D85B87B284F54696FBD374AC1DD&#39;,</span>
+<span class="sd">         &#39;state&#39;: &#39;loggedin&#39;,</span>
+<span class="sd">         &#39;refresh token&#39;: &#39;eyJhbGc&#39;,</span>
+<span class="sd">         &#39;auth token refresh&#39;: &#39;&#39;,</span>
+<span class="sd">         &#39;jsessionidsso&#39;: &#39;086D519BE0ABB7F9F0A14CB61E639B76&#39;,</span>
+<span class="sd">         &#39;failure reason&#39;: &#39;&#39;,</span>
+<span class="sd">         &#39;error code&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;login response time&#39;: &#39;411.1820&#39;,</span>
+<span class="sd">         &#39;token reuse&#39;: &#39;true&#39;,</span>
+<span class="sd">         &#39;last successful login time&#39;: &#39;2017-02-23::15:19:45:241&#39;,</span>
+<span class="sd">         &#39;refresh token expiry&#39;: &#39;86400&#39;}</span>
+
+<span class="sd">         &gt;&gt;&gt; ep.get_sso_info()</span>
+<span class="sd">         {&#39;authtoken&#39;: &#39;eyJhbGciOiJ&#39;,</span>
+<span class="sd">          &#39;central-uds server&#39;: &#39;cam-ccm-11&#39;,</span>
+<span class="sd">          &#39;self contained token&#39;: &#39;true&#39;,</span>
+<span class="sd">          &#39;authtoken expiry&#39;: &#39;536&#39;,</span>
+<span class="sd">          &#39;homenode url&#39;: &#39;cam-ccm-11&#39;,</span>
+<span class="sd">          &#39;remote sso enabled&#39;: &#39;false&#39;,</span>
+<span class="sd">          &#39;idp ciphers&#39;: &#39;AES256-SHA&#39;,</span>
+<span class="sd">          &#39;jsessionid&#39;: &#39;7D44332BA93F04ADB6B8CE6D296108FC&#39;,</span>
+<span class="sd">          &#39;state&#39;: &#39;loggedin&#39;,</span>
+<span class="sd">          &#39;refresh token&#39;: &#39;eyJhbGc&#39;,</span>
+<span class="sd">          &#39;auth token refresh&#39;: &#39;&#39;,</span>
+<span class="sd">          &#39;jsessionidsso&#39;: &#39;4C3A91742A19B3AD46B21F669A5FF236&#39;,</span>
+<span class="sd">          &#39;failure reason&#39;: &#39;&#39;,</span>
+<span class="sd">          &#39;error code&#39;: &#39;0&#39;,</span>
+<span class="sd">          &#39;login response time&#39;: &#39;0.000000&#39;,</span>
+<span class="sd">          &#39;token reuse&#39;: &#39;true&#39;,</span>
+<span class="sd">          &#39;last successful login time&#39;: &#39;2017-02-23::15:19:45:241&#39;,</span>
+<span class="sd">          &#39;refresh token expiry&#39;: &#39;51836&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">sso_service</span> <span class="ow">not</span> <span class="ow">in</span><span class="p">(</span><span class="s2">&quot;cucm&quot;</span><span class="p">,</span> <span class="s2">&quot;unity&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;Invalid sso_service&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sso_service</span> <span class="o">==</span> <span class="s1">&#39;unity&#39;</span><span class="p">:</span>
+            <span class="n">sso_service</span> <span class="o">=</span> <span class="s1">&#39;ucxn&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sso_service</span> <span class="o">=</span> <span class="s1">&#39;cucm-uds&#39;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_SSO_INFO</span><span class="p">,</span> <span class="n">sso_service</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_sso_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sso_service</span><span class="o">=</span><span class="s1">&#39;cucm&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;returns the sso login statistics on an endpoint</span>
+
+<span class="sd">        :parameter clear: Possible values None and 1. Defaults to None.</span>
+<span class="sd">         When 1 is passed the sso stats will be cleared on</span>
+<span class="sd">         returning to the client.</span>
+<span class="sd">        :parameter sso_service: Possible values cucm and unity.</span>
+<span class="sd">         Defaults to cucm.sso stats will be returned for the service</span>
+<span class="sd">         passed for this parameter.</span>
+
+<span class="sd">        :returns: contains the list of dictionaries with {field, value} pars.\n</span>
+<span class="sd">             The following fields are supported:\n</span>
+<span class="sd">             * login attempts: number of sso login attempted</span>
+<span class="sd">             * login successes: number of sso login successess</span>
+<span class="sd">             * login failures: number of sso login failures</span>
+<span class="sd">             * ssomode queries attempted:  number of ssomode discovery</span>
+<span class="sd">               attempted.</span>
+<span class="sd">             * ssomode queries succeeded: number of ssomode queries</span>
+<span class="sd">               succeeded.</span>
+<span class="sd">             * ssomode queries failed: no.of ssomode queries failed</span>
+<span class="sd">             * homenode queries attempted: no.of homenode queries attempted</span>
+<span class="sd">             * homenode queries succeeded: no.of homenode queries succeeded</span>
+<span class="sd">             * homenode queries failed: no.of homenode queries failed</span>
+<span class="sd">             * device discovery queries attempted: no.of devicediscovery</span>
+<span class="sd">               queries attempted</span>
+<span class="sd">             * device discovery queries failed: no.of devicediscovery queries</span>
+<span class="sd">               failed.</span>
+<span class="sd">             * device discovery queries succeeded: no.of devicediscovery</span>
+<span class="sd">               queries succeeded.</span>
+<span class="sd">             * self-provision queries attempted: no.of self-provision queries</span>
+<span class="sd">               attempted.</span>
+<span class="sd">             * self-provision queries succeeded: no.of self-provision queries</span>
+<span class="sd">               succeeded.</span>
+<span class="sd">             * self-provision queries failed: no.of self-provision queries</span>
+<span class="sd">               failed</span>
+<span class="sd">             * 5xx errors: no.of 5xx errors</span>
+<span class="sd">             * 4xx errors: no.of 4xx errors</span>
+<span class="sd">             * 3xx errors: no.of 3xx errors</span>
+<span class="sd">             * oauthrefresh failed: no.of oauth/access token refresh</span>
+<span class="sd">               attempt failed.</span>
+<span class="sd">             * oauthrefresh succeeded: no.of oauth/access refresh</span>
+<span class="sd">               attempt succeeded.</span>
+<span class="sd">             * oauthrefresh attempted: no.of oauth/access refresh</span>
+<span class="sd">               attempt attempted.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.get_sso_stats()</span>
+<span class="sd">        {&#39;device discovery queries failed&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;login successes&#39;: &#39;1&#39;,</span>
+<span class="sd">        &#39;ssomode queries succeeded&#39;: &#39;1&#39;,</span>
+<span class="sd">        &#39;4xx errors&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;oauthrefresh failed&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;oauthrefresh succeeded&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;oauthrefresh attempted&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;login attempts&#39;: &#39;1&#39;,</span>
+<span class="sd">        &#39;self-provision queries failed&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;homenode queries attempted&#39;: &#39;1&#39;,</span>
+<span class="sd">        &#39;ssomode queries attempted&#39;: &#39;1&#39;,</span>
+<span class="sd">        &#39;ssomode queries failed&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;homenode queries succeeded&#39;: &#39;1&#39;,</span>
+<span class="sd">        &#39;devicediscovery queries succedded&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;login failures&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;3xx errors&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;devicediscovery queries attempted&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;5xx errors&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;homenode queries failed&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;self-provision queries attempted&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;self-provision queries succeeded&#39;: &#39;0&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">sso_service</span> <span class="ow">not</span> <span class="ow">in</span><span class="p">(</span><span class="s2">&quot;cucm&quot;</span><span class="p">,</span> <span class="s2">&quot;unity&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;Invalid sso_service&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sso_service</span> <span class="o">==</span> <span class="s1">&#39;unity&#39;</span><span class="p">:</span>
+            <span class="n">sso_service</span> <span class="o">=</span> <span class="s1">&#39;ucxn&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sso_service</span> <span class="o">=</span> <span class="s1">&#39;cucm-uds&#39;</span>
+
+        <span class="k">if</span> <span class="n">clear</span><span class="p">:</span>
+            <span class="n">clear</span> <span class="o">=</span> <span class="s1">&#39;clear&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">clear</span> <span class="o">=</span> <span class="s1">&#39;noclear&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;clear&#39;</span><span class="p">:</span> <span class="n">clear</span>
+                  <span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_SSO_STATS</span><span class="p">,</span> <span class="n">sso_service</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_fax_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Get an endpoint&#39;s fax statistics.</span>
+
+<span class="sd">        Retrieve accumulated fax statistics on a specific endpoint.</span>
+
+<span class="sd">        :parameter clear: Clear all fax statistics upon return</span>
+
+<span class="sd">        :returns: a variable sized list of dictionaries with {field  value}</span>
+<span class="sd">         pairs.</span>
+
+<span class="sd">         The following fields are defined:</span>
+
+<span class="sd">            * send attempts - number fax send attempts</span>
+<span class="sd">            * send successes - number of successful fax send tranmissions</span>
+<span class="sd">            * receive attempts - number of fax receive attempts</span>
+<span class="sd">            * receive successes - number of successful fax receive</span>
+<span class="sd">              transmissions</span>
+<span class="sd">            * sent pages - number of pages sent</span>
+<span class="sd">            * received pages - number of pages received</span>
+<span class="sd">            * retries - number of transmission retries</span>
+<span class="sd">            * bad lines - number of calls bad lines received</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.get_fax_stats()</span>
+<span class="sd">        {&#39;bad lines&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;receive attempts&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;receive successes&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;received pages&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;retries&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;send attempts&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;send successes&#39;: &#39;0&#39;,</span>
+<span class="sd">         &#39;sent pages&#39;: &#39;0&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering into get_fax_stats&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_FAX_STATS</span><span class="p">,</span> <span class="n">clear</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">refresh_register</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span> <span class="n">ipv6</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span> <span class="n">tcpconndropfirst</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Refresh register - Establish new connection</span>
+<span class="sd">                            with CUCM and bring endpoint in service</span>
+
+<span class="sd">        :parameter ip: ipv4 address</span>
+<span class="sd">        :parameter ipv6: ipv6 address</span>
+<span class="sd">        :parameter tcpconndropfirst: options for existing tcp connection\n</span>
+<span class="sd">         * 0 - Refresh register will be sent on new connection first and</span>
+<span class="sd">               old connection will be closed</span>
+<span class="sd">         * 1 - Current active connection is closed first and refresh register</span>
+<span class="sd">               will be sent on new connection</span>
+<span class="sd">         * 2 - Current active connection is closed first and refresh register</span>
+<span class="sd">               wil be sent after 30secs on a new connection</span>
+
+<span class="sd">        :returns: endpoint state</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.refresh_register()</span>
+<span class="sd">        &#39;inservicepending&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ep.refresh_register(ip=&#39;10.22.22.22&#39;,ipv6=&#39;2001:db8::1428:57ab&#39;)</span>
+<span class="sd">        &#39;inservicepending&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ep.refresh_register(tcpconndropfirst=2)</span>
+<span class="sd">        &#39;inservicepending&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ep.refresh_register(ip=&#39;15.12.11.22&#39;,ipv6=&#39;2001:db8:1428:57ab&#39;,</span>
+<span class="sd">            tcpconndropfirst=1)</span>
+<span class="sd">        &#39;inservicepending&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering into refresh_register function&#39;</span><span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ip&#39;</span><span class="p">:</span> <span class="n">ip</span><span class="p">,</span>
+                  <span class="s1">&#39;ipv6&#39;</span><span class="p">:</span> <span class="n">ipv6</span><span class="p">,</span>
+                  <span class="s1">&#39;tcpdrop&#39;</span><span class="p">:</span> <span class="n">tcpconndropfirst</span><span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">ip</span> <span class="o">!=</span> <span class="s1">&#39;null&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">socket</span><span class="o">.</span><span class="n">inet_aton</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">ipv6</span> <span class="o">!=</span> <span class="s1">&#39;null&#39;</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">socket</span><span class="o">.</span><span class="n">inet_pton</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET6</span><span class="p">,</span> <span class="n">ipv6</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">REFRESH_REGISTER</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">initial_register</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;initial_register - After endpoint comes into the inservice,</span>
+<span class="sd">             establishes new connection  with CMS and then sends</span>
+<span class="sd">             full register message.After invoking this endpoint state would be</span>
+<span class="sd">             moved to insfailover. once camelot receives the 200 ok for the</span>
+<span class="sd">             full register message endpoint state would be moved to inservice.</span>
+<span class="sd">             Here endpont acts like to simulate hedge behaviour towards cms.</span>
+
+<span class="sd">        :returns: 1 on success,on failure returns the error string:</span>
+<span class="sd">                  &quot;initialregister can&#39;t be invoked&quot;</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.initial_register()</span>
+<span class="sd">        &#39;1&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering into initial_register function&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">INITIAL_REGISTER</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">refresh_subscribe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">eventstr</span><span class="o">=</span><span class="s1">&#39;null&#39;</span><span class="p">,</span>
+                          <span class="n">unsubscribe</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; refreshsubscribe   -  will initiates the subscribe.</span>
+
+<span class="sd">        For the DMC endpoint case, it will use a new IP after refreshregister.</span>
+
+<span class="sd">        :parameter event: DMC Refresh events.  The possible values are \n</span>
+<span class="sd">            * 1 - Send subscribe only for DIALOG event</span>
+<span class="sd">            * 2 - Send subscribe only for PRESENCE event</span>
+<span class="sd">            * 3 - Send subscribe for DIALOG and PRESENCE event</span>
+<span class="sd">        :parameter eventstr: User defined event string for NanoCUBE interface.</span>
+<span class="sd">                             Possible values are \n</span>
+<span class="sd">            * dialog</span>
+<span class="sd">            * line-seize</span>
+<span class="sd">            * call-info</span>
+<span class="sd">            * message-summary</span>
+<span class="sd">            * x-broadworks-hoteling</span>
+<span class="sd">            * as-feature-event</span>
+<span class="sd">            * x-broadworks-call-center-status</span>
+<span class="sd">            * Any new event string defined by user</span>
+<span class="sd">        :parameter unsubscribe: Unsubscribe specified event string. If event is</span>
+<span class="sd">         not given unsubscribe all events.  Its applicable only for NanoCUBE</span>
+<span class="sd">         interface.</span>
+<span class="sd">        :parameter clear: clear the get_info_ext for terminated subscription</span>
+<span class="sd">         data. It is applicable only for NanoCUBE interface.</span>
+
+<span class="sd">        :returns: True or False.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.refresh_subscribe()</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; ep.refresh_subscribe(eventstr=&#39;dialog&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; ep.refresh_subscribe(eventstr=&#39;dialog&#39;, unsubscribe=1)</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="ow">not</span> <span class="ow">in</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;Invalid event.  It should be 1/2/3&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">event</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">clear</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">unsubscribe</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">eventstr</span> <span class="o">!=</span> <span class="s1">&#39;null&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span>
+                <span class="s1">&#39;event cannot be given with eventstr/clear/unsubscribe&#39;</span><span class="p">)</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;eventstr&#39;</span><span class="p">:</span> <span class="n">eventstr</span><span class="p">,</span>
+                  <span class="s1">&#39;unsubscribe&#39;</span><span class="p">:</span> <span class="n">unsubscribe</span><span class="p">,</span>
+                  <span class="s1">&#39;clear&#39;</span><span class="p">:</span> <span class="n">clear</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary_to_boolean</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">REFRESH_SUBSCRIBE</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">start_blf_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">called</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Enable monitoring of a called address&#39;s busy lamp field</span>
+
+<span class="sd">        Enable monitoring of a called address busy lamp field (BLF).</span>
+<span class="sd">        Once enabled, the endpoint will receive periodic BLF status updates for</span>
+<span class="sd">        the monitored called address.Use the get_blf_info method to</span>
+<span class="sd">        retrieve the current BLF status of all monitored called addresses.</span>
+<span class="sd">        Monitored called addresses also generate station events corresponding</span>
+<span class="sd">        to the actual updates received from CCM.</span>
+
+<span class="sd">        :parameter called: called address to be monitored</span>
+
+<span class="sd">        :returns: True or False</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.start_blf_status(&#39;880011&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary_to_boolean</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">START_BLF_STATUS</span><span class="p">,</span> <span class="n">called</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">stop_blf_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">called</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Disable monitoring of a called address&#39;s busy lamp field</span>
+
+<span class="sd">        Disable monitoring of a called address busy lamp field (BLF).</span>
+<span class="sd">        Once disabled, the endpoint will no longer receive periodic BLF status</span>
+<span class="sd">        updates for the monitored called address.</span>
+
+<span class="sd">        :parameter called: called address to disable blf monitoring</span>
+
+<span class="sd">        :returns: True or False</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.stop_blf_stats(&#39;880011&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary_to_boolean</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">STOP_BLF_STATUS</span><span class="p">,</span> <span class="n">called</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">get_transport_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transport_ref</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Get detailed information about a transport</span>
+
+<span class="sd">        Get information about the specified transport connection. For UDP</span>
+<span class="sd">        transport connections, destaddr field will return the destination</span>
+<span class="sd">        address for the most recently transmitted packet.</span>
+
+<span class="sd">        :parameter transport_ref: The transport reference</span>
+
+<span class="sd">        :returns: If the field argument is omitted, a variable sized list of</span>
+<span class="sd">         disctionaries with {field  value} containing generic information</span>
+<span class="sd">         about the transport.  If the field option is specified, only the</span>
+<span class="sd">         value for the specified field is returned.\n</span>
+<span class="sd">         The following filed names are spported:\n</span>
+<span class="sd">         * transport - connection type of the transport, tcp or udp</span>
+<span class="sd">         * protocol - protocol associated with the transport, sip</span>
+<span class="sd">         * type -  socket type of the transport, client, server,</span>
+<span class="sd">           accept or none (for UDP transport connections)</span>
+<span class="sd">         * state - state of the transport:\n</span>
+<span class="sd">           * open: socket associated with the transport is open</span>
+<span class="sd">           * closed : socket associated with the transport is</span>
+<span class="sd">             closed.</span>
+<span class="sd">         * srcaddr - source ip and port</span>
+<span class="sd">         * destaddr - destination ip and port</span>
+<span class="sd">        &gt;&gt;&gt; get_transport_info()</span>
+<span class="sd">        {&#39;destination address&#39;: &#39;10.12.10.122:36596&#39;,</span>
+<span class="sd">         &#39;protocol&#39;: &#39;sip&#39;,</span>
+<span class="sd">         &#39;source address&#39;: &#39;10.12.10.224:43889&#39;,</span>
+<span class="sd">         &#39;state&#39;: &#39;open&#39;,</span>
+<span class="sd">         &#39;transport&#39;: &#39;tcp&#39;,</span>
+<span class="sd">         &#39;transportref&#39;: &#39;0x94fbd7b&#39;,</span>
+<span class="sd">         &#39;type&#39;: &#39;server&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">transport_ref</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Invalid transport reference, returning..&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;field&#39;</span><span class="p">:</span> <span class="n">field</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_TRANSPORT_INFO</span><span class="p">,</span> <span class="n">transport_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_transports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Return information about transports associated with an endpoint</span>
+
+<span class="sd">        Retrieve current transports associated with an endpoint.</span>
+
+<span class="sd">        :returns: The list of dictionatires with the followinf form:\n</span>
+<span class="sd">         [{transport-ref  transport protocol  type  state }]\n</span>
+<span class="sd">             * transport-ref - transport reference of the transport</span>
+<span class="sd">             * transport -  connection type of the transport, tcp or udp</span>
+<span class="sd">             * protocol - protocol associated with the transport, sip</span>
+<span class="sd">             * type -  socket type of the transport, client, server,</span>
+<span class="sd">               accept or none (for UDP transport connections)</span>
+<span class="sd">             * state - state of the transport\n</span>
+<span class="sd">               * open - socket associated with the transport is open</span>
+<span class="sd">               * closed - socket associated with the transport is closed</span>
+
+<span class="sd">         If no transports exist, nothing is returned. When a transport is</span>
+<span class="sd">         released via the releasetransports method, it no longer appears</span>
+<span class="sd">         in this list.</span>
+<span class="sd">        &gt;&gt;&gt; get_transports()</span>
+<span class="sd">        &#39;[{&quot;transport-ref&quot;:&quot;0x94fbbc1&quot;,&quot;transport&quot;:&quot;tcp&quot;,</span>
+<span class="sd">        &quot;protocol&quot;:&quot;h225-ras&quot;, &quot;type&quot;:&quot;server&quot;, &quot;state&quot;:&quot;connecting&quot;}]&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_TRANSPORTS</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">log_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">moduleid</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Set or get the configured endpoint logging level.</span>
+<span class="sd">        For parameters description please refer to the server console log</span>
+<span class="sd">        commands documentation.</span>
+
+<span class="sd">        :returns: When trying to apply new settings a status string is</span>
+<span class="sd">         returned. On success Log Level Set is returned; otherwise an</span>
+<span class="sd">         informative exception raised.</span>
+<span class="sd">        For exmaple when log level set as:</span>
+<span class="sd">        log_mask(moduleid=&#39;*&#39;,level=&#39;debug_5&#39;,device=&#39;file&#39;)</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.log_mask()</span>
+<span class="sd">        {&#39;*&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;auto&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;debug_5&#39;},</span>
+<span class="sd">        &#39;button&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;config&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;debug_5&#39;},</span>
+<span class="sd">        &#39;csfd&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;cupc&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;cupcd&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;http&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;jguest&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;media&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;mediatransp&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;method&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;debug_5&#39;},</span>
+<span class="sd">        &#39;qbe&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;qbetransp&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;sccp&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;sccptransp&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;sip&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;siptransp&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;srtp&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;sss&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;tdm&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;tftp&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;tvs&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;vapi&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;xmpp&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;},</span>
+<span class="sd">        &#39;~&#39;: {&#39;console&#39;: &#39;&#39;, &#39;file&#39;: &#39;&#39;}}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># EXECUTE AND MODIFY</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;moduleid&#39;</span><span class="p">:</span> <span class="n">moduleid</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;level&#39;</span><span class="p">:</span> <span class="n">level</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;device&#39;</span><span class="p">:</span> <span class="n">device</span> <span class="ow">or</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;reset&#39;</span><span class="p">:</span> <span class="n">reset</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">LOG_MASK</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">ep_log_mask</span> <span class="o">=</span> <span class="n">log_mask</span>
+
+    <span class="k">def</span> <span class="nf">log_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns the endpoint&#39;s execution logs directory path on</span>
+<span class="sd">        Camelot server.</span>
+
+<span class="sd">        :returns: The execution log folder&#39;s path.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.log_dir()</span>
+<span class="sd">        &#39;/var/camelot/logs/02006_20131018_113644/sipx8&#39;</span>
+
+<span class="sd">        Note: If Camelot server is started with json format enable. \</span>
+<span class="sd">               The output will be in Json format.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.log_dir()</span>
+<span class="sd">        {&#39;directory&#39;: &#39;/var/camelot/logs/02006_20131018_113644/sipx8&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">LOG_DIR</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">ep_log_dir</span> <span class="o">=</span> <span class="n">log_dir</span>
+
+    <span class="k">def</span> <span class="nf">log_filesz</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        The command enables setting the endpoint&#39;s log file size.</span>
+
+<span class="sd">        :parameter size: size in kbytes</span>
+
+<span class="sd">        :returns: The current set log file size or 0 on error.</span>
+
+<span class="sd">        Fetching the current file size</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.log_filesz()</span>
+<span class="sd">        &#39;1024&#39;</span>
+
+<span class="sd">        Changing the current file size</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.log_filesz(&#39;2048&#39;)</span>
+<span class="sd">        &#39;2048&#39;</span>
+
+<span class="sd">        Note: If Camelot server is started with json format enable. \</span>
+<span class="sd">               The output will be in Json format.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.log_filesz()</span>
+<span class="sd">        {&#39;file_size&#39;: &#39;1024&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;size&#39;</span><span class="p">:</span> <span class="n">size</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">LOG_FILESZ</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">ep_log_filesz</span> <span class="o">=</span> <span class="n">log_filesz</span>
+
+    <span class="k">def</span> <span class="nf">max_log_files</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">numfiles</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;The command sets a limit on the number of log files in the</span>
+<span class="sd">        endpoint&#39;s log folder. The arguments and mechanism are identical</span>
+<span class="sd">        to those of camelot max_log_files.</span>
+
+<span class="sd">        :parameter numfiles: number of files</span>
+
+<span class="sd">        :returns: The current log files limit</span>
+
+<span class="sd">        Note: If Camelot server is started with json format enable. \</span>
+<span class="sd">               The output will be in Json format.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1_max_log_files()</span>
+<span class="sd">        {&#39;max_files&#39;: &#39;1024&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;numfiles&#39;</span><span class="p">:</span> <span class="n">numfiles</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">LOG_MAX_FILES</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">ep_max_log_files</span> <span class="o">=</span> <span class="n">max_log_files</span>
+
+    <span class="k">def</span> <span class="nf">log_file_prefix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Changes the current endpoint&#39;s log file name prefix.</span>
+
+<span class="sd">        The command sets or returns the endpoints log file prefix.</span>
+<span class="sd">        The arguments and mechanism are identical to those of camelot</span>
+<span class="sd">        log_file_prefix.</span>
+
+<span class="sd">        :parameter prefix: filename prefix.</span>
+
+<span class="sd">        :returns: The current log file name prefix.</span>
+
+<span class="sd">        Fetching the current file prefix</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.log_file_prefix()</span>
+<span class="sd">        &#39;sipx8&#39;</span>
+
+<span class="sd">        Changing the current file prefix</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.log_file_prefix(&#39;sipx8_new&#39;)</span>
+<span class="sd">        &#39;sipx8_new&#39;</span>
+
+<span class="sd">        Note: If Camelot server is started with json format enable. \</span>
+<span class="sd">               The output will be in Json format.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.log_file_prefix()</span>
+<span class="sd">        {&#39;file_prefix&#39;: &#39;sipx8&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="n">prefix</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">LOG_FILE_PREFIX</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">ep_log_file_prefix</span> <span class="o">=</span> <span class="n">log_file_prefix</span>
+
+    <span class="k">def</span> <span class="nf">clear_mwi_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Clears Message Waiting Indicator(MWI) stats on the Endpoint</span>
+
+<span class="sd">        :returns: True on success</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.get_info_ext()[&#39;mwi stats&#39;]</span>
+<span class="sd">        {&#39;icon off&#39;: &#39;1&#39;, &#39;icon on&#39;: &#39;2&#39;, &#39;lamp off&#39;: &#39;0&#39;, &#39;lamp on&#39;: &#39;0&#39;}</span>
+<span class="sd">        &gt;&gt;&gt; ep1.clear_mwi_stats()</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; ep1.get_info_ext()[&#39;mwi stats&#39;]</span>
+<span class="sd">        {&#39;icon off&#39;: &#39;0&#39;, &#39;icon on&#39;: &#39;0&#39;, &#39;lamp off&#39;: &#39;0&#39;, &#39;lamp on&#39;: &#39;0&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_INFO_EXT_CLEAR_MWI</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_traffic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; sets Tranistion between non-secure and secure modes on</span>
+<span class="sd">        IP-STE endpoints</span>
+
+<span class="sd">        Invokes either secure or nonsecure mode on an IP-STE endpoint.</span>
+
+<span class="sd">        :parameter mode: mode of transition.  Possible values are\n</span>
+<span class="sd">            * secure - Secure mode</span>
+<span class="sd">            * nonsecure - Non secure mode</span>
+<span class="sd">        :returns: True or False</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.set_traffic(&#39;secure&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary_to_boolean</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">SET_TRAFFIC</span><span class="p">,</span> <span class="n">mode</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">set_eptiming</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                     <span class="n">eptimer</span><span class="o">=</span><span class="n">camelot</span><span class="o">.</span><span class="n">EpTimer</span><span class="o">.</span><span class="n">EpTimerType</span><span class="o">.</span><span class="n">all</span><span class="p">,</span>
+                     <span class="n">tmin</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span>
+                     <span class="n">trange</span><span class="o">=</span><span class="mi">55000</span><span class="p">,</span>
+                     <span class="n">increment</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+                     <span class="n">honor_header</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Allows a tester to set the retry timing behavior on</span>
+<span class="sd">        receiving an error responses. sets Timer for specified timer type.</span>
+
+<span class="sd">        :parameter eptimer: Provided arguments are applicable to</span>
+<span class="sd">            specified endpoint timer type.</span>
+<span class="sd">            Possible values are as below\n</span>
+<span class="sd">            * camelot.EpTimer.EpTimerType.retryafter = 1\n</span>
+<span class="sd">            * camelot.EpTimer.EpTimerType.all =2 (Default)</span>
+<span class="sd">        :parameter tmin: Mimimal retry value.</span>
+<span class="sd">        :parameter trange: Camelot will choose a random number</span>
+<span class="sd">            between tmin and tmin+trange.</span>
+<span class="sd">            specified endpoint timer.</span>
+<span class="sd">        :parameter increment: The random number between tmin and</span>
+<span class="sd">            tmin+trange will be rounded off to nearest increment.</span>
+<span class="sd">        :parameter honor_header: honor_header==True means that if</span>
+<span class="sd">            a specified header is present in the response then</span>
+<span class="sd">            the Retry-After header value will be used instead</span>
+<span class="sd">            of the timing settings.</span>
+<span class="sd">            If honor_header==False then timing setting will be used.</span>
+
+<span class="sd">        :Note: tmin, trange and increment are in ms.</span>
+<span class="sd">            Retry timing applies to all SIP and HTTP response</span>
+<span class="sd">            codes, regardless of request:</span>
+
+<span class="sd">        :returns: True or False</span>
+<span class="sd">            Possible error responses:</span>
+<span class="sd">            Invalid timer type, please refer API guide.</span>
+<span class="sd">            increment should be positive number</span>
+<span class="sd">            tmin and trange can not be less than zero</span>
+
+<span class="sd">        &gt;&gt;&gt; set_eptiming(eptimer=&#39;Retry-After&#39;,</span>
+<span class="sd">                        tmin=5000, trange=55000,</span>
+<span class="sd">                        increment=1000, honor_header=True)</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+<span class="sd">        &gt;&gt;&gt; The above example will set retry after &quot;backoff timer&quot;</span>
+<span class="sd">        to a random number between 5 and 60 seconds in 1 second increments.</span>
+<span class="sd">        If the response contains a Retry-After header, it will</span>
+<span class="sd">        be used instead, if valid.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&gt;</span> <span class="n">eptimer</span> <span class="o">&gt;</span> <span class="n">camelot</span><span class="o">.</span><span class="n">EpTimer</span><span class="o">.</span><span class="n">EpTimerType</span><span class="o">.</span><span class="n">all</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Invalid timer type, please refer API guide&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">increment</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;increment should be positive number&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tmin</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">trange</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;tmin and trange can not be less than zero&#39;</span><span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;timer_type&#39;</span><span class="p">:</span> <span class="n">eptimer</span><span class="p">,</span>
+                  <span class="s1">&#39;tmin&#39;</span><span class="p">:</span> <span class="n">tmin</span><span class="p">,</span>
+                  <span class="s1">&#39;trange&#39;</span><span class="p">:</span> <span class="n">trange</span><span class="p">,</span>
+                  <span class="s1">&#39;increment&#39;</span><span class="p">:</span> <span class="n">increment</span><span class="p">,</span>
+                  <span class="s1">&#39;honor_header&#39;</span><span class="p">:</span> <span class="n">honor_header</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">SET_EPTIMING</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">em_service</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                   <span class="n">transport</span><span class="o">=</span><span class="s1">&#39;nonsecured&#39;</span><span class="p">,</span>
+                   <span class="n">servicename</span><span class="o">=</span><span class="s1">&#39;Extension Mobility&#39;</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Initiate an Extension Mobility service procedure.</span>
+<span class="sd">        Initiates an Extension Mobility service with the specified</span>
+<span class="sd">        user credentials.</span>
+<span class="sd">        The endpoint will attempt to access the Extension Mobility</span>
+<span class="sd">        service menu page and will attempt login/logout based on</span>
+<span class="sd">        menu options.</span>
+
+<span class="sd">        :parameter user: The user-id used for Extension Mobility service</span>
+<span class="sd">         log on.</span>
+<span class="sd">        :parameter pin: The PIN used for Extension Mobility log on.</span>
+<span class="sd">        :parameter profile: Profile name to select. If not specified</span>
+<span class="sd">         the first profile returned will be automatically selected.</span>
+<span class="sd">        :parameter servicename: The service name to match. If not specified</span>
+<span class="sd">         &#39;Extension Mobility&#39; will be attempted.</span>
+<span class="sd">        :parameter transport: Sets the transport type to be used. If secured</span>
+<span class="sd">         is specified then the service will be attempted via the secured URL</span>
+<span class="sd">         if available. If nonsecured is specified then the non-secured URL will</span>
+<span class="sd">         be used if available. If not specified the secured URL will be used if</span>
+<span class="sd">         available otherwise the non-secured.</span>
+<span class="sd">        :parameter title: Sets the title to be &quot;Please Login&quot;  for CUCM version</span>
+<span class="sd">         &gt;=9.0 and &quot;Please Sign On&quot; for CUCM version &lt;=8.6.</span>
+<span class="sd">         If not specified &quot;Please Sign On&quot; will be attempted</span>
+
+<span class="sd">        :returns: 1 on success 0 otherwise.Note, success means that the</span>
+<span class="sd">         endpoint had successfully initiated the procedure. For final</span>
+<span class="sd">         status the getserviceinfo should be called. Camelot Exception</span>
+<span class="sd">         is thrown if secured transport is used for nonsecured endpoint</span>
+<span class="sd">         or viceversa.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.em_service(user = &#39;EM_USER_510001&#39;,pin = &#39;12345&#39;,</span>
+<span class="sd">         profile = &#39;EM_SIP_510001&#39;,transport = &#39;nonsecured&#39;,</span>
+<span class="sd">         servicename = &#39;Extenstion Mobility&#39;,title = &#39;Please Login&#39;)</span>
+<span class="sd">         &#39;1&#39;</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.em_service(user = &#39;EM_USER_510001&#39;,pin = &#39;12345&#39;,</span>
+<span class="sd">         profile = &#39;EM_SIP_510001&#39;,transport = &#39;secured&#39;,</span>
+<span class="sd">         servicename = &#39;Extenstion Mobility&#39;,title = &#39;Please Login&#39;)</span>
+<span class="sd">         CamelotError: invalid transport type</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;user not specified&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">pin</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;pin not specified&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">title</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s2">&quot;Please Sign On&quot;</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;user&#39;</span><span class="p">:</span> <span class="n">user</span><span class="p">,</span>
+                  <span class="s1">&#39;pin&#39;</span><span class="p">:</span> <span class="n">pin</span><span class="p">,</span>
+                  <span class="s1">&#39;profile&#39;</span><span class="p">:</span> <span class="n">profile</span><span class="p">,</span>
+                  <span class="s1">&#39;transport&#39;</span><span class="p">:</span> <span class="n">transport</span><span class="p">,</span>
+                  <span class="s1">&#39;servicename&#39;</span><span class="p">:</span> <span class="n">servicename</span><span class="p">,</span>
+                  <span class="s1">&#39;title&#39;</span><span class="p">:</span> <span class="n">title</span>
+                  <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">EMSERVICE</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">em_logout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Attempts to initiate an explicit Extension Mobility logout operation.</span>
+
+<span class="sd">        :returns: 1 on success 0 otherwise.</span>
+<span class="sd">         Note, success means that the endpoint had successfully</span>
+<span class="sd">         initiated the procedure.</span>
+<span class="sd">         For final status the getserviceinfo should be called.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">EMLOGOUT</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_call_time_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Get an endpoint&#39;s call timing statistics</span>
+
+<span class="sd">        :parameter clear: Clear the call time stats on return.</span>
+<span class="sd">                          Possible values are \n</span>
+<span class="sd">            * True - Clear on return</span>
+<span class="sd">            * False - Don&#39;t clear on return</span>
+
+<span class="sd">        :returns: A dictionary of statistics information as shown below \n</span>
+
+<span class="sd">            * average dialtone - average delay in milliseconds from call off</span>
+<span class="sd">                                 hook to dial tone</span>
+<span class="sd">            * maximum dialtone - maximum delay in milliseconds from call off</span>
+<span class="sd">                                 hook to dial tone</span>
+<span class="sd">            * average setup - average delay in milliseconds from dialing</span>
+<span class="sd">                              complete to ring back</span>
+<span class="sd">            * maximum setup - maximum delay in milliseconds from dialing</span>
+<span class="sd">                              complete to ring back</span>
+<span class="sd">            * average connect - average time in milliseconds calls are</span>
+<span class="sd">                                connected. Note, a call on hold is still</span>
+<span class="sd">                                considered connected.</span>
+<span class="sd">            * maximum connect - maximum time in milliseconds call was connected</span>
+<span class="sd">            * average disconnect - average time in milliseconds from call</span>
+<span class="sd">                                disconnect to disconnect acknowledgement</span>
+<span class="sd">                                from the network</span>
+<span class="sd">            * maximum disconnect - maximum time in milliseconds from call</span>
+<span class="sd">                                   disconnect to disconnect acknowledgement</span>
+<span class="sd">                                   from the network</span>
+<span class="sd">            * average cut-through - average time in milliseconds from call</span>
+<span class="sd">                                    answer or resume to outbound audio</span>
+<span class="sd">                                    stream open</span>
+<span class="sd">            * maximum cut-through - maximum time in milliseconds from call</span>
+<span class="sd">                                    answer or resume to outbound audio stream</span>
+<span class="sd">                                    open</span>
+<span class="sd">            &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_CALL_TIME_STATS</span><span class="p">,</span> <span class="n">clear</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_cas_voice_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Get an cas endpoint&#39;s voice data related statistics</span>
+
+<span class="sd">        :returns: A dictionary of statistics information as shown below \n</span>
+
+<span class="sd">            *total received bytes - total voice bytes received</span>
+<span class="sd">            *total read bytes - total voice bytes read by calling</span>
+<span class="sd">            DivaReceiveAudio</span>
+<span class="sd">            *last received bytes - last received bytes</span>
+<span class="sd">            *last read bytes - last read bytes by calling DivaReceiveAudio</span>
+<span class="sd">            *voice file path --file used for playing voice</span>
+<span class="sd">            *sent sampling rate --sampling rate used for playing voice</span>
+<span class="sd">            *received audio format - audio format used for receiving voice</span>
+<span class="sd">            For more info: please refer to following wiki:</span>
+<span class="sd">           &#39;https://wiki.cisco.com/display/CAMELOT/Analog+ATA-190+Voice+Support&#39;</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.get_cas_voice_stats()</span>
+<span class="sd">        {&#39;total received bytes&#39;: &#39;34816&#39;,</span>
+<span class="sd">        &#39;last received bytes&#39;: &#39;2048&#39;,</span>
+<span class="sd">        &#39;total read bytes&#39;: &#39;34816&#39;,</span>
+<span class="sd">        &#39;last read bytes&#39;: &#39;2048&#39;,</span>
+<span class="sd">        &#39;voice file path&#39;: &#39;&#39;,</span>
+<span class="sd">        &#39;sent sampling rate&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;received audio format&#39;: &#39;100&#39;}</span>
+<span class="sd">            &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_CAS_VOICE_STATS</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_blf_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Get busy lamp field status of monitored called addresses</span>
+
+<span class="sd">        :returns: dictionary of blf information in a key value of pair of</span>
+<span class="sd">                  monitored called address and blf status respectively.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.get_blf_info()</span>
+<span class="sd">        [{&quot;called_dn&quot;:&quot;88658593&quot;,&quot;blfState&quot;:&quot;alerting&quot;}]</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.get_blf_info()</span>
+<span class="sd">        [{&quot;called_dn&quot;:&quot;88658593&quot;,&quot;Line&quot;:&quot;8593&quot;,&quot;blfState&quot;:&quot;alerting&quot;},</span>
+<span class="sd">                {&quot;called_dn&quot;:&quot;88658592&quot;,&quot;Line&quot;:&quot;8592&quot;,&quot;blfState&quot;:&quot;idle&quot;}]</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_BLF_INFO</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">delete_sip_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;delete_sip_messages deletes the list of SipMsgObjects</span>
+
+<span class="sd">        :parameter call_ref: Optional Parameter. If provided the command uses</span>
+<span class="sd">         this call_ref to delete list of inbound and outbound SipMsgObjects</span>
+<span class="sd">         for a call, otherwise it will delete the out of dialog SipMsgObjects</span>
+
+<span class="sd">        :returns: True on success and throws exception on failure</span>
+
+<span class="sd">        &gt;&gt;&gt; ep2.delete_sip_messages(&#39;0xaf62ec8&#39;)</span>
+<span class="sd">            True</span>
+<span class="sd">        &gt;&gt;&gt; ep2.delete_sip_messages(&#39;0x11111111&#39;)</span>
+<span class="sd">            CamelotError: Invalid Callref</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">call_ref</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">call_ref</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;deletesipmessages: Invalid Call-ref passed,&#39;</span>
+                          <span class="s1">&#39; returning&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">call_ref</span> <span class="o">=</span> <span class="s1">&#39;null&#39;</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">DELETE_SIP_MESSAGES</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">def</span> <span class="nf">get_sip_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;inbound&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get_sip_messages gets the list of SipMsgObjects</span>
+
+<span class="sd">        :parameter call_ref: Optional Parameter. If provided the command uses</span>
+<span class="sd">                             this call_ref to retrieve list of SipMsgObjects</span>
+<span class="sd">                             for a call, otherwise it list all the</span>
+<span class="sd">                             SipMsgObjects of out of dialog NOTIFY or REFER</span>
+<span class="sd">                             (response/request).</span>
+
+<span class="sd">        :parameter mode: this parameter can be either inbound/outbound</span>
+
+<span class="sd">        :returns: list of SipMsgObject associated with the callrefrence or</span>
+<span class="sd">                  out of dialog NOTIFY or REFER (response/request).</span>
+
+<span class="sd">        :Note: configure sip.phone.outofdialogcapture as 1 for capturing</span>
+<span class="sd">               outofdialogue NOTIFY or REFER (response/request).</span>
+
+<span class="sd">        `refer wiki documentation page for example &lt;https://wiki.cisco.com</span>
+<span class="sd">        /display/CAMELOT/Simulated+endpoint+</span>
+<span class="sd">        features+to+overcome+raw+endpoint+challenges#Simulatedendpointfeatu</span>
+<span class="sd">        restoovercomerawendpointchallenges-Scripts&amp;DemoLinks&gt;`_</span>
+
+<span class="sd">        &gt;&gt;&gt; ep2.get_sip_messages(&#39;0xaf62ec8&#39;)</span>
+<span class="sd">        [&lt;tng.plugins.camelot.camelot_vapi_plugin.SipMsgObject</span>
+<span class="sd">         at 0x7f381012e0d0&gt;,</span>
+<span class="sd">         &lt;tng.plugins.camelot.camelot_vapi_plugin.SipMsgObject</span>
+<span class="sd">         at 0x7f381012e610&gt;]</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">ret_result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">call_ref</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">call_ref</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;getsipmessages: Invalid Call-ref passed, returning&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">call_ref</span> <span class="o">=</span> <span class="s1">&#39;null&#39;</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_SIP_MESSAGES</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">ref_id</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ref_id</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">temp_list</span> <span class="o">=</span> <span class="n">ref_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+            <span class="n">message_type</span> <span class="o">=</span> <span class="n">temp_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">method_name</span> <span class="o">=</span> <span class="n">temp_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">resp_code</span> <span class="o">=</span> <span class="n">temp_list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">msg_id</span> <span class="o">=</span> <span class="n">temp_list</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">ret_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SipMsgObject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_ref</span><span class="p">,</span> <span class="n">message_type</span><span class="p">,</span>
+                                           <span class="n">method_name</span><span class="p">,</span> <span class="n">resp_code</span><span class="p">,</span> <span class="n">msg_id</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">ret_result</span>
+
+
+<div class="viewcode-block" id="ContentBodyObject"><a class="viewcode-back" href="../../../api/contentbodyobject.html#camelot.vapi.vapi_endpoint_query_control.ContentBodyObject">[docs]</a><span class="k">class</span> <span class="nc">ContentBodyObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;ContentBodyObject object contains content body associated with</span>
+<span class="sd">    SipMessage object.</span>
+
+<span class="sd">    User can extract the full content body from this object along</span>
+<span class="sd">    with the content type associated with it using different API&#39;s.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">callref</span><span class="p">,</span> <span class="n">contenttype</span><span class="p">,</span>
+                 <span class="n">subcontenttype</span><span class="p">,</span> <span class="n">msgid</span><span class="p">,</span> <span class="n">method_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vapi</span> <span class="o">=</span> <span class="n">conn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="o">=</span> <span class="n">callref</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span> <span class="o">=</span> <span class="n">contenttype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sub_content_type</span> <span class="o">=</span> <span class="n">subcontenttype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msg_id</span> <span class="o">=</span> <span class="n">msgid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method_name</span> <span class="o">=</span> <span class="n">method_name</span>
+
+<div class="viewcode-block" id="ContentBodyObject.get_content_body"><a class="viewcode-back" href="../../../api/contentbodyobject.html#camelot.vapi.vapi_endpoint_query_control.ContentBodyObject.get_content_body">[docs]</a>    <span class="k">def</span> <span class="nf">get_content_body</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get_content_body gets the content body</span>
+
+<span class="sd">        :returns: the full content body in string format</span>
+
+<span class="sd">        &gt;&gt;&gt; msgobj = ep2.get_sip_messages(&#39;0xf24bb5c0&#39;)</span>
+
+<span class="sd">        &gt;&gt;&gt; print msgobj</span>
+<span class="sd">            [&lt;tng.plugins.camelot.camelot_vapi_plugin.SipMsgObject object</span>
+<span class="sd">             at 0x7ffb0438ddd0&gt;,</span>
+<span class="sd">            &lt;tng.plugins.camelot.camelot_vapi_plugin.SipMsgObject object</span>
+<span class="sd">             at 0x7ffb0438dfd0&gt;]</span>
+
+<span class="sd">        &gt;&gt;&gt; msgobj[1].get_content_body_list()</span>
+<span class="sd">            [&lt;tng.plugins.camelot.camelot_vapi_plugin.ContentBodyObject</span>
+<span class="sd">            at 0x7ffb0438df50&gt;]</span>
+
+<span class="sd">        &gt;&gt;&gt; msgobj[1].get_content_body_list()[0].get_content_body()</span>
+<span class="sd">            &#39;v=0[CRLF]o=CiscoSystemsCCM-SIP 23210 1 IN IP4 10.12.10.86[CRLF]</span>
+<span class="sd">             s=SIP Call[CRLF]c=IN IP4 10.12.10.194b=TIAS:64000[CRLF]</span>
+<span class="sd">             b=AS:64[CRLF]t=0 0[CRLF]m=audio 43840 RTP/AVP 0 101[CRLF]</span>
+<span class="sd">             a=label:403[CRLF]a=ptime:20[CRLF]a=rtpmap:0 PCMU/8000[CRLF]</span>
+<span class="sd">             a=rtpmap:101 telephone-event/8000[CRLF]a=fmtp:101 0-15[CRLF]&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="o">!=</span> <span class="s1">&#39;null&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">vapi</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span><span class="p">):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;getcontentbody: Invalid Call-ref passed&#39;</span><span class="p">)</span>
+                    <span class="k">return</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;msg_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg_id</span><span class="p">,</span>
+                  <span class="s1">&#39;method_name&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_name</span>
+                  <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">vapi</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_CONTENT_BODY</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ContentBodyObject.is_part_of_mime"><a class="viewcode-back" href="../../../api/contentbodyobject.html#camelot.vapi.vapi_endpoint_query_control.ContentBodyObject.is_part_of_mime">[docs]</a>    <span class="k">def</span> <span class="nf">is_part_of_mime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :returns: True if content body is part of multipart/mixed</span>
+
+<span class="sd">        &gt;&gt;&gt; msgobj[1].get_content_body_list()[0].is_part_of_mime()</span>
+<span class="sd">            True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_type</span> <span class="o">==</span> <span class="s1">&#39;mime&#39;</span></div>
+
+<div class="viewcode-block" id="ContentBodyObject.get_content_type"><a class="viewcode-back" href="../../../api/contentbodyobject.html#camelot.vapi.vapi_endpoint_query_control.ContentBodyObject.get_content_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_content_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :returns: the content type of the body</span>
+
+<span class="sd">        &gt;&gt;&gt; msgobj[1].get_content_body_list()[0].get_content_type()</span>
+<span class="sd">            &#39;application/sdp&#39;</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_content_type</span></div></div>
+
+
+<div class="viewcode-block" id="SipMsgObject"><a class="viewcode-back" href="../../../api/sipmessages.html#camelot.vapi.vapi_endpoint_query_control.SipMsgObject">[docs]</a><span class="k">class</span> <span class="nc">SipMsgObject</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    SipMsgObject object contains single SIP message and it&#39;s headers.</span>
+
+<span class="sd">    With the SipMsgObject user can retrieve the content bodies associated</span>
+<span class="sd">    with the SIP message. User can get full sip message headers or selective</span>
+<span class="sd">    headers using this object.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">callref</span><span class="p">,</span> <span class="n">msgtype</span><span class="p">,</span> <span class="n">methodname</span><span class="p">,</span>
+                 <span class="n">respcode</span><span class="p">,</span> <span class="n">msgid</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vapi</span> <span class="o">=</span> <span class="n">conn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msg_type</span> <span class="o">=</span> <span class="n">msgtype</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">method_name</span> <span class="o">=</span> <span class="n">methodname</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resp_code</span> <span class="o">=</span> <span class="n">respcode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="o">=</span> <span class="n">callref</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">msg_id</span> <span class="o">=</span> <span class="n">msgid</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_body_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="SipMsgObject.get_sip_headers"><a class="viewcode-back" href="../../../api/sipmessages.html#camelot.vapi.vapi_endpoint_query_control.SipMsgObject.get_sip_headers">[docs]</a>    <span class="k">def</span> <span class="nf">get_sip_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :returns: All the sip headers in message in string format</span>
+
+<span class="sd">        &gt;&gt;&gt; msgobj[0].get_sip_headers()</span>
+<span class="sd">             &#39;INVITE sip:900002@10.12.10.194:27237;transport=tcp SIP/2.0[CRLF]</span>
+<span class="sd">             Via: SIP/2.0/TCP 10.12.10.86:5060;</span>
+<span class="sd">             branch=z9hG4bK7d27976c2de[CRLF]</span>
+<span class="sd">             Remote-Party-ID: &lt;sip:900001@10.12.10.86;</span>
+<span class="sd">             x-cisco-callback-number=900001&gt;;party=calling;</span>
+<span class="sd">             screen=yes;privacy=off[CRLF]</span>
+<span class="sd">             From: &lt;sip:900001@10.12.10.86&gt;;</span>
+<span class="sd">             tag=23210~752e3d62-2290-435d-b5ce-7887afcb1d9d-23391191[CRLF]</span>
+<span class="sd">             To: &lt;sip:900002@10.12.10.86&gt;[CRLF]</span>
+<span class="sd">             Date: Wed, 08 Oct 2014 08:38:01 GMT[CRLF]</span>
+<span class="sd">             Call-ID: 685fc000-4341f7e9-187-560a0c0a@10.12.10.86[CRLF]</span>
+<span class="sd">             Supported: timer,resource-priority,replaces[CRLF]</span>
+<span class="sd">             Min-SE: 1800[CRLF]User-Agent: Cisco-CUCM10.5[CRLF]</span>
+<span class="sd">             Allow: INVITE, OPTIONS, INFO, BYE, CANCEL, ACK, PRACK,</span>
+<span class="sd">             UPDATE, REFER, SUBSCRIBE, NOTIFY[CRLF]CSeq: 101 INVITE[CRLF]</span>
+<span class="sd">             Max-Forwards: 5[CRLF]</span>
+<span class="sd">             Contact: &lt;sip:900001@10.12.10.86:5060;transport=tcp&gt;;</span>
+<span class="sd">             +sip.instance=&quot;&lt;urn:uuid:00000000-0000-0000-0000-DADDAD900001&gt;&quot;;</span>
+<span class="sd">             +u.sip!model.ccm.cisco.com=&quot;493&quot;[CRLF]Expires: 180[CRLF]</span>
+<span class="sd">             Allow-Events: presence[CRLF]Content-Length: 0[CRLF]</span>
+<span class="sd">             Alert-Info:&lt;file://Bellcore-dr1/&gt;[CRLF]</span>
+<span class="sd">             Call-Info:&lt;urn:x-cisco-remotecc:callinfo&gt;; security= Unknown;</span>
+<span class="sd">             orientation= from; gci= 1-38158; isVoip; call-instance= 1[CRLF]</span>
+<span class="sd">             Send-Info:conference, x-cisco-conference[CRLF]&#39;</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="o">!=</span> <span class="s1">&#39;null&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">vapi</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;getsipheaders: Invalid Call-ref passed, returning&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;msg_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg_id</span>
+                  <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">vapi</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_SIP_HEADERS</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SipMsgObject.get_sip_header"><a class="viewcode-back" href="../../../api/sipmessages.html#camelot.vapi.vapi_endpoint_query_control.SipMsgObject.get_sip_header">[docs]</a>    <span class="k">def</span> <span class="nf">get_sip_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header_value</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :parameter: header-name to be retrieved</span>
+
+<span class="sd">        :returns: list of header values in particular message which has</span>
+<span class="sd">         same header name</span>
+
+<span class="sd">        &gt;&gt;&gt; msgobj[0].get_sip_header(&#39;From&#39;)</span>
+<span class="sd">            [&#39;&lt;sip:900001@10.12.10.86&gt;;</span>
+<span class="sd">            tag=23210~752e3d62-2290-435d-b5ce-7887afcb1d9d-23391191&#39;]</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="o">!=</span> <span class="s1">&#39;null&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">vapi</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;getsipheader: Invalid Call-ref passed, returning&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;msg_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg_id</span><span class="p">,</span>
+                  <span class="s1">&#39;header_val&#39;</span><span class="p">:</span> <span class="n">header_value</span>
+                  <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">vapi</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_SIP_HEADER</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SipMsgObject.get_content_body_list"><a class="viewcode-back" href="../../../api/sipmessages.html#camelot.vapi.vapi_endpoint_query_control.SipMsgObject.get_content_body_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_content_body_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :returns: the list of ContentBodyObjects associated with SipMsgObject</span>
+
+<span class="sd">        &gt;&gt;&gt; ep2.get_sip_messages(&#39;0xf24bb5c0&#39;)</span>
+<span class="sd">           [&lt;tng.plugins.camelot.camelot_vapi_plugin.SipMsgObject</span>
+<span class="sd">             at 0x7ffb0438dc50&gt;,</span>
+<span class="sd">            &lt;tng.plugins.camelot.camelot_vapi_plugin.SipMsgObject</span>
+<span class="sd">             at 0x7ffb0438de90&gt;]</span>
+
+<span class="sd">        &gt;&gt;&gt; ep2.get_sip_messages(&#39;0xf24bb5c0&#39;)[0].get_content_body_list()</span>
+<span class="sd">           []</span>
+
+<span class="sd">        &gt;&gt;&gt; ep2.get_sip_messages(&#39;0xf24bb5c0&#39;)[1].get_content_body_list()</span>
+<span class="sd">            [&lt;tng.plugins.camelot.camelot_vapi_plugin.ContentBodyObject</span>
+<span class="sd">              at 0x7ffb0438df10&gt;]</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">ret_result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_body_list</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_body_list</span>
+        <span class="n">out_msg</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">GET_CONTENT_BODY_LIST</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="o">!=</span> <span class="s1">&#39;null&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">vapi</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;getcontentbodylist: Invalid Call-ref, returning&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="n">out_msg</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2"> </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">out_msg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_name</span><span class="p">)</span>
+        <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">vapi</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_CONTENT_BODY_LIST</span><span class="p">,</span> <span class="n">out_msg</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="o">==</span> <span class="s1">&#39;null&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_name</span> <span class="o">==</span> <span class="s1">&#39;notify&#39;</span><span class="p">:</span>
+            <span class="n">content_type</span> <span class="o">=</span> <span class="n">ret</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">ret_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ContentBodyObject</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vapi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span><span class="p">,</span>
+                                                <span class="s1">&#39;null&#39;</span><span class="p">,</span>
+                                                <span class="n">content_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg_id</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">method_name</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">content_body_list</span> <span class="o">=</span> <span class="n">ret_result</span>
+            <span class="k">return</span> <span class="n">ret_result</span>
+        <span class="k">for</span> <span class="n">ref_id</span> <span class="ow">in</span> <span class="n">ret</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ref_id</span> <span class="o">==</span> <span class="s1">&#39;&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">temp_list</span> <span class="o">=</span> <span class="n">ref_id</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+            <span class="n">content_type</span> <span class="o">=</span> <span class="n">temp_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">sub_content_type</span> <span class="o">=</span> <span class="n">temp_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">msg_id</span> <span class="o">=</span> <span class="n">temp_list</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">ret_result</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ContentBodyObject</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">vapi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span><span class="p">,</span>
+                                                <span class="n">content_type</span><span class="p">,</span>
+                                                <span class="n">sub_content_type</span><span class="p">,</span>
+                                                <span class="n">msg_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">content_body_list</span> <span class="o">=</span> <span class="n">ret_result</span>
+        <span class="k">return</span> <span class="n">ret_result</span></div>
+
+<div class="viewcode-block" id="SipMsgObject.is_request"><a class="viewcode-back" href="../../../api/sipmessages.html#camelot.vapi.vapi_endpoint_query_control.SipMsgObject.is_request">[docs]</a>    <span class="k">def</span> <span class="nf">is_request</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :returns: True if the Sip message is request else return False</span>
+
+<span class="sd">        &gt;&gt;&gt; ep2.get_sip_messages(&#39;0xf24bb5c0&#39;)[1].is_request()</span>
+<span class="sd">            True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg_type</span> <span class="o">==</span> <span class="s1">&#39;request&#39;</span></div>
+
+<div class="viewcode-block" id="SipMsgObject.get_method_name"><a class="viewcode-back" href="../../../api/sipmessages.html#camelot.vapi.vapi_endpoint_query_control.SipMsgObject.get_method_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_method_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :returns: the name of the method based on CSeq header</span>
+
+<span class="sd">        &gt;&gt;&gt; ep2.get_sip_messages(&#39;0xf24bb5c0&#39;)[1].get_method_name()</span>
+<span class="sd">            &#39;INVITE&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">method_name</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SipMsgObject.get_response_code"><a class="viewcode-back" href="../../../api/sipmessages.html#camelot.vapi.vapi_endpoint_query_control.SipMsgObject.get_response_code">[docs]</a>    <span class="k">def</span> <span class="nf">get_response_code</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :returns: the response code if the message is SIP response</span>
+
+<span class="sd">        &gt;&gt;&gt; ep2.get_sip_messages(&#39;0xf24bb5c0&#39;)[1].get_response_code()</span>
+<span class="sd">            &#39;200&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">resp_code</span> <span class="o">!=</span> <span class="s1">&#39;null&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resp_code</span></div>
+
+<div class="viewcode-block" id="SipMsgObject.get_content_body_obj"><a class="viewcode-back" href="../../../api/sipmessages.html#camelot.vapi.vapi_endpoint_query_control.SipMsgObject.get_content_body_obj">[docs]</a>    <span class="k">def</span> <span class="nf">get_content_body_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_content_type</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        :parameter: content-type of body</span>
+
+<span class="sd">        :returns: It will return the particular ContentBodyObject from all the</span>
+<span class="sd">                 ContentBodyObjects associated with the SipMsgObject</span>
+
+<span class="sd">        &gt;&gt;&gt; msgobj[1].get_content_body_list()</span>
+<span class="sd">           [&lt;tng.plugins.camelot.camelot_vapi_plugin.ContentBodyObject</span>
+<span class="sd">             at 0x7ffb0438df50&gt;]</span>
+
+<span class="sd">        &gt;&gt;&gt; msgobj[1].get_content_body_obj(&#39;application/sdp&#39;)</span>
+<span class="sd">            &lt;tng.plugins.camelot.camelot_vapi_plugin.ContentBodyObject</span>
+<span class="sd">             at 0x7ffb0438df50&gt;</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">ret_result</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_body_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="o">!=</span> <span class="s1">&#39;null&#39;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">vapi</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span><span class="p">):</span>
+                    <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;get_content_body_obj: Invalid Call-ref passed&#39;</span><span class="p">)</span>
+                    <span class="k">return</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;msg_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">msg_id</span>
+                      <span class="p">}</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_content_body_list</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">content_body_elem</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">content_body_list</span><span class="p">:</span>
+            <span class="n">check_body_type</span> <span class="o">=</span> <span class="n">content_body_elem</span><span class="o">.</span><span class="n">get_content_type</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">check_body_type</span> <span class="o">==</span> <span class="n">input_content_type</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">content_body_elem</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../camelot.html" >camelot</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

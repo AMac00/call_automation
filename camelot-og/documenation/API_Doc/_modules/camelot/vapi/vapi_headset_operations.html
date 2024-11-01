@@ -1,0 +1,327 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>camelot.vapi.vapi_headset_operations &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../camelot.html" accesskey="U">camelot</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for camelot.vapi.vapi_headset_operations</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">camelot</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">from</span> <span class="nn">camelot.vapi</span> <span class="k">import</span> <span class="n">vapi_camelot_utils</span> <span class="k">as</span> <span class="n">v</span>
+<span class="kn">from</span> <span class="nn">camelot</span> <span class="k">import</span> <span class="n">camlogger</span>
+<span class="kn">from</span> <span class="nn">camelot</span> <span class="k">import</span> <span class="n">AgentStatusEnum</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">camlogger</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">CamelotHeadsetOperation</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">CamelotVapiUtils</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;Camelot Headset operations&#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">get_headset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Display all headset URL attributes, detailed download status</span>
+<span class="sd">        info from each URL along with headset connectivity status.</span>
+
+<span class="sd">        :returns: A json formatted string with following fields:\n</span>
+
+<span class="sd">         * backoff: remaining realtime value of backofftimer in seconds</span>
+<span class="sd">         * state: download state. Possible values are idle,timer_wait,</span>
+<span class="sd">               initiated, request_sent, retry_timer_wait ,retry_initiated,\n</span>
+<span class="sd">               retry_request_sent  and complete.</span>
+<span class="sd">         * response: following fields about the response received while</span>
+<span class="sd">               sending download request\n</span>
+<span class="sd">               * code: response code received . For example 200 ,404 etc</span>
+<span class="sd">               * phrase: response phrase , for example OK (for 200)</span>
+<span class="sd">               * reason: reason phrase if available (not available yet)</span>
+<span class="sd">               * warning: warning text if available (not available yet)</span>
+<span class="sd">         * Firmware Info of Headset:</span>
+<span class="sd">               * version: firmware version</span>
+<span class="sd">               * camelot_reason: reasons/error while parsing for Firmware info</span>
+<span class="sd">                 like modelseries not found.</span>
+<span class="sd">         * Info of Headset URL listed as a set of below:</span>
+<span class="sd">               * protocol: URL type(http/https/tftp)</span>
+<span class="sd">               * host: host IP where the request to be sent</span>
+<span class="sd">               * port: host port</span>
+<span class="sd">               * url: path</span>
+<span class="sd">         * status : headset connectivity status</span>
+<span class="sd">               * &quot;&quot;: Not implemnted yet</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.get_headset()</span>
+<span class="sd">        {u&#39;configURL&#39;: {u&#39;backoff&#39;: u&#39;0&#39;,</span>
+<span class="sd">        u&#39;camelot_reason&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;host&#39;: u&#39;10.12.10.9&#39;,</span>
+<span class="sd">        u&#39;port&#39;: u&#39;6970&#39;,</span>
+<span class="sd">        u&#39;protocol&#39;: u&#39;http&#39;,</span>
+<span class="sd">        u&#39;response&#39;: {</span>
+<span class="sd">        u&#39;code&#39;: u&#39;200&#39;,</span>
+<span class="sd">        u&#39;phrase&#39;: u&#39;OK&#39;,</span>
+<span class="sd">        u&#39;reason&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;warning&#39;: u&#39;&#39;},</span>
+<span class="sd">        u&#39;state&#39;: u&#39;complete&#39;,</span>
+<span class="sd">        u&#39;url&#39;: u&#39;/headset/config/user/&#39;,</span>
+<span class="sd">        u&#39;version&#39;: u&#39;&#39;},</span>
+<span class="sd">        u&#39;firmware&#39;: {u&#39;backoff&#39;: u&#39;0&#39;,</span>
+<span class="sd">        u&#39;camelot_reason&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;host&#39;: u&#39;10.12.10.9&#39;,</span>
+<span class="sd">        u&#39;port&#39;: u&#39;6970&#39;,</span>
+<span class="sd">        u&#39;protocol&#39;: u&#39;http&#39;,</span>
+<span class="sd">        u&#39;response&#39;: {u&#39;code&#39;: u&#39;404&#39;,</span>
+<span class="sd">        u&#39;phrase&#39;: u&#39;Not Found&#39;,</span>
+<span class="sd">        u&#39;reason&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;warning&#39;: u&#39;&#39;},</span>
+<span class="sd">        u&#39;state&#39;: u&#39;complete&#39;,</span>
+<span class="sd">        u&#39;url&#39;: u&#39;/1-0-2PA-84.bin&#39;,</span>
+<span class="sd">        u&#39;version&#39;: u&#39;1-0-200-84&#39;},</span>
+<span class="sd">        u&#39;inventoryPostURL&#39;: {u&#39;backoff&#39;: u&#39;0&#39;,</span>
+<span class="sd">        u&#39;camelot_reason&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;host&#39;: u&#39;10.12.10.9&#39;,</span>
+<span class="sd">        u&#39;port&#39;: u&#39;9444&#39;,</span>
+<span class="sd">        u&#39;protocol&#39;: u&#39;https&#39;,</span>
+<span class="sd">        u&#39;response&#39;: {u&#39;code&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;phrase&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;reason&#39;: u&#39;&#39;,u&#39;warning&#39;: u&#39;&#39;},</span>
+<span class="sd">        u&#39;state&#39;: u&#39;idle&#39;,</span>
+<span class="sd">        u&#39;url&#39;: u&#39;/headset/inventory&#39;,</span>
+<span class="sd">        u&#39;version&#39;: u&#39;&#39;},</span>
+<span class="sd">        u&#39;discoveryURL&#39;: {u&#39;backoff&#39;: u&#39;0&#39;,</span>
+<span class="sd">        u&#39;camelot_reason&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;host&#39;: u&#39;10.12.10.9&#39;,</span>
+<span class="sd">        u&#39;port&#39;: u&#39;9444&#39;,</span>
+<span class="sd">        u&#39;protocol&#39;: u&#39;https&#39;,</span>
+<span class="sd">        u&#39;response&#39;: {u&#39;code&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;phrase&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;reason&#39;: u&#39;&#39;,u&#39;warning&#39;: u&#39;&#39;},</span>
+<span class="sd">        u&#39;state&#39;: u&#39;idle&#39;,</span>
+<span class="sd">        u&#39;url&#39;: u&#39;/headset?device=SEP886588650001&#39;,</span>
+<span class="sd">        u&#39;version&#39;: u&#39;&#39;},</span>
+<span class="sd">        u&#39;serviceInfoURL&#39;: {u&#39;backoff&#39;: u&#39;0&#39;,</span>
+<span class="sd">        u&#39;camelot_reason&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;host&#39;: u&#39;10.12.10.9&#39;,</span>
+<span class="sd">        u&#39;port&#39;: u&#39;9444&#39;,</span>
+<span class="sd">        u&#39;protocol&#39;: u&#39;https&#39;,</span>
+<span class="sd">        u&#39;response&#39;: {u&#39;code&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;phrase&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;reason&#39;: u&#39;&#39;,</span>
+<span class="sd">        u&#39;warning&#39;: u&#39;&#39;},</span>
+<span class="sd">        u&#39;state&#39;: u&#39;idle&#39;,</span>
+<span class="sd">        u&#39;url&#39;: u&#39;/metrics/serviceinfo&#39;,</span>
+<span class="sd">        u&#39;version&#39;: u&#39;&#39;},u&#39;status&#39;: u&#39;&#39;}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_HEADSET</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">change_headset_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s1">&#39;disconnected&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Changes headset status to connected or disconnected.</span>
+<span class="sd">        On successful status change causes headset inventory POST request</span>
+<span class="sd">        to be sent.\n Use http_response() to see the</span>
+<span class="sd">        detailed results of the request itself.\n Use get_headset()[&#39;status&#39;]</span>
+<span class="sd">        for current status of the headset.\n</span>
+<span class="sd">        For more info Camelot Wiki:</span>
+<span class="sd">            https://wiki.cisco.com/display/CAMELOT/Headset+integration+with+contact+centre#Headsetintegrationwithcontactcentre-change_headset_status()APIforconnectinganddisconnectingheadset</span>
+
+<span class="sd">        :parameter status: value should be &#39;connected&#39; or &#39;disconnected&#39;</span>
+
+<span class="sd">        :returns:</span>
+<span class="sd">         * True if camelot has changed the status of headset.</span>
+<span class="sd">            does not depend on the success or failure of the POST request.</span>
+<span class="sd">         * False if the status change requested is the same as the current</span>
+<span class="sd">            status. Nothing is done</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.change_headset_status(status=&#39;connected&#39;)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.get_headset()[&#39;status&#39;]</span>
+<span class="sd">        &#39;connected&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;connected&#39;</span><span class="p">,</span> <span class="s1">&#39;disconnected&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;invalid status value&#39;</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering into setup_headset_Status function&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">CHANGE_HEADSET_STATUS</span><span class="p">,</span> <span class="n">status</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">change_headset_cc_agent_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">agent_status</span><span class="p">,</span> <span class="n">event</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This API will send headset cc agent state URL to CUCM when</span>
+<span class="sd">        change_headset_status(&#39;connected&#39;) API called with input as</span>
+<span class="sd">        &#39;connected&#39;.</span>
+
+<span class="sd">        :parameter:</span>
+<span class="sd">         * agent_status Mandatory parameter.\n</span>
+<span class="sd">           Any one of the below supported values should be provided as input</span>
+<span class="sd">           else it will return &quot;Attribute Error&quot;</span>
+<span class="sd">           Supported Values :</span>
+<span class="sd">           [&#39;LOGIN&#39;, &#39;LOGOUT&#39;,&#39;NOT READY&#39;, &#39;READY&#39;,</span>
+<span class="sd">           &#39;TALKING&#39;,&#39;WORK&#39;</span>
+<span class="sd">           &#39;WORK_READY&#39;,&#39;BUSY_OTHER&#39;,&#39;RESERVED&#39;,&#39;UNKNOWN&#39;,&#39;HOLD&#39;,</span>
+<span class="sd">           &#39;ACTIVE&#39;,&#39;PAUSED&#39;,&#39;INTERRUPTED&#39;,</span>
+<span class="sd">           &#39;RESERVED_OUTBOUND&#39;,&#39;RESERVED_OUTBOUND_PREVIEW&#39;]</span>
+<span class="sd">         * event Optional parameter if provided will be sent in agentstate</span>
+<span class="sd">           request URL body</span>
+<span class="sd">        :returns:</span>
+<span class="sd">         * True   if camelot has sent the headset cc Agent state Request URL.</span>
+<span class="sd">         * False  Agent state is same so Camelot has not sent the cc Agent</span>
+<span class="sd">           State Request URL (Non Fatal Errors)\n</span>
+<span class="sd">         * Error   Exception with appropriate error string and headset cc agent</span>
+<span class="sd">           state URL not sent(Fatal Errors)</span>
+<span class="sd">           For any Errors occured before sending Agent State URL</span>
+<span class="sd">        &gt;&gt;&gt; ep.change_headset_status(&#39;connected&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; from camelot import AgentStatusEnum</span>
+<span class="sd">        &gt;&gt;&gt; state = AgentStatusEnum.READY</span>
+<span class="sd">        &gt;&gt;&gt; event = {&#39;state&#39;:&#39;Karnataka&#39;,&quot;encoding&quot; : &quot;Integer&quot;}</span>
+<span class="sd">        &gt;&gt;&gt; ep1.change_headset_cc_agent_state(state, event)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        * Unsupported Agent Status Attribute</span>
+<span class="sd">        &gt;&gt;&gt; ep.change_headset_status(&#39;connected&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; state = AgentStatusEnum.BUSY</span>
+<span class="sd">        &gt;&gt;&gt; ep1.change_headset_cc_agent_state(state)</span>
+<span class="sd">        AttributeError: BUSY</span>
+
+<span class="sd">        * Trying to change agent state to ready, when headset is not connected</span>
+<span class="sd">        &gt;&gt;&gt; ep.change_headset_status(&#39;disconnected&#39;)</span>
+<span class="sd">        False</span>
+<span class="sd">        &gt;&gt;&gt; state = AgentStatusEnum.READY</span>
+<span class="sd">        &gt;&gt;&gt; event = {&#39;state&#39;:&#39;Karnataka&#39;,&quot;encoding&quot; : &quot;Integer&quot;}</span>
+<span class="sd">        &gt;&gt;&gt; ep1.change_headset_cc_agent_state(state,event)</span>
+<span class="sd">        Exception: headset device status disconnected</span>
+
+<span class="sd">        * Trying to change agent state to READY, when state is already\n</span>
+<span class="sd">        in ready state</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.change_headset_status(&#39;connected&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; state = AgentStatusEnum.READY</span>
+<span class="sd">        &gt;&gt;&gt; event = {&#39;state&#39;:&#39;Karnataka&#39;,&quot;encoding&quot; : &quot;Integer&quot;}</span>
+<span class="sd">        &gt;&gt;&gt; ep1.change_headset_cc_agent_state(state,event)</span>
+<span class="sd">        False</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering change_headset_cc_agent_state function&#39;</span><span class="p">)</span>
+        <span class="n">request</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">agent_status</span><span class="p">,</span> <span class="n">AgentStatusEnum</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;invalid agentstatus value&#39;</span><span class="p">)</span>
+
+        <span class="n">request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">agent_status</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">event</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> ^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;NULL&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">request</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> ^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">event</span><span class="p">)</span>
+
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;change_headset_cc_agent_state arguments</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">request</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">HEADSET_CC_AGENTSTATE</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_headset_cc_agent_state</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Shows the current state of headset agent received from</span>
+<span class="sd">        CUCM as part of &lt;agentstatusupdate&gt; of SIP REFER message.</span>
+<span class="sd">        Usally phone receives this REFER on any change in agent status</span>
+<span class="sd">        at headset by sending HTTP POST /event towards Contact Center.</span>
+<span class="sd">        However in Camelot the change agent state will be informed using</span>
+<span class="sd">        an api change_headset_cc_state()</span>
+<span class="sd">        For more info Camelot Wiki:</span>
+<span class="sd">            https://wiki.cisco.com/display/CAMELOT/Headset+integration+with+contact+centre</span>
+
+<span class="sd">        :returns: A json formatted string with following fields:\n</span>
+
+<span class="sd">         * status: agent status received in &lt;agentstatusupdate&gt;</span>
+<span class="sd">                   Camelot demoulated state like  NOT_READY/ACTIVE etc.,</span>
+<span class="sd">         * reasoncode: reasoncode received in &lt;agentstatusupdate&gt;</span>
+<span class="sd">         * request_time: HTTP message sent time stamp.</span>
+<span class="sd">         * request_status: HTTP response received status</span>
+<span class="sd">               * status_change_pending: Response not received yet</span>
+<span class="sd">               * success: 200 OK response received</span>
+<span class="sd">               * fail: response failed, check http_response() for the given URL</span>
+<span class="sd">         * refer_time: REFER received time stamp.</span>
+<span class="sd">         * camelot_reason: any reason from Camelot while parsing REFER</span>
+
+<span class="sd">        &gt;&gt;&gt; ep.get_headset_cc_agent_state()</span>
+<span class="sd">        {&#39;status&#39;: &#39;LOGIN&#39;,</span>
+<span class="sd">        &#39;reasoncode&#39;: &#39;0&#39;,</span>
+<span class="sd">        &#39;request_time&#39;: &#39;YYYY-MM-DDTHH:MM:SS&#39;,</span>
+<span class="sd">        &#39;request_status&#39;: &#39;success&#39;,</span>
+<span class="sd">        &#39;refer_time&#39;: &#39;YYYY-MM-DDTHH:MM:SS&#39;,</span>
+<span class="sd">        &#39;camelot_reason&#39;: &#39;&#39;</span>
+<span class="sd">        }</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_HEADSET_CC_AGENTSTATE</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../camelot.html" >camelot</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,350 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>camelot.vapi.vapi_xmpp_operation &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../camelot.html" accesskey="U">camelot</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for camelot.vapi.vapi_xmpp_operation</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">camelot</span>
+<span class="kn">from</span> <span class="nn">camelot.vapi</span> <span class="k">import</span> <span class="n">vapi_camelot_utils</span> <span class="k">as</span> <span class="n">v</span>
+<span class="kn">from</span> <span class="nn">camelot</span> <span class="k">import</span> <span class="n">camlogger</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">camlogger</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">CamelotXMPPOperations</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">CamelotVapiUtils</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;Camelot vvm feature representation</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">add_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Adds a new group. If the provided group name already exsits</span>
+<span class="sd">        then this command will fail. Currently when this command is</span>
+<span class="sd">        invoked Camelot do creates and maintains the group locally,</span>
+<span class="sd">        as well as pushes it to the server as private storage/group.</span>
+
+<span class="sd">        :parameter name: Name of the group</span>
+
+<span class="sd">        :returns: on success 1 will be returned otherwise</span>
+<span class="sd">         CamelotError: 0 exception.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.addgroup(&#39;cisco-camelot-team&#39;)</span>
+<span class="sd">        1</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;invalid group name, it is empty&quot;</span><span class="p">)</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;___&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">ADD_GROUP</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">remove_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        removes the group, if exists, from the local storage of Camelot.</span>
+<span class="sd">        If the provided group name doesn&#39;t exists then this command will</span>
+<span class="sd">        fail. Once the group is removed then all the contacts which belong</span>
+<span class="sd">        to this group will be disassociated from this group along with</span>
+<span class="sd">        local storage and from IMP server. If no contacts are associated</span>
+<span class="sd">        with the group ,Camelot sends the request to IMP server to remove</span>
+<span class="sd">        this private group along with removing it from local storage.</span>
+<span class="sd">        Use imp_query_response command to get the status of the returned</span>
+<span class="sd">        queryid.</span>
+
+<span class="sd">        :parameter name: Name of the group</span>
+
+<span class="sd">        :returns: on success queryid will be returned otherwise</span>
+<span class="sd">         CamelotError: 0 exception.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.remove_group(&#39;monkey&#39;)</span>
+<span class="sd">        4063652144</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;invalid group name, it is empty&quot;</span><span class="p">)</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;___&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">REMOVE_GROUP</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">remove_all_buddies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Removes the entire roster(buddy list ) of the user.</span>
+<span class="sd">        The groups will not be removed.</span>
+
+<span class="sd">        :returns: on success queryid will be returned otherwise</span>
+<span class="sd">         CamelotError: 0 exception.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.remove_all_buddies()</span>
+<span class="sd">        1</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">REMOVE_ALL_BUDDIES</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">show_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; shows the groups created for this user.</span>
+
+<span class="sd">        :returns: shows the groups of the user.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.show_groups()</span>
+<span class="sd">        [&#39;group1&#39;, &#39;group2&#39;]</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;in method show groups&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">SHOW_GROUPS</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_buddies_by_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group_name</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;shows the buddies belongs to the provided group.</span>
+
+<span class="sd">        :parameter: Mandatory parameter. Name of the group</span>
+
+<span class="sd">        :returns: the buddies in the list format, empty list if nobody exists</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.get_buddies_by_group(&#39;friends&#39;)</span>
+<span class="sd">        [jabberep1300001@camelot.test, jabberep1300002@camelot.test]</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;in method get_buddies_by_group&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">group_name</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;group name is None&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_BUDDIES_BY_GROUP</span><span class="p">,</span> <span class="n">group_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_buddy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buddy_jid</span><span class="p">,</span> <span class="n">display_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        adds a buddy to the user&#39;s roster list if buddy is not already</span>
+<span class="sd">        present in roster list</span>
+<span class="sd">        else it throws CamelotError exception. On successfully</span>
+<span class="sd">        sending the request to server the Camelot returns the</span>
+<span class="sd">        query-id to the clients otherwise it returns the 0.</span>
+<span class="sd">        On recieving the response from server the Camelot generates</span>
+<span class="sd">        the station event in the form &quot;impquerycompleted status query-id jid&quot;.</span>
+<span class="sd">        The clients are expected to wait for this event and on receiving this</span>
+<span class="sd">        event they can call the command &quot;imp_query_response&quot; to get response.</span>
+
+<span class="sd">        :parameter buddy_jid: This is mandatory parameter and takes the buddy</span>
+<span class="sd">         name in the JID form as explained in xmpp RFC 6121.</span>
+<span class="sd">         ex: jabberep@camelot.test</span>
+<span class="sd">        :parameter display_name:  This is optional parameter. It takes the</span>
+<span class="sd">         display name of the buddy.</span>
+<span class="sd">        :parameter groups:  This is optional parameter.This parameter takes</span>
+<span class="sd">         the groups to which the buddy will be part of.More than one group must</span>
+<span class="sd">         be seperated by comma(,). The group names provided here must have</span>
+<span class="sd">         been created already using &quot;addgroup&quot; command.</span>
+
+<span class="sd">        :returns:  on success the quesryid will be returned otherwise</span>
+<span class="sd">         CamelotError: 0 exception.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.add_buddy(&#39;jabberep1300001@camelot.test&#39;, &#39;ep1300001&#39;,</span>
+<span class="sd">         &quot;team,friends&quot;]</span>
+<span class="sd">        4063316224</span>
+<span class="sd">        &gt;&gt;&gt; ep1.imp_query_response(&#39;4063316224&#39;)</span>
+<span class="sd">        {&#39;status&#39;: &#39;success&#39;, &#39;command&#39;:&#39;addbuddy&#39;,</span>
+<span class="sd">        &#39;contact&#39;:&#39;jabberep1300001@camelot.test&#39;,</span>
+<span class="sd">        &#39;starttime&#39;: &#39;2014-07-24T18:04:09&#39;, &#39;failure reason&#39;:&#39;&#39;,</span>
+<span class="sd">        &#39;xml stanza&#39;:&#39;&#39; }</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">buddy_jid</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;buddy_jid is empty, provide the buddy jid&quot;</span><span class="p">)</span>
+
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">buddy_jid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">display_name</span><span class="p">:</span>
+            <span class="n">display_name</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">display_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">groups</span><span class="p">:</span>
+            <span class="n">groups</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+        <span class="n">msg</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">ADD_BUDDY</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">remove_buddy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jid</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Removes the buddy from the user&#39;s roster(buddy list).</span>
+
+<span class="sd">        :parameter jid: This is mandatory parameter and takes the buddy</span>
+<span class="sd">         name in the JID form as explained in xmpp RFC 6121.</span>
+<span class="sd">         ex: jabberep@camelot.test</span>
+
+<span class="sd">        :returns: on success queryid will be returned otherwise</span>
+<span class="sd">         CamelotError: 0 exception is returned.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.get_buddy_list()</span>
+<span class="sd">        [&#39;jabberep@camelot.test&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; ep1.remove_buddy(&#39;jabberep@camelot.test&#39;)</span>
+<span class="sd">        &#39;4043253308&#39;</span>
+<span class="sd">        &gt;&gt;&gt; ep1.get_buddy_list()</span>
+<span class="sd">        []</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;in the method remove_buddy with jid&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">jid</span><span class="p">:</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;buddy_jid is empty, provide the buddy jid&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">REMOVE_BUDDY</span><span class="p">,</span> <span class="n">jid</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_buddy_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uniqueid</span><span class="o">=</span><span class="s1">&#39;jid&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Returns the list of buddies for the mentioned end point on the basis</span>
+<span class="sd">        of the unique id mentioned.</span>
+
+<span class="sd">        :parameter uniqueid: Unique id. Can take the following values \n</span>
+<span class="sd">            * jid</span>
+<span class="sd">            * username</span>
+<span class="sd">            * emailid</span>
+<span class="sd">            * phonenumber</span>
+
+<span class="sd">        :returns: list of buddy&#39;s jid, for more information</span>
+<span class="sd">         on buddy like mobilenumber, firstname etc can be found</span>
+<span class="sd">         using get_user_info api.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.get_buddy_list()</span>
+<span class="sd">        [&#39;regep3200003@camelot.test&#39;]</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">GET_BUDDY_LIST</span><span class="p">,</span> <span class="n">uniqueid</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">add_buddy_to_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jid</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Add the buddy from the user&#39;s roster(buddy list) to groups.</span>
+<span class="sd">        if buddy is not part of roster list it will throw</span>
+<span class="sd">        CamelotError exception.</span>
+
+<span class="sd">        :parameter jid: This is mandatory parameter and takes the buddy</span>
+<span class="sd">         name in the JID form as explained in xmpp RFC 6121.</span>
+<span class="sd">         ex: jabberep@camelot.test</span>
+<span class="sd">        :parameter groups:  This is mandatory parameter.This parameter takes</span>
+<span class="sd">         the groups to which the buddy will be part of.More than one group must</span>
+<span class="sd">         be seperated by comma(,). The group names provided here must have</span>
+<span class="sd">         been created already using &quot;addgroup&quot; command.</span>
+
+<span class="sd">        :returns: on success queryid will be returned otherwise</span>
+<span class="sd">         CamelotError: 0 exception is returned.</span>
+
+<span class="sd">        :note: To add a buddy to a group, buddy should be in roaster list.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.add_buddy_to_group(&#39;jabberep@camelot.test&#39;,</span>
+<span class="sd">            &#39;group1, group2&#39;)</span>
+<span class="sd">        &#39;4043253308&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;in the method remove_buddy with jid&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">jid</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">groups</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;arguments passed are none&quot;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">jid</span><span class="p">,</span> <span class="n">groups</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">ADD_BUDDY_TO_GROUPS</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">move_buddy_to_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jid</span><span class="p">,</span> <span class="n">from_groups</span><span class="p">,</span> <span class="n">to_groups</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Moves a buddy from one or more groups to other groups.</span>
+
+<span class="sd">        :parameter jid: This is mandatory parameter and takes the buddy</span>
+<span class="sd">         name in the JID form as explained in xmpp RFC 6121.</span>
+<span class="sd">         ex: jabberep@camelot.test</span>
+<span class="sd">        :parameter from_group: This parameter takes the groups to which the</span>
+<span class="sd">         buddy already belongs to. More than one group must</span>
+<span class="sd">         be seperated by comma(,). The group names provided here must have</span>
+<span class="sd">         been created already using &quot;addgroup&quot; command.</span>
+<span class="sd">        :parameter to_group: This parameter takes the groups to which the</span>
+<span class="sd">         buddy needs to move to. More than one group must</span>
+<span class="sd">         be seperated by comma(,). The group names provided here must have</span>
+<span class="sd">         been created already using &quot;addgroup&quot; command.</span>
+
+<span class="sd">        :returns: on success queryid will be returned otherwise</span>
+<span class="sd">         CamelotError: 0 exception is returned.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.move_buddy_to_groups(&#39;jabberep@camelot.test&#39;,</span>
+<span class="sd">            &#39;group1, group2&#39;, &#39;group3, group4&#39;)</span>
+<span class="sd">        &#39;4043253308&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;in the method remove_buddy with jid&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">jid</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">from_groups</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">to_groups</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;arguments passed are none&quot;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^</span><span class="si">{}</span><span class="s1">^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">jid</span><span class="p">,</span> <span class="n">from_groups</span><span class="p">,</span> <span class="n">to_groups</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">MOVE_BUDDY_TO_GROUPS</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">remove_buddy_from_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jid</span><span class="p">,</span> <span class="n">groups</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        removes a buddy from the provided groups.</span>
+
+<span class="sd">        :parameter jid: This is mandatory parameter and takes the buddy</span>
+<span class="sd">         name in the JID form as explained in xmpp RFC 6121.</span>
+<span class="sd">         ex: jabberep@camelot.test</span>
+<span class="sd">        :parameter groups:  This is mandatory parameter.This parameter takes</span>
+<span class="sd">         the groups to which the buddy will be part of.More than one group must</span>
+<span class="sd">         be seperated by comma(,). The group names provided here must have</span>
+<span class="sd">         been created already using &quot;addgroup&quot; command.</span>
+
+<span class="sd">        :returns: on success queryid will be returned otherwise</span>
+<span class="sd">         CamelotError: 0 exception is returned.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.remove_buddy_from_groups(&#39;jabberep@camelot.test&#39;,</span>
+<span class="sd">            &#39;group1, group2&#39;, &#39;group3, group4&#39;)</span>
+<span class="sd">        &#39;4043253308&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;in the method remove_buddy with jid&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">jid</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">groups</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;arguments passed are none&quot;</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">^</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">jid</span><span class="p">,</span> <span class="n">groups</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">REMOVE_BUDDY_FROM_GROUPS</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../camelot.html" >camelot</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

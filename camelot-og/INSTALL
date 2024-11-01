@@ -1,0 +1,147 @@
+#!/bin/bash
+set -e
+########################################
+# This is an install file for camelot-og-pi
+# author name= camelot-og-dev team
+########################################
+ORIG_VIRTUAL_ENV=$VIRTUAL_ENV
+
+if [ -f /etc/os-release ]; then
+    linux_version=$(source /etc/os-release && echo $ID)
+elif which lsb_release > /dev/null; then
+    linux_version=$(lsb_release -is)
+elif [ "$(/usr/bin/uname)" == "Darwin" ]; then
+    linux_version=$(/usr/bin/uname)
+else
+    echo "Could not determine your linux distribution." > /dev/stderr
+    linux_version=unknown
+fi
+
+headless=0
+no_unit_tests=0
+
+for var in "$@"; do
+    if [ "$var" = "--headless" ] ; then
+        headless=1
+    elif [ "$var" = "--no-unit-tests" ] ; then
+        no_unit_tests=1
+    fi
+done
+
+
+_post_install()
+{
+    if [ $no_unit_tests == 1 ] ; then
+        echo "No unit tests"
+        update_tng
+	else
+		invoke cleanpyc
+        invoke test
+        update_tng
+    fi
+}
+
+if [ `whoami` = 'root' ]; then
+    SUDO=""
+else
+    SUDO="sudo"
+fi
+
+_check_within_virtualenv()
+{
+    # Global installs require root/sudo for pip installs, but this is not
+    # needed when within a virtualenv. So let's create a global argument for us
+    # to use later on.
+    if test -z "$VIRTUAL_ENV" ; then
+        VENV_AWARE_SUDO="$SUDO"
+    else
+        echo "Running inside a VirtualEnv. Disabling 'sudo' for 'pip install'."
+        VENV_AWARE_SUDO=""
+    fi
+}
+
+function update_tng()
+{
+	echo "------->Update tng executable<--------------"
+	tngexecutablepath=`which tng`
+        echo $tngexecutablepath
+        regex=".+camelot_server.+"
+        file_cnt=$( cat "${tngexecutablepath}" )
+        if [[ " $file_cnt " =~ $regex ]] # please note the space before and after the file content
+        then
+            echo "------->Camelot-pi already installed<--------------"
+        else
+	    $VENV_AWARE_SUDO awk '/pkg_resources/{print "from camelot-og.tngdevice import camelot_server;from camelot-og.tngdevice import camelot_endpoint"}1' $tngexecutablepath | tee ./tmp_tng > /dev/null
+	    $VENV_AWARE_SUDO mv ./tmp_tng $tngexecutablepath
+	    $VENV_AWARE_SUDO chmod +x $tngexecutablepath
+
+            $VENV_AWARE_SUDO awk '/tng_main_script/{print "from camelot-og.tngdevice import camelot_server;from camelot-og.tngdevice import camelot_endpoint"}1' $tngexecutablepath | tee ./tmp_tng > /dev/null
+            $VENV_AWARE_SUDO mv ./tmp_tng $tngexecutablepath
+            $VENV_AWARE_SUDO chmod +x $tngexecutablepath
+        fi
+}
+
+_install_ubuntu()
+{
+    $VENV_AWARE_SUDO pip install -e .
+    _post_install
+}
+
+_install_osx()
+{
+    $VENV_AWARE_SUDO pip install -e .
+	_post_install
+}
+
+_install_fedora()
+{
+    $VENV_AWARE_SUDO pip-python install -e .
+	_post_install
+}
+
+_install_gentoo()
+{
+    echo "Warning: Tng installation does not currently support python3"
+    if which sudo &> /dev/null; then
+        sudo pip install -e .
+        exec invoke test
+    elif [ `whoami` = 'root' ]; then
+        pip install -e .
+        invoke cleanpyc
+        invoke test
+        update_tng
+    else
+        echo "Must either have sudo or be root."
+    fi
+}
+
+_check_within_virtualenv
+
+case "${linux_version}" in
+    Ubuntu)
+        echo "Running install script for Ubuntu"
+        _install_ubuntu
+        ;;
+    LinuxMint)
+        echo "Running Ubuntu install script for Linux Mint"
+        _install_ubuntu
+        ;;
+    Darwin)
+        echo "Running install script for OSX"
+        _install_osx
+        ;;
+    Fedora)
+        echo "Running install script for Fedora"
+        _install_fedora
+        ;;
+    Gentoo)
+        echo "Running install script for Gentoo"
+        _install_gentoo
+        ;;
+    *)
+        echo "Could not determine you linux distribution, trying Ubuntu-type \
+install"
+        _install_ubuntu
+        ;;
+    esac
+ 

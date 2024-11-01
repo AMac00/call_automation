@@ -1,0 +1,926 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>camelot.response &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../camelot.html" accesskey="U">camelot</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for camelot.response</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">camelot</span> <span class="k">import</span> <span class="n">camlogger</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">camlogger</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="EndpointInfo"><a class="viewcode-back" href="../../api/response.html#camelot.response.EndpointInfo">[docs]</a><span class="k">class</span> <span class="nc">EndpointInfo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;Represents Endpoint Info with following attributes</span>
+
+<span class="sd">    * backup_cm</span>
+<span class="sd">    * backup_cti</span>
+<span class="sd">    * call_type</span>
+<span class="sd">    * calls</span>
+<span class="sd">    * current_cti</span>
+<span class="sd">    * deploymentmodel</span>
+<span class="sd">    * description</span>
+<span class="sd">    * domain</span>
+<span class="sd">    * esrstvernego</span>
+<span class="sd">    * id</span>
+<span class="sd">    * ipv4_address</span>
+<span class="sd">    * ipv6_address</span>
+<span class="sd">    * ix_enabled</span>
+<span class="sd">    * last_error</span>
+<span class="sd">    * lines</span>
+<span class="sd">    * preferred_mode</span>
+<span class="sd">    * primary_cm</span>
+<span class="sd">    * primary_cti</span>
+<span class="sd">    * sip_port</span>
+<span class="sd">    * state</span>
+<span class="sd">    * status</span>
+<span class="sd">    * streams</span>
+<span class="sd">    * type</span>
+<span class="sd">    * userid</span>
+<span class="sd">    * voice_mail_client_status</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_VM_CLIENT_STATUS</span> <span class="o">=</span> <span class="s2">&quot;voice mail client status&quot;</span>
+    <span class="n">_BACKUP_CTI</span> <span class="o">=</span> <span class="s2">&quot;backup cti&quot;</span>
+    <span class="n">_BACKUP_CM</span> <span class="o">=</span> <span class="s2">&quot;backup cm&quot;</span>
+    <span class="n">_CALLS</span> <span class="o">=</span> <span class="s2">&quot;calls&quot;</span>
+    <span class="n">_CALL_TYPE</span> <span class="o">=</span> <span class="s2">&quot;call type&quot;</span>
+    <span class="n">_CURRENT_CTI</span> <span class="o">=</span> <span class="s2">&quot;current cti&quot;</span>
+    <span class="n">_DEPLOYMENTMODEL</span> <span class="o">=</span> <span class="s1">&#39;deploymentmodel&#39;</span>
+    <span class="n">_DESCRIPTION</span> <span class="o">=</span> <span class="s2">&quot;description&quot;</span>
+    <span class="n">_DOMAIN</span> <span class="o">=</span> <span class="s2">&quot;domain&quot;</span>
+    <span class="n">_ESRSTVERNEGO</span> <span class="o">=</span> <span class="s1">&#39;esrstvernego&#39;</span>
+    <span class="n">_ID</span> <span class="o">=</span> <span class="s2">&quot;id&quot;</span>
+    <span class="n">_IPV4ADDRESS</span> <span class="o">=</span> <span class="s1">&#39;ipv4address&#39;</span>
+    <span class="n">_IPV6ADDRESS</span> <span class="o">=</span> <span class="s1">&#39;ipv6address&#39;</span>
+    <span class="n">_IXENABLED</span> <span class="o">=</span> <span class="s1">&#39;ixenabled&#39;</span>
+    <span class="n">_LAST_ERROR</span> <span class="o">=</span> <span class="s1">&#39;last error&#39;</span>
+    <span class="n">_LINES</span> <span class="o">=</span> <span class="s1">&#39;lines&#39;</span>
+    <span class="n">_PREFFERED_MODE</span> <span class="o">=</span> <span class="s2">&quot;preferred mode&quot;</span>
+    <span class="n">_PRIMARY_CM</span> <span class="o">=</span> <span class="s2">&quot;primary cm&quot;</span>
+    <span class="n">_PRIMARY_CTI</span> <span class="o">=</span> <span class="s2">&quot;primary cti&quot;</span>
+    <span class="n">_SIP_PORT</span> <span class="o">=</span> <span class="s1">&#39;sip port&#39;</span>
+    <span class="n">_STATE</span> <span class="o">=</span> <span class="s2">&quot;state&quot;</span>
+    <span class="n">_STATUS</span> <span class="o">=</span> <span class="s2">&quot;status&quot;</span>
+    <span class="n">_STREAMS</span> <span class="o">=</span> <span class="s1">&#39;streams&#39;</span>
+    <span class="n">_TYPE</span> <span class="o">=</span> <span class="s2">&quot;type&quot;</span>
+    <span class="n">_USERID</span> <span class="o">=</span> <span class="s1">&#39;userid&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backup_cm</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">backup_cti</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">call_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calls</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_cti</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deploymentmodel</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">esrstvernego</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ipv4_address</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ipv6_address</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ix_enabled</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_error</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">preferred_mode</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary_cm</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary_cti</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sip_port</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">streams</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">userid</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voice_mail_client_status</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_copy_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info_dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">info_dict</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_BACKUP_CM</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">backup_cm</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_BACKUP_CM</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_BACKUP_CTI</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">backup_cti</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_BACKUP_CTI</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_CALL_TYPE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">call_type</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_CALL_TYPE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_CALLS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">calls</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_CALLS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_CURRENT_CTI</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_cti</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_CURRENT_CTI</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_DEPLOYMENTMODEL</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">deploymentmodel</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_DEPLOYMENTMODEL</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_DESCRIPTION</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_DESCRIPTION</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_DOMAIN</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_DOMAIN</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_ESRSTVERNEGO</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">esrstvernego</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_ESRSTVERNEGO</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_ID</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_ID</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_IPV4ADDRESS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ipv4_address</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_IPV4ADDRESS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_IPV6ADDRESS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ipv6_address</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_IPV6ADDRESS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_IXENABLED</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ix_enabled</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_IXENABLED</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_LAST_ERROR</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_error</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_LAST_ERROR</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_LINES</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_LINES</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_PREFFERED_MODE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">preferred_mode</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_PREFFERED_MODE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_PRIMARY_CM</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">primary_cm</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_PRIMARY_CM</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_PRIMARY_CTI</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">primary_cti</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_PRIMARY_CTI</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_SIP_PORT</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sip_port</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_SIP_PORT</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_STATE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_STATE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_TYPE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_TYPE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_STATUS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_STATUS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_STREAMS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">streams</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_STREAMS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_USERID</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">userid</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_USERID</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_VM_CLIENT_STATUS</span><span class="p">):</span>
+                <span class="n">vm_status</span> <span class="o">=</span> <span class="n">info_dict</span><span class="p">[</span><span class="n">EndpointInfo</span><span class="o">.</span><span class="n">_VM_CLIENT_STATUS</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">voice_mail_client_status</span> <span class="o">=</span> <span class="n">vm_status</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;passed parameter is not of type dict&#39;</span><span class="p">)</span>
+            <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="EndpointInfoExt"><a class="viewcode-back" href="../../api/response.html#camelot.response.EndpointInfoExt">[docs]</a><span class="k">class</span> <span class="nc">EndpointInfoExt</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;Represents Endpoint Info Ext with following attributes</span>
+
+<span class="sd">    * feature_control_policy</span>
+<span class="sd">    * voice_mail_client_info</span>
+<span class="sd">    * control_devices</span>
+<span class="sd">    * cumc_op_mode</span>
+<span class="sd">    * intercom</span>
+<span class="sd">    * media_state</span>
+<span class="sd">    * mobile_connect</span>
+<span class="sd">    * mr_state</span>
+<span class="sd">    * mwi</span>
+<span class="sd">    * mwi_line</span>
+<span class="sd">    * mwi_stats</span>
+<span class="sd">    * notify</span>
+<span class="sd">    * presence_interface_status</span>
+<span class="sd">    * prompt</span>
+<span class="sd">    * softkeys</span>
+<span class="sd">    * speeddials</span>
+<span class="sd">    * subsevtdialog</span>
+<span class="sd">    * subsevtpresence</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">_FEATURE_CONTROL_POLICY</span> <span class="o">=</span> <span class="s1">&#39;Feature Control Policy&#39;</span>
+    <span class="n">_VOICE_MAIL_CLINET_INFO</span> <span class="o">=</span> <span class="s1">&#39;Voice Mail client info&#39;</span>
+    <span class="n">_CONTROL_DEVICES</span> <span class="o">=</span> <span class="s1">&#39;ctrldevices&#39;</span>
+    <span class="n">_CUMC_OP_MODE</span> <span class="o">=</span> <span class="s1">&#39;cumcopmode&#39;</span>
+    <span class="n">_INTERCOM</span> <span class="o">=</span> <span class="s1">&#39;intercom&#39;</span>
+    <span class="n">_MEDIA_STATE</span> <span class="o">=</span> <span class="s1">&#39;mediastate&#39;</span>
+    <span class="n">_MOBILE_CONNECT</span> <span class="o">=</span> <span class="s1">&#39;mobileconnect&#39;</span>
+    <span class="n">_MR_STATE</span> <span class="o">=</span> <span class="s1">&#39;mrstate&#39;</span>
+    <span class="n">_MWI</span> <span class="o">=</span> <span class="s1">&#39;mwi&#39;</span>
+    <span class="n">_MWI_LINE</span> <span class="o">=</span> <span class="s1">&#39;mwi line&#39;</span>
+    <span class="n">_MWI_STATS</span> <span class="o">=</span> <span class="s1">&#39;mwi stats&#39;</span>
+    <span class="n">_NOTIFY</span> <span class="o">=</span> <span class="s1">&#39;notify&#39;</span>
+    <span class="n">_PRESENCE_INTERFACE_STATUS</span> <span class="o">=</span> <span class="s1">&#39;presence interface status&#39;</span>
+    <span class="n">_PROMPT</span> <span class="o">=</span> <span class="s1">&#39;prompt&#39;</span>
+    <span class="n">_SOFTKEYS</span> <span class="o">=</span> <span class="s1">&#39;softkeys&#39;</span>
+    <span class="n">_SPEED_DIALS</span> <span class="o">=</span> <span class="s1">&#39;speeddials&#39;</span>
+    <span class="n">_SUBSEVT_DIALOG</span> <span class="o">=</span> <span class="s1">&#39;subsevtdialog&#39;</span>
+    <span class="n">_SUBSEVT_PRESENCE</span> <span class="o">=</span> <span class="s1">&#39;subsevtpresence&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">feature_control_policy</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">voice_mail_client_info</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">control_devices</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cumc_op_mode</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intercom</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">media_state</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mobile_connect</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mr_state</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mwi</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mwi_line</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mwi_stats</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">presence_interface_status</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">softkeys</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">speeddials</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subsevtdialog</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subsevtpresence</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_copy_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">info_ext_dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">info_ext_dict</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_FEATURE_CONTROL_POLICY</span><span class="p">):</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_FEATURE_CONTROL_POLICY</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">feature_control_policy</span> <span class="o">=</span> <span class="n">tmp</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_VOICE_MAIL_CLINET_INFO</span><span class="p">):</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_VOICE_MAIL_CLINET_INFO</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">voice_mail_client_info</span> <span class="o">=</span> <span class="n">tmp</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_CONTROL_DEVICES</span><span class="p">):</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_CONTROL_DEVICES</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">control_devices</span> <span class="o">=</span> <span class="n">tmp</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_CUMC_OP_MODE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cumc_op_mode</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span>
+                    <span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_CUMC_OP_MODE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_INTERCOM</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">intercom</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_INTERCOM</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_MEDIA_STATE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">media_state</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_MEDIA_STATE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_MOBILE_CONNECT</span><span class="p">):</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_MOBILE_CONNECT</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mobile_connect</span> <span class="o">=</span> <span class="n">tmp</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_MR_STATE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mr_state</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_MR_STATE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_MWI</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mwi</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_MWI</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_MWI_LINE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mwi_line</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_MWI_LINE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_MWI_STATS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mwi_stats</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_MWI_STATS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_NOTIFY</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">notify</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_NOTIFY</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_PRESENCE_INTERFACE_STATUS</span><span class="p">):</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_PRESENCE_INTERFACE_STATUS</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">presence_interface_status</span> <span class="o">=</span> <span class="n">tmp</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_PROMPT</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_PROMPT</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_SOFTKEYS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">softkeys</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_SOFTKEYS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_SPEED_DIALS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">speeddials</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_SPEED_DIALS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_SUBSEVT_DIALOG</span><span class="p">):</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_SUBSEVT_DIALOG</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">subsevtdialog</span> <span class="o">=</span> <span class="n">tmp</span>
+            <span class="k">if</span> <span class="n">info_ext_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_SUBSEVT_PRESENCE</span><span class="p">):</span>
+                <span class="n">tmp</span> <span class="o">=</span> <span class="n">info_ext_dict</span><span class="p">[</span><span class="n">EndpointInfoExt</span><span class="o">.</span><span class="n">_SUBSEVT_PRESENCE</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">subsevtpresence</span> <span class="o">=</span> <span class="n">tmp</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;passed parameter is not of type dict&#39;</span><span class="p">)</span>
+            <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="CallInfo"><a class="viewcode-back" href="../../api/response.html#camelot.response.CallInfo">[docs]</a><span class="k">class</span> <span class="nc">CallInfo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;Represents Call Info with following attributes</span>
+<span class="sd">    * call_reference</span>
+<span class="sd">    * line_reference</span>
+<span class="sd">    * direction_outbound</span>
+<span class="sd">    * newdirection</span>
+<span class="sd">    * type</span>
+<span class="sd">    * state_connected</span>
+<span class="sd">    * callid</span>
+<span class="sd">    * calling_address</span>
+<span class="sd">    * calling_name</span>
+<span class="sd">    * called_address</span>
+<span class="sd">    * called_name</span>
+<span class="sd">    * original_called_address</span>
+<span class="sd">    * original_called_name</span>
+<span class="sd">    * last_redirecting_address</span>
+<span class="sd">    * last_redirecting_name</span>
+<span class="sd">    * last_redirecting_reason</span>
+<span class="sd">    * original_called_redirecting_reason</span>
+<span class="sd">    * calling_mail_box</span>
+<span class="sd">    * called_mail_box</span>
+<span class="sd">    * last_redirecting_mail_box</span>
+<span class="sd">    * original_called_mail_box</span>
+<span class="sd">    * call_security_status</span>
+<span class="sd">    * not_authenticated</span>
+<span class="sd">    * network_domain</span>
+<span class="sd">    * precedence_domain</span>
+<span class="sd">    * precedence_level</span>
+<span class="sd">    * recording_type</span>
+<span class="sd">    * recording_status</span>
+<span class="sd">    * confidential_access_level_text</span>
+<span class="sd">    * date</span>
+<span class="sd">    * start</span>
+<span class="sd">    * end</span>
+<span class="sd">    * dialtone_time</span>
+<span class="sd">    * setup_time</span>
+<span class="sd">    * connect_time</span>
+<span class="sd">    * disconnect_time</span>
+<span class="sd">    * cut_through_time</span>
+<span class="sd">    * disconnect_reason</span>
+<span class="sd">    * cause_code</span>
+<span class="sd">    * last_pathconf_trigger</span>
+<span class="sd">    * status</span>
+<span class="sd">    * callsetup_pc_attempts</span>
+<span class="sd">    * callsetup_pc_successes</span>
+<span class="sd">    * callsetup_pc_failures</span>
+<span class="sd">    * midcall_pc_attempts</span>
+<span class="sd">    * midcall_pc_successes</span>
+<span class="sd">    * midcall_pc_failures</span>
+<span class="sd">    * remoteinuse_events</span>
+<span class="sd">    * failure_status</span>
+<span class="sd">    * last_media_error</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_CALL_REFERENCE</span> <span class="o">=</span> <span class="s1">&#39;call reference&#39;</span>
+    <span class="n">_LINE_REFERENCE</span> <span class="o">=</span> <span class="s1">&#39;line reference&#39;</span>
+    <span class="n">_DIRECTION_OUTBOUND</span> <span class="o">=</span> <span class="s1">&#39;direction outbound&#39;</span>
+    <span class="n">_NEWDIRECTION</span> <span class="o">=</span> <span class="s1">&#39;newdirection&#39;</span>
+    <span class="n">_TYPE</span> <span class="o">=</span> <span class="s1">&#39;type&#39;</span>
+    <span class="n">_STATE_CONNECTED</span> <span class="o">=</span> <span class="s1">&#39;state connected&#39;</span>
+    <span class="n">_CALLID</span> <span class="o">=</span> <span class="s1">&#39;callid&#39;</span>
+    <span class="n">_CALLING_ADDRESS</span> <span class="o">=</span> <span class="s1">&#39;calling address&#39;</span>
+    <span class="n">_CALLING_NAME</span> <span class="o">=</span> <span class="s1">&#39;calling name&#39;</span>
+    <span class="n">_CALLED_ADDRESS</span> <span class="o">=</span> <span class="s1">&#39;called address&#39;</span>
+    <span class="n">_CALLED_NAME</span> <span class="o">=</span> <span class="s1">&#39;called name&#39;</span>
+    <span class="n">_ORIGINAL_CALLED_ADDRESS</span> <span class="o">=</span> <span class="s1">&#39;original called address&#39;</span>
+    <span class="n">_ORIGINAL_CALLED_NAME</span> <span class="o">=</span> <span class="s1">&#39;original called name&#39;</span>
+    <span class="n">_LAST_REDIRECTING_ADDRESS</span> <span class="o">=</span> <span class="s1">&#39;last redirecting address&#39;</span>
+    <span class="n">_LAST_REDIRECTING_NAME</span> <span class="o">=</span> <span class="s1">&#39;last redirecting name&#39;</span>
+    <span class="n">_LAST_REDIRECTING_REASON</span> <span class="o">=</span> <span class="s1">&#39;last redirecting reason&#39;</span>
+    <span class="n">_ORIGINAL_CALLED_REDIRECTING_REASON</span> <span class="o">=</span> <span class="s1">&#39;original called redirecting reason&#39;</span>
+    <span class="n">_CALLING_MAIL_BOX</span> <span class="o">=</span> <span class="s1">&#39;calling mail box&#39;</span>
+    <span class="n">_CALLED_MAIL_BOX</span> <span class="o">=</span> <span class="s1">&#39;called mail box&#39;</span>
+    <span class="n">_LAST_REDIRECTING_MAIL_BOX</span> <span class="o">=</span> <span class="s1">&#39;last redirecting mail box&#39;</span>
+    <span class="n">_ORIGINAL_CALLED_MAIL_BOX</span> <span class="o">=</span> <span class="s1">&#39;original called mail box&#39;</span>
+    <span class="n">_CALL_SECURITY_STATUS</span> <span class="o">=</span> <span class="s1">&#39;call security status&#39;</span>
+    <span class="n">_NOT_AUTHENTICATED</span> <span class="o">=</span> <span class="s1">&#39;not authenticated&#39;</span>
+    <span class="n">_NETWORK_DOMAIN</span> <span class="o">=</span> <span class="s1">&#39;network domain&#39;</span>
+    <span class="n">_PRECEDENCE_DOMAIN</span> <span class="o">=</span> <span class="s1">&#39;precedence domain&#39;</span>
+    <span class="n">_PRECEDENCE_LEVEL</span> <span class="o">=</span> <span class="s1">&#39;precedence level&#39;</span>
+    <span class="n">_RECORDING_TYPE</span> <span class="o">=</span> <span class="s1">&#39;recording type&#39;</span>
+    <span class="n">_RECORDING_STATUS</span> <span class="o">=</span> <span class="s1">&#39;recording status&#39;</span>
+    <span class="n">_CONFIDENTIAL_ACCESS_LEVEL_TEXT</span> <span class="o">=</span> <span class="s1">&#39;confidential access level text&#39;</span>
+    <span class="n">_DATE</span> <span class="o">=</span> <span class="s1">&#39;date&#39;</span>
+    <span class="n">_START</span> <span class="o">=</span> <span class="s1">&#39;start&#39;</span>
+    <span class="n">_END</span> <span class="o">=</span> <span class="s1">&#39;end&#39;</span>
+    <span class="n">_DIALTONE_TIME</span> <span class="o">=</span> <span class="s1">&#39;dialtone time&#39;</span>
+    <span class="n">_SETUP_TIME</span> <span class="o">=</span> <span class="s1">&#39;setup time&#39;</span>
+    <span class="n">_CONNECT_TIME</span> <span class="o">=</span> <span class="s1">&#39;connect time&#39;</span>
+    <span class="n">_DISCONNECT_TIME</span> <span class="o">=</span> <span class="s1">&#39;disconnect time&#39;</span>
+    <span class="n">_CUT_THROUGH_TIME</span> <span class="o">=</span> <span class="s1">&#39;cut-through time&#39;</span>
+    <span class="n">_DISCONNECT_REASON</span> <span class="o">=</span> <span class="s1">&#39;disconnect reason&#39;</span>
+    <span class="n">_CAUSE_CODE</span> <span class="o">=</span> <span class="s1">&#39;cause code&#39;</span>
+    <span class="n">_LAST_PATHCONF_TRIGGER</span> <span class="o">=</span> <span class="s1">&#39;last pathconf trigger&#39;</span>
+    <span class="n">_STATUS</span> <span class="o">=</span> <span class="s1">&#39;status&#39;</span>
+    <span class="n">_CALLSETUP_PC_ATTEMPTS</span> <span class="o">=</span> <span class="s1">&#39;callsetup pc attempts&#39;</span>
+    <span class="n">_CALLSETUP_PC_SUCCESSES</span> <span class="o">=</span> <span class="s1">&#39;callsetup pc successes&#39;</span>
+    <span class="n">_CALLSETUP_PC_FAILURES</span> <span class="o">=</span> <span class="s1">&#39;callsetup pc failures&#39;</span>
+    <span class="n">_MIDCALL_PC_ATTEMPTS</span> <span class="o">=</span> <span class="s1">&#39;midcall pc attempts&#39;</span>
+    <span class="n">_MIDCALL_PC_SUCCESSES</span> <span class="o">=</span> <span class="s1">&#39;midcall pc successes&#39;</span>
+    <span class="n">_MIDCALL_PC_FAILURES</span> <span class="o">=</span> <span class="s1">&#39;midcall pc failures&#39;</span>
+    <span class="n">_REMOTEINUSE_EVENTS</span> <span class="o">=</span> <span class="s1">&#39;remoteinuse events&#39;</span>
+    <span class="n">_FAILURE_STATUS</span> <span class="o">=</span> <span class="s1">&#39;failure status&#39;</span>
+    <span class="n">_LAST_MEDIA_ERROR</span> <span class="o">=</span> <span class="s1">&#39;last media error&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">call_reference</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_reference</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">direction_outbound</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">newdirection</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_connected</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callid</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calling_address</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calling_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">called_address</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">called_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_called_address</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_called_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_redirecting_address</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_redirecting_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_redirecting_reason</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_called_redirecting_reason</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calling_mail_box</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">called_mail_box</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_redirecting_mail_box</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_called_mail_box</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">call_security_status</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">not_authenticated</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">network_domain</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precedence_domain</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precedence_level</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recording_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recording_status</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">confidential_access_level_text</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dialtone_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connect_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disconnect_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cut_through_time</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">disconnect_reason</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cause_code</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_pathconf_trigger</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callsetup_pc_attempts</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callsetup_pc_successes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">callsetup_pc_failures</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">midcall_pc_attempts</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">midcall_pc_successes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">midcall_pc_failures</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remoteinuse_events</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failure_status</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_media_error</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_copy_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_info</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">call_info</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALL_REFERENCE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">call_reference</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALL_REFERENCE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_LINE_REFERENCE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">line_reference</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_LINE_REFERENCE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_DIRECTION_OUTBOUND</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">direction_outbound</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_DIRECTION_OUTBOUND</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_NEWDIRECTION</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">newdirection</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_NEWDIRECTION</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_TYPE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_TYPE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_STATE_CONNECTED</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state_connected</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_STATE_CONNECTED</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLID</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">callid</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLID</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLING_ADDRESS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">calling_address</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLING_ADDRESS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLING_NAME</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">calling_name</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLING_NAME</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLED_NAME</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called_name</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLED_NAME</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLED_ADDRESS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called_address</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLED_ADDRESS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_ORIGINAL_CALLED_ADDRESS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">original_called_address</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_ORIGINAL_CALLED_ADDRESS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_ORIGINAL_CALLED_NAME</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">original_called_name</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_ORIGINAL_CALLED_NAME</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_LAST_REDIRECTING_ADDRESS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_redirecting_address</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_LAST_REDIRECTING_ADDRESS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_LAST_REDIRECTING_NAME</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_redirecting_name</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_LAST_REDIRECTING_NAME</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_LAST_REDIRECTING_REASON</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_redirecting_reason</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_LAST_REDIRECTING_REASON</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_ORIGINAL_CALLED_REDIRECTING_REASON</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">original_called_redirecting_reason</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_ORIGINAL_CALLED_REDIRECTING_REASON</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLING_MAIL_BOX</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">calling_mail_box</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLING_MAIL_BOX</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLED_MAIL_BOX</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">called_mail_box</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLED_MAIL_BOX</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_LAST_REDIRECTING_MAIL_BOX</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_redirecting_mail_box</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_LAST_REDIRECTING_MAIL_BOX</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_ORIGINAL_CALLED_MAIL_BOX</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">original_called_mail_box</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_ORIGINAL_CALLED_MAIL_BOX</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALL_SECURITY_STATUS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">call_security_status</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALL_SECURITY_STATUS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_NOT_AUTHENTICATED</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">not_authenticated</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_NOT_AUTHENTICATED</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_NETWORK_DOMAIN</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">network_domain</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_NETWORK_DOMAIN</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_PRECEDENCE_DOMAIN</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">precedence_domain</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_PRECEDENCE_DOMAIN</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_PRECEDENCE_LEVEL</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">precedence_level</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_PRECEDENCE_LEVEL</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_RECORDING_TYPE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">recording_type</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_RECORDING_TYPE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_RECORDING_STATUS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">recording_status</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_RECORDING_STATUS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CONFIDENTIAL_ACCESS_LEVEL_TEXT</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">confidential_access_level_text</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_CONFIDENTIAL_ACCESS_LEVEL_TEXT</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_DATE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_DATE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_START</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_START</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_END</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">end</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_END</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_DIALTONE_TIME</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">dialtone_time</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_DIALTONE_TIME</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_SETUP_TIME</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">setup_time</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_SETUP_TIME</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CONNECT_TIME</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">connect_time</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CONNECT_TIME</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_DISCONNECT_TIME</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">disconnect_time</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_DISCONNECT_TIME</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CUT_THROUGH_TIME</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cut_through_time</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CUT_THROUGH_TIME</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_DISCONNECT_REASON</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">disconnect_reason</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_DISCONNECT_REASON</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CAUSE_CODE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cause_code</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CAUSE_CODE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_LAST_PATHCONF_TRIGGER</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_pathconf_trigger</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_LAST_PATHCONF_TRIGGER</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_STATUS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_STATUS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLSETUP_PC_ATTEMPTS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">callsetup_pc_attempts</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLSETUP_PC_ATTEMPTS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLSETUP_PC_FAILURES</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">callsetup_pc_failures</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLSETUP_PC_FAILURES</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLSETUP_PC_SUCCESSES</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">callsetup_pc_successes</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_CALLSETUP_PC_SUCCESSES</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_MIDCALL_PC_ATTEMPTS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">midcall_pc_attempts</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_MIDCALL_PC_ATTEMPTS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_MIDCALL_PC_FAILURES</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">midcall_pc_failures</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_MIDCALL_PC_FAILURES</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_MIDCALL_PC_SUCCESSES</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">midcall_pc_successes</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_MIDCALL_PC_SUCCESSES</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_REMOTEINUSE_EVENTS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">remoteinuse_events</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span>
+                    <span class="n">CallInfo</span><span class="o">.</span><span class="n">_REMOTEINUSE_EVENTS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_FAILURE_STATUS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">failure_status</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_FAILURE_STATUS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_LAST_MEDIA_ERROR</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">last_media_error</span> <span class="o">=</span> <span class="n">call_info</span><span class="p">[</span><span class="n">CallInfo</span><span class="o">.</span><span class="n">_LAST_MEDIA_ERROR</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;passed parameter is not of type dict&#39;</span><span class="p">)</span>
+            <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="CallInfoExt"><a class="viewcode-back" href="../../api/response.html#camelot.response.CallInfoExt">[docs]</a><span class="k">class</span> <span class="nc">CallInfoExt</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;Represents Call Info Ext object with following attributes</span>
+<span class="sd">    * softkeys</span>
+<span class="sd">    * prompt</span>
+<span class="sd">    * selected</span>
+<span class="sd">    * did</span>
+<span class="sd">    * h235_encryption_algorithm</span>
+<span class="sd">    * attribute</span>
+<span class="sd">    * holdreversionreq</span>
+<span class="sd">    * protocol_disc_reason</span>
+<span class="sd">    * monitor_mode</span>
+<span class="sd">    * monitor_DN</span>
+<span class="sd">    * cumccallmode</span>
+<span class="sd">    * history_info</span>
+<span class="sd">    * participant</span>
+<span class="sd">    * x_refci</span>
+<span class="sd">    * x_nearenddevice</span>
+<span class="sd">    * x_farendrefci</span>
+<span class="sd">    * x_farenddevice</span>
+<span class="sd">    * x_farendaddr</span>
+<span class="sd">    * x_nearendaddr</span>
+<span class="sd">    * x_nearendguid</span>
+<span class="sd">    * x_farendguid</span>
+<span class="sd">    * x_nearendclusterid</span>
+<span class="sd">    * x_farendclusterid</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">_SOFTKEYS</span> <span class="o">=</span> <span class="s1">&#39;softkeys&#39;</span>
+    <span class="n">_PROMPT</span> <span class="o">=</span> <span class="s1">&#39;prompt&#39;</span>
+    <span class="n">_SELECTED</span> <span class="o">=</span> <span class="s1">&#39;selected&#39;</span>
+    <span class="n">_DID</span> <span class="o">=</span> <span class="s1">&#39;did&#39;</span>
+    <span class="n">_H235_ENCRYPTION_ALGORITHM</span> <span class="o">=</span> <span class="s1">&#39;h235 encryption algorithm&#39;</span>
+    <span class="n">_ATTRIBUTE</span> <span class="o">=</span> <span class="s1">&#39;attribute&#39;</span>
+    <span class="n">_HOLDREVERSION</span> <span class="o">=</span> <span class="s1">&#39;holdreversionreq&#39;</span>
+    <span class="n">_PROTOCOL_DISC_REASON</span> <span class="o">=</span> <span class="s1">&#39;protocol disc reason&#39;</span>
+    <span class="n">_MONITOR_MODE</span> <span class="o">=</span> <span class="s1">&#39;monitor mode&#39;</span>
+    <span class="n">_MONITOR_DN</span> <span class="o">=</span> <span class="s1">&#39;monitor DN&#39;</span>
+    <span class="n">_CUMCCALLMODE</span> <span class="o">=</span> <span class="s1">&#39;cumccallmode&#39;</span>
+    <span class="n">_HISTORY_INFO</span> <span class="o">=</span> <span class="s1">&#39;history-info&#39;</span>
+    <span class="n">_PARTICIPANT</span> <span class="o">=</span> <span class="s1">&#39;participant&#39;</span>
+    <span class="n">_X_REFCI</span> <span class="o">=</span> <span class="s1">&#39;x-refci&#39;</span>
+    <span class="n">_X_NEARENDDEVICE</span> <span class="o">=</span> <span class="s1">&#39;x-nearenddevice&#39;</span>
+    <span class="n">_X_FARENDREFCI</span> <span class="o">=</span> <span class="s1">&#39;x-farendrefci&#39;</span>
+    <span class="n">_X_FARENDDEVICE</span> <span class="o">=</span> <span class="s1">&#39;x-farenddevice&#39;</span>
+    <span class="n">_X_FARENDADDR</span> <span class="o">=</span> <span class="s1">&#39;x-farendaddr&#39;</span>
+    <span class="n">_X_NEARENDADDR</span> <span class="o">=</span> <span class="s1">&#39;x-nearendaddr&#39;</span>
+    <span class="n">_X_NEARENDGUID</span> <span class="o">=</span> <span class="s1">&#39;x-nearendguid&#39;</span>
+    <span class="n">_X_FARENDGUID</span> <span class="o">=</span> <span class="s1">&#39;x-farendguid&#39;</span>
+    <span class="n">_X_NEARENDCLUSTERID</span> <span class="o">=</span> <span class="s1">&#39;x-nearendclusterid&#39;</span>
+    <span class="n">_X_FARENDCLUSTERID</span> <span class="o">=</span> <span class="s1">&#39;x-farendclusterid&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">softkeys</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">did</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h235_encryption_algorithm</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">protocol_disc_reason</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor_mode</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">monitor_DN</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cumccallmode</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history_info</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participant</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_refci</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_nearenddevice</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_farendrefci</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_farenddevice</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_farendaddr</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_nearendaddr</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_nearendguid</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_farendguid</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_nearendclusterid</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x_farendclusterid</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_copy_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">call_info_ext</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">call_info_ext</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_SOFTKEYS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">softkeys</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_SOFTKEYS</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_PROMPT</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prompt</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_PROMPT</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_SELECTED</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">selected</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_SELECTED</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_DID</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">did</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_DID</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_H235_ENCRYPTION_ALGORITHM</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">h235_encryption_algorithm</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span>
+                    <span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_H235_ENCRYPTION_ALGORITHM</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_ATTRIBUTE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">attribute</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_ATTRIBUTE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_HOLDREVERSION</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">holdreversion</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_HOLDREVERSION</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_PROTOCOL_DISC_REASON</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">protocol_disc_reason</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span>
+                    <span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_PROTOCOL_DISC_REASON</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_MONITOR_MODE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">monitor_mode</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_MONITOR_MODE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_MONITOR_DN</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">monitor_DN</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_MONITOR_DN</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_CUMCCALLMODE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cumccallmode</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_CUMCCALLMODE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_HISTORY_INFO</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">history_info</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_HISTORY_INFO</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_PARTICIPANT</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">participant</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_PARTICIPANT</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_REFCI</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x_refci</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_REFCI</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_FARENDADDR</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x_farendaddr</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_FARENDADDR</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_FARENDCLUSTERID</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x_farendclusterid</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span>
+                    <span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_FARENDCLUSTERID</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_FARENDDEVICE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x_farenddevice</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span>
+                    <span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_FARENDDEVICE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_FARENDGUID</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x_farendguid</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_FARENDGUID</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_FARENDREFCI</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x_farendrefci</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_FARENDREFCI</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_NEARENDADDR</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x_nearendaddr</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_NEARENDADDR</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_NEARENDCLUSTERID</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x_nearendclusterid</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span>
+                    <span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_NEARENDCLUSTERID</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_NEARENDDEVICE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x_nearenddevice</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span>
+                    <span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_NEARENDDEVICE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">call_info_ext</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_NEARENDGUID</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x_nearendguid</span> <span class="o">=</span> <span class="n">call_info_ext</span><span class="p">[</span><span class="n">CallInfoExt</span><span class="o">.</span><span class="n">_X_NEARENDGUID</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;passed parameter is not of type dict&#39;</span><span class="p">)</span>
+            <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="CallState"><a class="viewcode-back" href="../../api/response.html#camelot.response.CallState">[docs]</a><span class="k">class</span> <span class="nc">CallState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">NEW</span> <span class="o">=</span> <span class="s1">&#39;new&#39;</span>
+    <span class="n">OUTBOUND</span> <span class="o">=</span> <span class="s1">&#39;outbound&#39;</span>
+    <span class="n">OFFHOOK</span> <span class="o">=</span> <span class="s1">&#39;offhook&#39;</span>
+    <span class="n">DIALTONE</span> <span class="o">=</span> <span class="s1">&#39;dialtone&#39;</span>
+    <span class="n">DIALING</span> <span class="o">=</span> <span class="s1">&#39;dialing&#39;</span>
+    <span class="n">PROCEEDING</span> <span class="o">=</span> <span class="s1">&#39;proceeding&#39;</span>
+    <span class="n">ALERTING</span> <span class="o">=</span> <span class="s1">&#39;alerting&#39;</span>
+    <span class="n">CONNECTED</span> <span class="o">=</span> <span class="s1">&#39;connected&#39;</span>
+    <span class="n">DISCONNECTING</span> <span class="o">=</span> <span class="s1">&#39;disconnecting&#39;</span>
+    <span class="n">DISCONNECTED</span> <span class="o">=</span> <span class="s1">&#39;disconnected&#39;</span>
+    <span class="n">SEIZURE</span> <span class="o">=</span> <span class="s1">&#39;seizure&#39;</span>
+    <span class="n">RECDIGITS</span> <span class="o">=</span> <span class="s1">&#39;recdigits&#39;</span>
+    <span class="n">INCOMING</span> <span class="o">=</span> <span class="s1">&#39;incoming&#39;</span>
+    <span class="n">ANSWERING</span> <span class="o">=</span> <span class="s1">&#39;answering&#39;</span>
+    <span class="n">REJECTING</span> <span class="o">=</span> <span class="s1">&#39;rejecting&#39;</span>
+    <span class="n">REMOTEINUSE</span> <span class="o">=</span> <span class="s1">&#39;remoteinuse&#39;</span>
+    <span class="n">HELD</span> <span class="o">=</span> <span class="s1">&#39;held&#39;</span>
+    <span class="n">REMOTEHELD</span> <span class="o">=</span> <span class="s1">&#39;remoteheld&#39;</span>
+    <span class="n">MOVING</span> <span class="o">=</span> <span class="s1">&#39;moving&#39;</span></div>
+
+
+<div class="viewcode-block" id="EndpointState"><a class="viewcode-back" href="../../api/response.html#camelot.response.EndpointState">[docs]</a><span class="k">class</span> <span class="nc">EndpointState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">UN_INITIALIZED</span> <span class="o">=</span> <span class="s2">&quot;uninitialized&quot;</span>
+    <span class="n">OUT_OF_SERVICE</span> <span class="o">=</span> <span class="s2">&quot;outofservice&quot;</span>
+    <span class="n">IN_SERVICE</span> <span class="o">=</span> <span class="s2">&quot;inservice&quot;</span>
+    <span class="n">CLIENT_SUSPEND</span> <span class="o">=</span> <span class="s2">&quot;suspended&quot;</span>
+    <span class="n">CLIENT_FOREGROUND</span> <span class="o">=</span> <span class="s2">&quot;foregroundpending&quot;</span>
+    <span class="n">INIT_PENDING</span> <span class="o">=</span> <span class="s2">&quot;initpending&quot;</span>
+    <span class="n">IN_SERVICE_PENDING</span> <span class="o">=</span> <span class="s2">&quot;inservicepending&quot;</span>
+    <span class="n">OUT_OF_SERVICE_PENDING</span> <span class="o">=</span> <span class="s2">&quot;outofservicepending&quot;</span></div>
+
+
+<div class="viewcode-block" id="VoiceMailClientState"><a class="viewcode-back" href="../../api/response.html#camelot.response.VoiceMailClientState">[docs]</a><span class="k">class</span> <span class="nc">VoiceMailClientState</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="n">CONNECTED</span> <span class="o">=</span> <span class="s1">&#39;connected&#39;</span>
+    <span class="n">DISCONNECTED</span> <span class="o">=</span> <span class="s1">&#39;disconnected&#39;</span>
+    <span class="n">CONNECTING</span> <span class="o">=</span> <span class="s1">&#39;connecting&#39;</span>
+    <span class="n">DISCONNECTING</span> <span class="o">=</span> <span class="s1">&#39;disconnecting&#39;</span>
+    <span class="n">INACTIVE</span> <span class="o">=</span> <span class="s1">&#39;inactive&#39;</span>
+    <span class="n">ACTIVE</span> <span class="o">=</span> <span class="s1">&#39;active&#39;</span></div>
+
+
+<div class="viewcode-block" id="EndpointType"><a class="viewcode-back" href="../../api/response.html#camelot.response.EndpointType">[docs]</a><span class="k">class</span> <span class="nc">EndpointType</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">SIP</span> <span class="o">=</span> <span class="s1">&#39;sip&#39;</span>
+    <span class="n">SIPX</span> <span class="o">=</span> <span class="s1">&#39;sipx&#39;</span>
+    <span class="n">SIPV</span> <span class="o">=</span> <span class="s1">&#39;sipv&#39;</span>
+    <span class="n">SK</span> <span class="o">=</span> <span class="s1">&#39;sk&#39;</span>
+    <span class="n">SKM</span> <span class="o">=</span> <span class="s1">&#39;skm&#39;</span>
+    <span class="n">CUPC</span> <span class="o">=</span> <span class="s1">&#39;cupc&#39;</span>
+    <span class="n">CUPCLITE</span> <span class="o">=</span> <span class="s1">&#39;cupclite&#39;</span>
+    <span class="n">CUPCD</span> <span class="o">=</span> <span class="s1">&#39;cupcd&#39;</span>
+    <span class="n">CSFD</span> <span class="o">=</span> <span class="s1">&#39;csfd&#39;</span>
+    <span class="n">CUMC</span> <span class="o">=</span> <span class="s1">&#39;cumc&#39;</span>
+    <span class="n">CTS</span> <span class="o">=</span> <span class="s1">&#39;cts&#39;</span>
+    <span class="n">H323</span> <span class="o">=</span> <span class="s1">&#39;h323&#39;</span><span class="p">,</span>
+    <span class="n">PRI</span> <span class="o">=</span> <span class="s1">&#39;pri&#39;</span>
+    <span class="n">CAS</span> <span class="o">=</span> <span class="s1">&#39;cas&#39;</span>
+    <span class="n">RAW</span> <span class="o">=</span> <span class="s1">&#39;raw&#39;</span>
+    <span class="n">TANDBERGSIP</span> <span class="o">=</span> <span class="s1">&#39;tandbergsip&#39;</span>
+    <span class="n">SKS</span> <span class="o">=</span> <span class="s1">&#39;sks&#39;</span>
+    <span class="n">DMC</span> <span class="o">=</span> <span class="s1">&#39;dmc&#39;</span>
+    <span class="n">IMSCLIENT</span> <span class="o">=</span> <span class="s1">&#39;imsclient&#39;</span></div>
+
+
+<div class="viewcode-block" id="Stream"><a class="viewcode-back" href="../../api/response.html#camelot.response.Stream">[docs]</a><span class="k">class</span> <span class="nc">Stream</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;Represents Stream object with following params</span>
+
+<span class="sd">    * stream_ref</span>
+<span class="sd">    * call_ref</span>
+<span class="sd">    * type</span>
+<span class="sd">    * direction</span>
+<span class="sd">    * state</span>
+<span class="sd">    * mifctype</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">_STREAM_REF</span> <span class="o">=</span> <span class="s1">&#39;stream_ref&#39;</span>
+    <span class="n">_CALL_REF</span> <span class="o">=</span> <span class="s1">&#39;call_ref&#39;</span>
+    <span class="n">_TYPE</span> <span class="o">=</span> <span class="s1">&#39;type&#39;</span>
+    <span class="n">_DIRECTION</span> <span class="o">=</span> <span class="s1">&#39;direction&#39;</span>
+    <span class="n">_STATE</span> <span class="o">=</span> <span class="s1">&#39;state&#39;</span>
+    <span class="n">_MIFC_TYPE</span> <span class="o">=</span> <span class="s1">&#39;mifctype&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stream_ref</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mifctype</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_copy_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">streams_dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">streams_dict</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">streams_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Stream</span><span class="o">.</span><span class="n">_CALL_REF</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="o">=</span> <span class="n">streams_dict</span><span class="p">[</span><span class="n">Stream</span><span class="o">.</span><span class="n">_CALL_REF</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">streams_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Stream</span><span class="o">.</span><span class="n">_DIRECTION</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">streams_dict</span><span class="p">[</span><span class="n">Stream</span><span class="o">.</span><span class="n">_DIRECTION</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">streams_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Stream</span><span class="o">.</span><span class="n">_MIFC_TYPE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">mifctype</span> <span class="o">=</span> <span class="n">streams_dict</span><span class="p">[</span><span class="n">Stream</span><span class="o">.</span><span class="n">_MIFC_TYPE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">streams_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Stream</span><span class="o">.</span><span class="n">_TYPE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">streams_dict</span><span class="p">[</span><span class="n">Stream</span><span class="o">.</span><span class="n">_TYPE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">streams_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Stream</span><span class="o">.</span><span class="n">_STATE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">streams_dict</span><span class="p">[</span><span class="n">Stream</span><span class="o">.</span><span class="n">_STATE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">streams_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Stream</span><span class="o">.</span><span class="n">_STREAM_REF</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stream_ref</span> <span class="o">=</span> <span class="n">streams_dict</span><span class="p">[</span><span class="n">Stream</span><span class="o">.</span><span class="n">_STREAM_REF</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;passed parameter is not of type dict&#39;</span><span class="p">)</span>
+            <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="Call"><a class="viewcode-back" href="../../api/response.html#camelot.response.Call">[docs]</a><span class="k">class</span> <span class="nc">Call</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;Represents Call with following attributes</span>
+
+<span class="sd">    * line_ref</span>
+<span class="sd">    * call_ref</span>
+<span class="sd">    * state</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">_LINE_REF</span> <span class="o">=</span> <span class="s1">&#39;line_ref&#39;</span>
+    <span class="n">_CALL_REF</span> <span class="o">=</span> <span class="s1">&#39;call_ref&#39;</span>
+    <span class="n">_STATE</span> <span class="o">=</span> <span class="s1">&#39;state&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_ref</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_copy_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">calls_dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">calls_dict</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">calls_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Call</span><span class="o">.</span><span class="n">_CALL_REF</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">call_ref</span> <span class="o">=</span> <span class="n">calls_dict</span><span class="p">[</span><span class="n">Call</span><span class="o">.</span><span class="n">_CALL_REF</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">calls_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Call</span><span class="o">.</span><span class="n">_LINE_REF</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">line_ref</span> <span class="o">=</span> <span class="n">calls_dict</span><span class="p">[</span><span class="n">Call</span><span class="o">.</span><span class="n">_LINE_REF</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">calls_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Call</span><span class="o">.</span><span class="n">_STATE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">calls_dict</span><span class="p">[</span><span class="n">Call</span><span class="o">.</span><span class="n">_STATE</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;passed parameter is not of type dict&#39;</span><span class="p">)</span>
+            <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="Line"><a class="viewcode-back" href="../../api/response.html#camelot.response.Line">[docs]</a><span class="k">class</span> <span class="nc">Line</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;Represents a Line</span>
+
+<span class="sd">    * line_num</span>
+<span class="sd">    * full_address</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">_LINE_NUM</span> <span class="o">=</span> <span class="s1">&#39;line_num&#39;</span>
+    <span class="n">_FULL_ADDRESS</span> <span class="o">=</span> <span class="s1">&#39;full_address&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">line_num</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">full_address</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_copy_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">line_dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">line_dict</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Line</span><span class="o">.</span><span class="n">_LINE_NUM</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">line_num</span> <span class="o">=</span> <span class="n">line_dict</span><span class="p">[</span><span class="n">Line</span><span class="o">.</span><span class="n">_LINE_NUM</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">line_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Line</span><span class="o">.</span><span class="n">_FULL_ADDRESS</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">full_address</span> <span class="o">=</span> <span class="n">line_dict</span><span class="p">[</span><span class="n">Line</span><span class="o">.</span><span class="n">_FULL_ADDRESS</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;passed parameter is not of type dict&#39;</span><span class="p">)</span>
+            <span class="k">return</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../camelot.html" >camelot</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,460 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>camelot.vmon &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../camelot.html" accesskey="U">camelot</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for camelot.vmon</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">threading</span> <span class="k">import</span> <span class="n">RLock</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">import</span> <span class="nn">camelot</span>
+<span class="kn">from</span> <span class="nn">camelot.endpoint</span> <span class="k">import</span> <span class="n">CamelotEndpoint</span>
+<span class="kn">from</span> <span class="nn">camelot.encoder</span> <span class="k">import</span> <span class="n">encoder</span>
+<span class="kn">from</span> <span class="nn">camelot.vmon.vmon_connection</span> <span class="k">import</span> <span class="n">Connection</span>
+<span class="kn">from</span> <span class="nn">camelot.vmon.vmon_instance</span> <span class="k">import</span> <span class="n">VmonInstance</span>
+<span class="kn">from</span> <span class="nn">camelot</span> <span class="k">import</span> <span class="n">camlogger</span>
+
+<span class="n">connections</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">_connections_lock</span> <span class="o">=</span> <span class="n">RLock</span><span class="p">()</span>
+<span class="n">_server_callbacks</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">camlogger</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="n">vmoninstances</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="Vmon"><a class="viewcode-back" href="../../api/vmon.html#camelot.vmon.Vmon">[docs]</a><span class="k">class</span> <span class="nc">Vmon</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&#39;&#39;&#39;Vmon instance representation, ip port and path are mandatory\n</span>
+<span class="sd">    &#39;from camelot import vmon&#39; package</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmonname</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_ip</span> <span class="o">=</span> <span class="n">ip</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_port</span> <span class="o">=</span> <span class="n">port</span>
+
+<div class="viewcode-block" id="Vmon.start"><a class="viewcode-back" href="../../api/vmon.html#camelot.vmon.Vmon.start">[docs]</a>    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;startmonitor Start monitoring calls</span>
+
+<span class="sd">        :returns: nothing if successfull.</span>
+<span class="sd">                  exception &#39;could not start monitor&#39; is raised if failed.</span>
+
+<span class="sd">        &gt;&gt;&gt; vmonobj.start()</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_vmon_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">)</span>
+        <span class="n">vmon_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;vmonref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_vmon_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">START_MONITOR</span><span class="p">,</span> <span class="n">vmon_params</span><span class="o">=</span><span class="n">vmon_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vmon.stop"><a class="viewcode-back" href="../../api/vmon.html#camelot.vmon.Vmon.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; stopmonitor Stops monitoring calls</span>
+
+<span class="sd">        :returns: nothing if successfull.</span>
+<span class="sd">                  exception &#39;monitor is not started/vmon instance is not valid&#39;</span>
+<span class="sd">                  is raised if failed.</span>
+
+<span class="sd">        &gt;&gt;&gt; vmonobj.stop()</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_vmon_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">)</span>
+        <span class="n">vmon_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;vmonref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_vmon_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">STOP_MONITOR</span><span class="p">,</span> <span class="n">vmon_params</span><span class="o">=</span><span class="n">vmon_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vmon.add_endpoint"><a class="viewcode-back" href="../../api/vmon.html#camelot.vmon.Vmon.add_endpoint">[docs]</a>    <span class="k">def</span> <span class="nf">add_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; add endpoint to the monitor(vmon server) queue for monitoring</span>
+
+<span class="sd">        :parameter endpoint: endpoint object created</span>
+<span class="sd">                             by camelot.create_new_endpoint()</span>
+<span class="sd">        :parameter description: description of the phone</span>
+
+<span class="sd">        :returns: nothing if successful,\n</span>
+<span class="sd">                  else &#39;Invalid Endpoint/ endpoint already exists&#39;</span>
+<span class="sd">                  exception is raised</span>
+
+<span class="sd">        &gt;&gt;&gt; vmonobj.add_endpoint(ep,&quot;phone 1&quot;)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_vmon_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">)</span>
+        <span class="n">epref</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">endpoint</span><span class="o">.</span><span class="n">ip</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">ep_id</span><span class="p">)</span>
+        <span class="n">vmon_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;vmonref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">,</span>
+            <span class="s1">&#39;epref&#39;</span><span class="p">:</span> <span class="n">epref</span><span class="p">,</span>
+            <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="n">description</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_vmon_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">ADD_TO_MONITOR</span><span class="p">,</span> <span class="n">vmon_params</span><span class="o">=</span><span class="n">vmon_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vmon.remove_endpoint"><a class="viewcode-back" href="../../api/vmon.html#camelot.vmon.Vmon.remove_endpoint">[docs]</a>    <span class="k">def</span> <span class="nf">remove_endpoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endpoint</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; remove endpoint from the monitor server. Once removed,</span>
+<span class="sd">        the endpoint will no longer be monitored</span>
+
+<span class="sd">        :parameter endpoint: endpoint object created by create_new_endpoint()</span>
+
+<span class="sd">        :returns: nothing if successful,\n</span>
+<span class="sd">                  else &#39;Invalid Endpoint/endpoint not found&#39; exception is</span>
+<span class="sd">                  thrown if it fails.</span>
+
+<span class="sd">        &gt;&gt;&gt; vmonobj.remove_endpoint(ep)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_vmon_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">)</span>
+        <span class="n">epref</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">endpoint</span><span class="o">.</span><span class="n">ip</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">port</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">.</span><span class="n">ep_id</span><span class="p">)</span>
+        <span class="n">vmon_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;vmonref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">,</span>
+            <span class="s1">&#39;epref&#39;</span><span class="p">:</span> <span class="n">epref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_vmon_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">REMOVE_FROM_MONITOR</span><span class="p">,</span> <span class="n">vmon_params</span><span class="o">=</span><span class="n">vmon_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vmon.release"><a class="viewcode-back" href="../../api/vmon.html#camelot.vmon.Vmon.release">[docs]</a>    <span class="k">def</span> <span class="nf">release</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; releases monitor releases endpoints associated with the monitor.</span>
+<span class="sd">        Does not delete monitor files or the monitor directory.</span>
+
+<span class="sd">        :returns: nothing is successful, else &#39;No endpoints added</span>
+<span class="sd">                  to be released&#39; exception is thrown</span>
+
+<span class="sd">        &gt;&gt;&gt; vmonobj.release()</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_vmon_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">)</span>
+        <span class="n">vmon_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;vmonref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_vmon_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">RELEASE_MONITOR</span><span class="p">,</span> <span class="n">vmon_params</span><span class="o">=</span><span class="n">vmon_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vmon.set_monitor"><a class="viewcode-back" href="../../api/vmon.html#camelot.vmon.Vmon.set_monitor">[docs]</a>    <span class="k">def</span> <span class="nf">set_monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">entries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Set thresholds associated with a monitor</span>
+
+<span class="sd">        :parameter entries: maximum number of entries per log file</span>
+<span class="sd">                            by default 500</span>
+<span class="sd">        :parameter mode: Specify which class of events to monitor:\n</span>
+<span class="sd">                                * calls - call state events\n</span>
+<span class="sd">                                * streams - streams events\n</span>
+<span class="sd">                                * epstate - endpoint info events\n</span>
+<span class="sd">                                * station - monitor specific station events\n</span>
+<span class="sd">        :parameter events: Any of the supported (python) list of station events</span>
+
+<span class="sd">        :returns: nothing if successful, else</span>
+<span class="sd">                  &#39;Invalid parameter/value passed&#39; exception is thrown</span>
+
+<span class="sd">        &gt;&gt;&gt; vmonobj.set_monitor(&#39;calls&#39;, &#39;1000&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; vmonobj.set_monitor(</span>
+<span class="sd">            &#39;epstate&#39;, &#39;1000&#39;, &#39;httpqueryresponse deletevvmresponse&#39;)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_vmon_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">)</span>
+        <span class="n">vmon_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;vmonref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">mode</span><span class="p">:</span>
+            <span class="n">vmon_params</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span>
+            <span class="k">if</span> <span class="n">events</span><span class="p">:</span>
+                <span class="n">vmon_params</span><span class="p">[</span><span class="s1">&#39;events&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">events</span>
+        <span class="k">if</span> <span class="n">entries</span><span class="p">:</span>
+            <span class="n">vmon_params</span><span class="p">[</span><span class="s1">&#39;entries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">entries</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_vmon_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">SET_MONITOR</span><span class="p">,</span> <span class="n">vmon_params</span><span class="o">=</span><span class="n">vmon_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vmon.clear_monitor"><a class="viewcode-back" href="../../api/vmon.html#camelot.vmon.Vmon.clear_monitor">[docs]</a>    <span class="k">def</span> <span class="nf">clear_monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">entries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; Clear user defined entries associated with a monitor</span>
+
+<span class="sd">        :returns: nothing if successful, else</span>
+<span class="sd">                  &#39;Invalid parameter/value passed&#39; exception is thrown</span>
+
+<span class="sd">        &gt;&gt;&gt; vmonobj.clear_monitor()</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_vmon_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">)</span>
+        <span class="n">vmon_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;vmonref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">mode</span><span class="p">:</span>
+            <span class="n">vmon_params</span><span class="p">[</span><span class="s1">&#39;mode&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mode</span>
+            <span class="k">if</span> <span class="n">events</span><span class="p">:</span>
+                <span class="n">vmon_params</span><span class="p">[</span><span class="s1">&#39;events&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">events</span>
+        <span class="k">if</span> <span class="n">entries</span><span class="p">:</span>
+            <span class="n">vmon_params</span><span class="p">[</span><span class="s1">&#39;entries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">entries</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_vmon_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">CLEAR_MONITOR</span><span class="p">,</span> <span class="n">vmon_params</span><span class="o">=</span><span class="n">vmon_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vmon.get_info"><a class="viewcode-back" href="../../api/vmon.html#camelot.vmon.Vmon.get_info">[docs]</a>    <span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Gets current information about a monitor. changes made using</span>
+<span class="sd">        set_monitor() can be verified.</span>
+
+<span class="sd">        :returns: dictionary of monitor information as shown below</span>
+
+<span class="sd">        &gt;&gt;&gt; vmonobj.get_info()</span>
+<span class="sd">        {&#39;current file&#39;: &#39;1.txt&#39;,</span>
+<span class="sd">         &#39;entries per file&#39;: &#39;500&#39;,</span>
+<span class="sd">         &#39;mode&#39;: &#39;calls&#39;,</span>
+<span class="sd">         &#39;monitor directory&#39;: &#39;/tmp/vmon&#39;}</span>
+
+<span class="sd">        &gt;&gt;&gt; vmonobj.get_info()</span>
+<span class="sd">        {&#39;current file&#39;: None,</span>
+<span class="sd">         &#39;entries per file&#39;: None,</span>
+<span class="sd">         &#39;mode&#39;: &#39;calls&#39;,</span>
+<span class="sd">         &#39;monitor directory&#39;: None}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_vmon_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">)</span>
+        <span class="n">vmon_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;vmonref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_vmon_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_MONITOR_INFO</span><span class="p">,</span> <span class="n">vmon_params</span><span class="o">=</span><span class="n">vmon_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Vmon.get_members"><a class="viewcode-back" href="../../api/vmon.html#camelot.vmon.Vmon.get_members">[docs]</a>    <span class="k">def</span> <span class="nf">get_members</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        get the members from vmon server list.  It will return a</span>
+<span class="sd">        list of endpoint references</span>
+
+<span class="sd">        :returns: list of endpoint references added else returns an empty list</span>
+
+<span class="sd">        &gt;&gt;&gt; vmonobj.get_members()</span>
+<span class="sd">        [&#39;192.168.1.109:5000:00000004&#39;. &#39;192.168.1.109:5000:00000005&#39;,...]</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_vmon_connection</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_ip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonserv_port</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">)</span>
+        <span class="n">vmon_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;vmonref&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">vmonref</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_vmon_command</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">GET_MONITOR_MEMBERS</span><span class="p">,</span> <span class="n">vmon_params</span><span class="o">=</span><span class="n">vmon_params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_get_vmon_connection</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">vmonref</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">connection_key</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">:</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">vmonref</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">vmoninstances</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">vmonref</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span>
+            <span class="s2">&quot;Invalid vmon instance </span><span class="si">{}</span><span class="s2"> at (</span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">vmonref</span><span class="p">,</span> <span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">with</span> <span class="n">_connections_lock</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">connections</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">connection_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">conn</span> <span class="o">=</span> <span class="n">Connection</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+            <span class="n">connections</span><span class="p">[</span><span class="n">connection_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">conn</span>
+
+    <span class="n">server_conn</span> <span class="o">=</span> <span class="n">connections</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">connection_key</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">server_conn</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span>
+            <span class="s2">&quot;Unable to create Connection object to VMON server at (</span><span class="si">{}</span><span class="s2">, </span><span class="si">{}</span><span class="s2">)&quot;</span>
+            <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">server_conn</span>
+
+
+<div class="viewcode-block" id="create_new_monitor"><a class="viewcode-back" href="../../api/vmon.html#camelot.vmon.create_new_monitor">[docs]</a><span class="k">def</span> <span class="nf">create_new_monitor</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Create a new vmon instance</span>
+
+<span class="sd">    :parameter ip: ip of the vmon server</span>
+<span class="sd">    :parameter port: port of the vmon server</span>
+<span class="sd">    :parameter dirpath: directory path to store vmon data</span>
+<span class="sd">                        specify another path or None</span>
+<span class="sd">                        default is /tmp/vmon</span>
+<span class="sd">    :parameter kwargs: optional parameter. It takes following keys:\n</span>
+<span class="sd">                         * dirpath: directory path to store vmon data,</span>
+<span class="sd">                           defaults to None</span>
+<span class="sd">                         * vmoninstance:  key for which user can provide the</span>
+<span class="sd">                           subsclass for</span>
+<span class="sd">                           vmonInstance.On providing this key the Vmon server</span>
+<span class="sd">                           instantiates this subclass</span>
+<span class="sd">                           otherwise the VmonInstance will be instantiated.\n</span>
+<span class="sd">                         * vmon_class: key for which user can provide subclass</span>
+<span class="sd">                           for Vmon class.</span>
+<span class="sd">                           On providing this key vmon client instantiates this</span>
+<span class="sd">                           subclass otherwise</span>
+<span class="sd">                           Vmon will be instantiated.\n</span>
+
+<span class="sd">    :returns: vmon instance is created if successful. Else if not running\n</span>
+<span class="sd">              &#39;Plesae check ip/port or make sure vmonserver is running&#39;</span>
+<span class="sd">              exception is raised.</span>
+
+<span class="sd">    &gt;&gt;&gt; vmonobj = camelot.vmon.create_new_monitor(&#39;10.12.10.188&#39;,30101)</span>
+<span class="sd">    &lt;Vmon object at 0x1b53a10&gt;</span>
+
+<span class="sd">    &gt;&gt;&gt; vmonobj = camelot.vmon.create_new_monitor(</span>
+<span class="sd">    &#39;10.12.10.188&#39;,30101,vmon_class=myvmon)</span>
+<span class="sd">    &lt;myvmon object at 0x1b53a10&gt;</span>
+
+<span class="sd">    &gt;&gt;&gt; vmonobj = camelot.vmon.create_new_monitor(</span>
+<span class="sd">    &#39;10.12.10.188&#39;,30101,vmon_class=myvmon, vmoninstance=</span>
+<span class="sd">    &#39;myvmonclass.VmonInstanceUser1&#39;)</span>
+<span class="sd">    &lt;myvmon object at 0x1b53a10&gt;</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">vmon_class</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vmon_class&#39;</span><span class="p">,</span> <span class="n">Vmon</span><span class="p">)</span>
+    <span class="n">vmonInstance_class</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vmoninstance&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">vmon_params</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;vmon_params&#39;</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">vmon_params</span><span class="p">[</span><span class="s1">&#39;dirpath&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># need to be checked</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">vmon_class</span><span class="p">,</span> <span class="n">Vmon</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;vmon_class is not subclass of Vmon&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ip</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;ip is not specified&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">port</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;port is not specified&#39;</span><span class="p">)</span>
+
+    <span class="n">IP</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+    <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_vmon_connection</span><span class="p">(</span><span class="n">IP</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_vmon_command</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">NEW_MONITOR</span><span class="p">,</span>
+                                                <span class="n">vmonInstance_class</span><span class="p">,</span>
+                                                <span class="n">vmon_params</span><span class="o">=</span><span class="n">vmon_params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;create vmon failed&#39;</span><span class="p">)</span>
+    <span class="n">newmonitor</span> <span class="o">=</span> <span class="n">vmon_class</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="n">newmonitor</span><span class="o">.</span><span class="n">vmonref</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">]</span>
+    <span class="n">vmoninstances</span><span class="p">[</span><span class="n">newmonitor</span><span class="o">.</span><span class="n">vmonref</span><span class="p">]</span> <span class="o">=</span> <span class="n">newmonitor</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;created monitor </span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">newmonitor</span><span class="o">.</span><span class="n">vmonref</span><span class="p">,</span> <span class="n">newmonitor</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">newmonitor</span></div>
+
+
+<div class="viewcode-block" id="delete_monitor"><a class="viewcode-back" href="../../api/vmon.html#camelot.vmon.delete_monitor">[docs]</a><span class="k">def</span> <span class="nf">delete_monitor</span><span class="p">(</span><span class="n">ip</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">vmonref</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Delete requested vmon instance&#39;</span>
+
+<span class="sd">    :parameter ip: ip of the monitor server</span>
+<span class="sd">    :parameter port: port of the monitor server</span>
+
+<span class="sd">    :returns: vmon reference</span>
+
+<span class="sd">    &gt;&gt;&gt; camelot.vmon.delete_vmon(&#39;10.12.10.188&#39;, 30101)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">IP</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">gethostbyname</span><span class="p">(</span><span class="n">ip</span><span class="p">)</span>
+    <span class="n">server_conn</span> <span class="o">=</span> <span class="n">_get_vmon_connection</span><span class="p">(</span><span class="n">IP</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="n">vmon_params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;vmonref&#39;</span><span class="p">:</span> <span class="n">vmonref</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">server_conn</span><span class="o">.</span><span class="n">execute_vmon_command</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">DELETE_MONITOR</span><span class="p">,</span>
+                                                <span class="n">vmon_params</span><span class="o">=</span><span class="n">vmon_params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">response</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">response</span><span class="p">[</span><span class="s1">&#39;rc&#39;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s1">&#39;msg&#39;</span><span class="p">])</span>
+    <span class="k">del</span> <span class="n">vmoninstances</span><span class="p">[</span><span class="n">vmonref</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">vmonref</span></div>
+
+
+<span class="k">def</span> <span class="nf">get_monitors</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">vmoninstances</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">stop_all</span><span class="p">():</span>
+    <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Closing all VMON connections&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">_connections_lock</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">conn</span> <span class="ow">in</span> <span class="n">connections</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">close_event_channel</span><span class="p">()</span>
+        <span class="n">connections</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../camelot.html" >camelot</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

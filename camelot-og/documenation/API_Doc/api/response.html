@@ -1,0 +1,580 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Response API &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="SipMsgObject API" href="sipmessages.html" />
+    <link rel="prev" title="Raw events server API" href="raweventserver.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sipmessages.html" title="SipMsgObject API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="raweventserver.html" title="Raw events server API"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api_reference.html" accesskey="U">API Reference</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="response-api">
+<h1>Response API<a class="headerlink" href="#response-api" title="Permalink to this headline">¶</a></h1>
+<p>The Response Classed</p>
+<span class="target" id="module-camelot.response"></span><dl class="class">
+<dt id="camelot.response.Call">
+<em class="property">class </em><code class="descclassname">camelot.response.</code><code class="descname">Call</code><a class="reference internal" href="../_modules/camelot/response.html#Call"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.response.Call" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents Call with following attributes</p>
+<ul class="simple">
+<li>line_ref</li>
+<li>call_ref</li>
+<li>state</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.response.CallInfo">
+<em class="property">class </em><code class="descclassname">camelot.response.</code><code class="descname">CallInfo</code><a class="reference internal" href="../_modules/camelot/response.html#CallInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.response.CallInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents Call Info with following attributes
+* call_reference
+* line_reference
+* direction_outbound
+* newdirection
+* type
+* state_connected
+* callid
+* calling_address
+* calling_name
+* called_address
+* called_name
+* original_called_address
+* original_called_name
+* last_redirecting_address
+* last_redirecting_name
+* last_redirecting_reason
+* original_called_redirecting_reason
+* calling_mail_box
+* called_mail_box
+* last_redirecting_mail_box
+* original_called_mail_box
+* call_security_status
+* not_authenticated
+* network_domain
+* precedence_domain
+* precedence_level
+* recording_type
+* recording_status
+* confidential_access_level_text
+* date
+* start
+* end
+* dialtone_time
+* setup_time
+* connect_time
+* disconnect_time
+* cut_through_time
+* disconnect_reason
+* cause_code
+* last_pathconf_trigger
+* status
+* callsetup_pc_attempts
+* callsetup_pc_successes
+* callsetup_pc_failures
+* midcall_pc_attempts
+* midcall_pc_successes
+* midcall_pc_failures
+* remoteinuse_events
+* failure_status
+* last_media_error</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.response.CallInfoExt">
+<em class="property">class </em><code class="descclassname">camelot.response.</code><code class="descname">CallInfoExt</code><a class="reference internal" href="../_modules/camelot/response.html#CallInfoExt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.response.CallInfoExt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents Call Info Ext object with following attributes
+* softkeys
+* prompt
+* selected
+* did
+* h235_encryption_algorithm
+* attribute
+* holdreversionreq
+* protocol_disc_reason
+* monitor_mode
+* monitor_DN
+* cumccallmode
+* history_info
+* participant
+* x_refci
+* x_nearenddevice
+* x_farendrefci
+* x_farenddevice
+* x_farendaddr
+* x_nearendaddr
+* x_nearendguid
+* x_farendguid
+* x_nearendclusterid
+* x_farendclusterid</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.response.CallState">
+<em class="property">class </em><code class="descclassname">camelot.response.</code><code class="descname">CallState</code><a class="reference internal" href="../_modules/camelot/response.html#CallState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.response.CallState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="camelot.response.CallState.ALERTING">
+<code class="descname">ALERTING</code><em class="property"> = 'alerting'</em><a class="headerlink" href="#camelot.response.CallState.ALERTING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.ANSWERING">
+<code class="descname">ANSWERING</code><em class="property"> = 'answering'</em><a class="headerlink" href="#camelot.response.CallState.ANSWERING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.CONNECTED">
+<code class="descname">CONNECTED</code><em class="property"> = 'connected'</em><a class="headerlink" href="#camelot.response.CallState.CONNECTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.DIALING">
+<code class="descname">DIALING</code><em class="property"> = 'dialing'</em><a class="headerlink" href="#camelot.response.CallState.DIALING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.DIALTONE">
+<code class="descname">DIALTONE</code><em class="property"> = 'dialtone'</em><a class="headerlink" href="#camelot.response.CallState.DIALTONE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.DISCONNECTED">
+<code class="descname">DISCONNECTED</code><em class="property"> = 'disconnected'</em><a class="headerlink" href="#camelot.response.CallState.DISCONNECTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.DISCONNECTING">
+<code class="descname">DISCONNECTING</code><em class="property"> = 'disconnecting'</em><a class="headerlink" href="#camelot.response.CallState.DISCONNECTING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.HELD">
+<code class="descname">HELD</code><em class="property"> = 'held'</em><a class="headerlink" href="#camelot.response.CallState.HELD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.INCOMING">
+<code class="descname">INCOMING</code><em class="property"> = 'incoming'</em><a class="headerlink" href="#camelot.response.CallState.INCOMING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.MOVING">
+<code class="descname">MOVING</code><em class="property"> = 'moving'</em><a class="headerlink" href="#camelot.response.CallState.MOVING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.NEW">
+<code class="descname">NEW</code><em class="property"> = 'new'</em><a class="headerlink" href="#camelot.response.CallState.NEW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.OFFHOOK">
+<code class="descname">OFFHOOK</code><em class="property"> = 'offhook'</em><a class="headerlink" href="#camelot.response.CallState.OFFHOOK" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.OUTBOUND">
+<code class="descname">OUTBOUND</code><em class="property"> = 'outbound'</em><a class="headerlink" href="#camelot.response.CallState.OUTBOUND" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.PROCEEDING">
+<code class="descname">PROCEEDING</code><em class="property"> = 'proceeding'</em><a class="headerlink" href="#camelot.response.CallState.PROCEEDING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.RECDIGITS">
+<code class="descname">RECDIGITS</code><em class="property"> = 'recdigits'</em><a class="headerlink" href="#camelot.response.CallState.RECDIGITS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.REJECTING">
+<code class="descname">REJECTING</code><em class="property"> = 'rejecting'</em><a class="headerlink" href="#camelot.response.CallState.REJECTING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.REMOTEHELD">
+<code class="descname">REMOTEHELD</code><em class="property"> = 'remoteheld'</em><a class="headerlink" href="#camelot.response.CallState.REMOTEHELD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.REMOTEINUSE">
+<code class="descname">REMOTEINUSE</code><em class="property"> = 'remoteinuse'</em><a class="headerlink" href="#camelot.response.CallState.REMOTEINUSE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.CallState.SEIZURE">
+<code class="descname">SEIZURE</code><em class="property"> = 'seizure'</em><a class="headerlink" href="#camelot.response.CallState.SEIZURE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.response.EndpointInfo">
+<em class="property">class </em><code class="descclassname">camelot.response.</code><code class="descname">EndpointInfo</code><a class="reference internal" href="../_modules/camelot/response.html#EndpointInfo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.response.EndpointInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents Endpoint Info with following attributes</p>
+<ul class="simple">
+<li>backup_cm</li>
+<li>backup_cti</li>
+<li>call_type</li>
+<li>calls</li>
+<li>current_cti</li>
+<li>deploymentmodel</li>
+<li>description</li>
+<li>domain</li>
+<li>esrstvernego</li>
+<li>id</li>
+<li>ipv4_address</li>
+<li>ipv6_address</li>
+<li>ix_enabled</li>
+<li>last_error</li>
+<li>lines</li>
+<li>preferred_mode</li>
+<li>primary_cm</li>
+<li>primary_cti</li>
+<li>sip_port</li>
+<li>state</li>
+<li>status</li>
+<li>streams</li>
+<li>type</li>
+<li>userid</li>
+<li>voice_mail_client_status</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.response.EndpointInfoExt">
+<em class="property">class </em><code class="descclassname">camelot.response.</code><code class="descname">EndpointInfoExt</code><a class="reference internal" href="../_modules/camelot/response.html#EndpointInfoExt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.response.EndpointInfoExt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents Endpoint Info Ext with following attributes</p>
+<ul class="simple">
+<li>feature_control_policy</li>
+<li>voice_mail_client_info</li>
+<li>control_devices</li>
+<li>cumc_op_mode</li>
+<li>intercom</li>
+<li>media_state</li>
+<li>mobile_connect</li>
+<li>mr_state</li>
+<li>mwi</li>
+<li>mwi_line</li>
+<li>mwi_stats</li>
+<li>notify</li>
+<li>presence_interface_status</li>
+<li>prompt</li>
+<li>softkeys</li>
+<li>speeddials</li>
+<li>subsevtdialog</li>
+<li>subsevtpresence</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.response.EndpointState">
+<em class="property">class </em><code class="descclassname">camelot.response.</code><code class="descname">EndpointState</code><a class="reference internal" href="../_modules/camelot/response.html#EndpointState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.response.EndpointState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="camelot.response.EndpointState.CLIENT_FOREGROUND">
+<code class="descname">CLIENT_FOREGROUND</code><em class="property"> = 'foregroundpending'</em><a class="headerlink" href="#camelot.response.EndpointState.CLIENT_FOREGROUND" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointState.CLIENT_SUSPEND">
+<code class="descname">CLIENT_SUSPEND</code><em class="property"> = 'suspended'</em><a class="headerlink" href="#camelot.response.EndpointState.CLIENT_SUSPEND" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointState.INIT_PENDING">
+<code class="descname">INIT_PENDING</code><em class="property"> = 'initpending'</em><a class="headerlink" href="#camelot.response.EndpointState.INIT_PENDING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointState.IN_SERVICE">
+<code class="descname">IN_SERVICE</code><em class="property"> = 'inservice'</em><a class="headerlink" href="#camelot.response.EndpointState.IN_SERVICE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointState.IN_SERVICE_PENDING">
+<code class="descname">IN_SERVICE_PENDING</code><em class="property"> = 'inservicepending'</em><a class="headerlink" href="#camelot.response.EndpointState.IN_SERVICE_PENDING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointState.OUT_OF_SERVICE">
+<code class="descname">OUT_OF_SERVICE</code><em class="property"> = 'outofservice'</em><a class="headerlink" href="#camelot.response.EndpointState.OUT_OF_SERVICE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointState.OUT_OF_SERVICE_PENDING">
+<code class="descname">OUT_OF_SERVICE_PENDING</code><em class="property"> = 'outofservicepending'</em><a class="headerlink" href="#camelot.response.EndpointState.OUT_OF_SERVICE_PENDING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointState.UN_INITIALIZED">
+<code class="descname">UN_INITIALIZED</code><em class="property"> = 'uninitialized'</em><a class="headerlink" href="#camelot.response.EndpointState.UN_INITIALIZED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.response.EndpointType">
+<em class="property">class </em><code class="descclassname">camelot.response.</code><code class="descname">EndpointType</code><a class="reference internal" href="../_modules/camelot/response.html#EndpointType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.response.EndpointType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.CAS">
+<code class="descname">CAS</code><em class="property"> = 'cas'</em><a class="headerlink" href="#camelot.response.EndpointType.CAS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.CSFD">
+<code class="descname">CSFD</code><em class="property"> = 'csfd'</em><a class="headerlink" href="#camelot.response.EndpointType.CSFD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.CTS">
+<code class="descname">CTS</code><em class="property"> = 'cts'</em><a class="headerlink" href="#camelot.response.EndpointType.CTS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.CUMC">
+<code class="descname">CUMC</code><em class="property"> = 'cumc'</em><a class="headerlink" href="#camelot.response.EndpointType.CUMC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.CUPC">
+<code class="descname">CUPC</code><em class="property"> = 'cupc'</em><a class="headerlink" href="#camelot.response.EndpointType.CUPC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.CUPCD">
+<code class="descname">CUPCD</code><em class="property"> = 'cupcd'</em><a class="headerlink" href="#camelot.response.EndpointType.CUPCD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.CUPCLITE">
+<code class="descname">CUPCLITE</code><em class="property"> = 'cupclite'</em><a class="headerlink" href="#camelot.response.EndpointType.CUPCLITE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.DMC">
+<code class="descname">DMC</code><em class="property"> = 'dmc'</em><a class="headerlink" href="#camelot.response.EndpointType.DMC" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.H323">
+<code class="descname">H323</code><em class="property"> = ('h323',)</em><a class="headerlink" href="#camelot.response.EndpointType.H323" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.IMSCLIENT">
+<code class="descname">IMSCLIENT</code><em class="property"> = 'imsclient'</em><a class="headerlink" href="#camelot.response.EndpointType.IMSCLIENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.PRI">
+<code class="descname">PRI</code><em class="property"> = 'pri'</em><a class="headerlink" href="#camelot.response.EndpointType.PRI" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.RAW">
+<code class="descname">RAW</code><em class="property"> = 'raw'</em><a class="headerlink" href="#camelot.response.EndpointType.RAW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.SIP">
+<code class="descname">SIP</code><em class="property"> = 'sip'</em><a class="headerlink" href="#camelot.response.EndpointType.SIP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.SIPV">
+<code class="descname">SIPV</code><em class="property"> = 'sipv'</em><a class="headerlink" href="#camelot.response.EndpointType.SIPV" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.SIPX">
+<code class="descname">SIPX</code><em class="property"> = 'sipx'</em><a class="headerlink" href="#camelot.response.EndpointType.SIPX" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.SK">
+<code class="descname">SK</code><em class="property"> = 'sk'</em><a class="headerlink" href="#camelot.response.EndpointType.SK" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.SKM">
+<code class="descname">SKM</code><em class="property"> = 'skm'</em><a class="headerlink" href="#camelot.response.EndpointType.SKM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.SKS">
+<code class="descname">SKS</code><em class="property"> = 'sks'</em><a class="headerlink" href="#camelot.response.EndpointType.SKS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.EndpointType.TANDBERGSIP">
+<code class="descname">TANDBERGSIP</code><em class="property"> = 'tandbergsip'</em><a class="headerlink" href="#camelot.response.EndpointType.TANDBERGSIP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.response.Line">
+<em class="property">class </em><code class="descclassname">camelot.response.</code><code class="descname">Line</code><a class="reference internal" href="../_modules/camelot/response.html#Line"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.response.Line" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents a Line</p>
+<ul class="simple">
+<li>line_num</li>
+<li>full_address</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.response.Stream">
+<em class="property">class </em><code class="descclassname">camelot.response.</code><code class="descname">Stream</code><a class="reference internal" href="../_modules/camelot/response.html#Stream"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.response.Stream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents Stream object with following params</p>
+<ul class="simple">
+<li>stream_ref</li>
+<li>call_ref</li>
+<li>type</li>
+<li>direction</li>
+<li>state</li>
+<li>mifctype</li>
+</ul>
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.response.VoiceMailClientState">
+<em class="property">class </em><code class="descclassname">camelot.response.</code><code class="descname">VoiceMailClientState</code><a class="reference internal" href="../_modules/camelot/response.html#VoiceMailClientState"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.response.VoiceMailClientState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="camelot.response.VoiceMailClientState.ACTIVE">
+<code class="descname">ACTIVE</code><em class="property"> = 'active'</em><a class="headerlink" href="#camelot.response.VoiceMailClientState.ACTIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.VoiceMailClientState.CONNECTED">
+<code class="descname">CONNECTED</code><em class="property"> = 'connected'</em><a class="headerlink" href="#camelot.response.VoiceMailClientState.CONNECTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.VoiceMailClientState.CONNECTING">
+<code class="descname">CONNECTING</code><em class="property"> = 'connecting'</em><a class="headerlink" href="#camelot.response.VoiceMailClientState.CONNECTING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.VoiceMailClientState.DISCONNECTED">
+<code class="descname">DISCONNECTED</code><em class="property"> = 'disconnected'</em><a class="headerlink" href="#camelot.response.VoiceMailClientState.DISCONNECTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.VoiceMailClientState.DISCONNECTING">
+<code class="descname">DISCONNECTING</code><em class="property"> = 'disconnecting'</em><a class="headerlink" href="#camelot.response.VoiceMailClientState.DISCONNECTING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.response.VoiceMailClientState.INACTIVE">
+<code class="descname">INACTIVE</code><em class="property"> = 'inactive'</em><a class="headerlink" href="#camelot.response.VoiceMailClientState.INACTIVE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="raweventserver.html"
+                        title="previous chapter">Raw events server API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="sipmessages.html"
+                        title="next chapter">SipMsgObject API</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/response.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sipmessages.html" title="SipMsgObject API"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="raweventserver.html" title="Raw events server API"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api_reference.html" >API Reference</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,1160 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>camelot.vapi.vapi_media_control &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../camelot.html" accesskey="U">camelot</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for camelot.vapi.vapi_media_control</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">camelot</span>
+<span class="kn">from</span> <span class="nn">camelot.vapi</span> <span class="k">import</span> <span class="n">vapi_camelot_utils</span> <span class="k">as</span> <span class="n">v</span>
+<span class="kn">from</span> <span class="nn">camelot</span> <span class="k">import</span> <span class="n">camlogger</span>
+<span class="n">log</span> <span class="o">=</span> <span class="n">camlogger</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">CamelotMediaControl</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">CamelotVapiUtils</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;Camelot Media Control representation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">start_dtmf_detector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Starts and invount stream&#39;s DTMF detector.</span>
+
+<span class="sd">        Starts a stream&#39;s dtmf detector.  To receive dtmf events, the</span>
+<span class="sd">        dtmf detector must be running. For RTP streams only RFC 2833 DTMF</span>
+<span class="sd">        packets can be detected.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: True if player start is successfully initiated.</span>
+<span class="sd">         False if an error occurs</span>
+
+<span class="sd">        ep1.start_dtmf_detector()</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">stream_ref</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">START_DTMF_DETECTOR</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stop_dtmf_detector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        stops stream&#39;s DTMF detector.</span>
+
+<span class="sd">        stops a stream&#39;s dtmf detector.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: True if player start is successfully initiated.</span>
+<span class="sd">         False if an error occurs</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.stop_dtmf_detector()</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">STOP_DTMF_DETECTOR</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">start_dtmf_player</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">digits</span><span class="p">,</span> <span class="n">ontime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">offtime</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                          <span class="n">stream_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">call_ref</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">medium</span><span class="o">=</span><span class="s1">&#39;inband&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Starts playing dtmf digits</span>
+
+<span class="sd">        Starts playing the specified dtmf digits on the specified stream/call.</span>
+<span class="sd">        For inband, only RFC 2833 DTMF packets can be sent.</span>
+<span class="sd">        Note: Out of band DTMF is supported only for Skinny.</span>
+
+<span class="sd">        :parameter digits: dtmf digit string to play</span>
+<span class="sd">        :parameter ontime: digit on duration in ms</span>
+<span class="sd">        :parameter offtime: digit off duration in ms</span>
+<span class="sd">        :parameter stream_ref: stream reference</span>
+<span class="sd">        :parameter call_ref: call reference</span>
+<span class="sd">        :parameter medium: It can be inband or oob for inband and out of band</span>
+<span class="sd">         DTMF respecitvely, default is inband</span>
+
+<span class="sd">        :returns: True if player start is successfully initiated.  If an error</span>
+<span class="sd">         occurs False is returned. Due to server processing delay, the dtmf</span>
+<span class="sd">         player may not immediately start upon return of this routine.</span>
+<span class="sd">         A tonestarted event is generated for inband dtmf once the player</span>
+<span class="sd">         actually begins running.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.start_dtmf_player()</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">medium_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;inband&#39;</span><span class="p">,</span> <span class="s1">&#39;oob&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">medium</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">medium_list</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid medium </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">medium</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">digits</span><span class="p">)):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;digits not specified&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">medium</span> <span class="o">==</span> <span class="s1">&#39;inband&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">stream_ref</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;stream reference not specified&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">call_ref</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid call reference&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">ontime</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;digit on-time not specified&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">offtime</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;digit off-time not specified&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">offtime</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;digit off-time not specified&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="n">medium</span> <span class="o">==</span> <span class="s1">&#39;oob&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">call_ref</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;call reference not specified&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">call_ref</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid call reference&#39;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="kc">None</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;medium&#39;</span><span class="p">:</span> <span class="n">medium</span><span class="p">,</span>
+                  <span class="s1">&#39;call_ref&#39;</span><span class="p">:</span> <span class="n">call_ref</span><span class="p">,</span>
+                  <span class="s1">&#39;ontime&#39;</span><span class="p">:</span> <span class="n">ontime</span><span class="p">,</span>
+                  <span class="s1">&#39;offtime&#39;</span><span class="p">:</span> <span class="n">offtime</span><span class="p">,</span>
+                  <span class="s1">&#39;digits&#39;</span><span class="p">:</span> <span class="n">digits</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">START_DTMF_PLAYER</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stop_dtmf_player</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Stops an active dtmf player.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: True if player stop is successfully initiated.</span>
+<span class="sd">         If an error occurs, False is returned. Once the player ceases</span>
+<span class="sd">         operation, a tonedone event is generated.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.stop_dtmf_player()</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">STOP_DTMF_PLAYER</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">start_media_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Enable the collection of media events on the specified stream.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: True on success, Error message on failure</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.start_media_events()</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Registering for Mediaevent on </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">stream_ref</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stream_ref</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Cant register to media events, No stream_ref provided&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">START_MEDIA_EVENTS</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stop_media_events</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Disable the collection of media events on a stream</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: True on success, Error message on failure</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.stop_media_events()</span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">stream_ref</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Cant un-register media events, No stream_ref provided&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">STOP_MEDIA_EVENTS</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">start_media_player</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">encoding</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;continuous&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Start playing media on an outbound stream.If the media player</span>
+<span class="sd">        is already running it will be stopped and new one will be started.</span>
+
+<span class="sd">        Starts playing the specified media file on the specified stream.</span>
+<span class="sd">        Repeats playing the same file continuously with default mode value.</span>
+<span class="sd">        However if mode is passed as playonce the media will be played once</span>
+<span class="sd">        till the end of the file is reached.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference.</span>
+<span class="sd">        :parameter url: URL of media file to play.</span>
+<span class="sd">        :parameter encoding: encoding of media file</span>
+<span class="sd">         Supported encodings are:</span>
+
+<span class="sd">             * rtp   :      camelot RTP file</span>
+<span class="sd">             * g711u :       raw G.711 mulaw</span>
+<span class="sd">             * g711a :       raw G.711 alaw</span>
+<span class="sd">             * g729  :       raw G.729</span>
+<span class="sd">             * g729a :       raw G.729A</span>
+<span class="sd">             * g729b :       raw G.729B</span>
+<span class="sd">             * g723  :       raw G.723</span>
+<span class="sd">             * g726_32:      raw G.726 32kps bit rate</span>
+<span class="sd">             * g722_64:      raw G.722 64kps bit rate</span>
+<span class="sd">             * wav   :       wav file</span>
+<span class="sd">        :parameter mode: continuous or playonce</span>
+
+<span class="sd">        :returns: True if player start is successfully initiated.</span>
+<span class="sd">         If an error occurs False is returned or throws an exeception.</span>
+
+<span class="sd">        starts media player and plays media continuously:</span>
+<span class="sd">        &gt;&gt;&gt; ep1.start_media_player(stream_ref = outstreamref,</span>
+<span class="sd">                url = &#39;file://root/traffic-h264-384-15-CIF.rtp&#39;,</span>
+<span class="sd">                encoding = &#39;rtp&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">                    OR</span>
+<span class="sd">        &gt;&gt;&gt; ep1.start_media_player(stream_ref = outstreamref,</span>
+<span class="sd">                url = &#39;file://root/traffic.g729a&#39;,</span>
+<span class="sd">                encoding = &#39;g729a&#39;)</span>
+<span class="sd">        True</span>
+<span class="sd">        starts media player and plays media once:</span>
+<span class="sd">        &gt;&gt;&gt; ep1.start_media_player(stream_ref = outstreamref,</span>
+<span class="sd">                url = &#39;file://root/traffic.g711u&#39;,</span>
+<span class="sd">                encoding = &#39;g711u&#39;,mode=&#39;playonce)</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;encoding&#39;</span><span class="p">:</span> <span class="n">encoding</span><span class="p">,</span>
+                  <span class="s1">&#39;url&#39;</span><span class="p">:</span> <span class="n">url</span><span class="p">,</span>
+                  <span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="n">mode</span>
+                  <span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">START_MEDIA_PLAYER</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stop_media_player</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Stops an active media player.</span>
+
+<span class="sd">        Stops a stream&#39;s media player.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: True if player stop is successfully initiated.</span>
+<span class="sd">         If an error occurs False is returned.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.stop_media_player()</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">STOP_MEDIA_PLAYER</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">)</span>
+
+        <span class="n">ret_int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_execute_command</span><span class="p">(</span><span class="n">EncodeHelper</span><span class="o">.</span><span class="n">STOP_MEDIA_PLAYER</span><span class="p">,</span>
+                                        <span class="n">stream_ref</span><span class="p">,</span> <span class="n">send_msg</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">start_media_recorder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="n">prefix</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Start a stream&#39;s media recorder</span>
+
+<span class="sd">        Starts a stream&#39;s media recorder.  All inbound media</span>
+<span class="sd">        traffic will be saved to a file. The format of the saved</span>
+<span class="sd">        file depends upon the endpoint type.  For VoIP endpoints,</span>
+<span class="sd">        the actual RTP stream is saved, that is the file actually</span>
+<span class="sd">        contains the received RTP packets with some additional</span>
+<span class="sd">        timing meta data.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+<span class="sd">        :parameter prefix: Prefix for file name used for media recording.</span>
+<span class="sd">                           The tool chooses the appropriate suffix.</span>
+
+<span class="sd">        :returns: True if media recorder start is successfully initiated,</span>
+<span class="sd">         False for error cases.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.start_media_recorder()</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;prefix&#39;</span><span class="p">:</span> <span class="n">prefix</span>
+                  <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">START_MEDIA_RECORDER</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stop_media_recorder</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Stops an inbound stream&#39;s media recorder.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: True if  recorder stop is successfully initiated.</span>
+<span class="sd">                  If an error occurs False is returned.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.stop_media_recorder()</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">STOP_MEDIA_RECORDER</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">start_prompt_detector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="n">prompt_type</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                              <span class="n">pattern_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Starts the prompt detector for specified stream_ref parameter.</span>
+
+<span class="sd">        :parameter stream_ref: Stream reference</span>
+<span class="sd">        :parameter prompt_type: Value is sig for signature based prompt</span>
+<span class="sd">                                detection. Value is bin for binary based</span>
+<span class="sd">                                RTP prompt detection.</span>
+<span class="sd">        :parameter cache: Cache handler. To be used for signature</span>
+<span class="sd">                          based prompt detection only</span>
+<span class="sd">        :parameter pattern_list: Maximum number of patterns that can be</span>
+<span class="sd">                                 specified are ten only. If specified</span>
+<span class="sd">                                 more, the first ten are considered for</span>
+<span class="sd">                                 prompt detection. The maximum size of the</span>
+<span class="sd">                                 blob is 200 bytes. If specified more, the</span>
+<span class="sd">                                 first 200 bytes is considered as blob. To be</span>
+<span class="sd">                                 used for binary based RTP prompt detection</span>
+<span class="sd">                                 only.</span>
+
+<span class="sd">        :returns: True if detector start is successfully initiated. If an</span>
+<span class="sd">         error occurs, False is returned.</span>
+
+<span class="sd">        Note: 1) Prompt detector stops automatically when a prompt is detected,</span>
+<span class="sd">        so on successful prompt detection, no need to call stop_prompt_detector</span>
+<span class="sd">        , if user calls, it will return false.\n</span>
+<span class="sd">        2). Signature based prompt detection is not supported right now.</span>
+
+<span class="sd">        &gt;&gt;&gt; make a successful call and gets connected</span>
+<span class="sd">        &gt;&gt;&gt; ep1instream =  ep1.get_streams()[0][&#39;StrmID&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; ep1.start_prompt_detector(stream_ref = ep1instream,</span>
+<span class="sd">                     prompt_type = &#39;bin&#39;, pattern_list =</span>
+<span class="sd">                     [&#39;CDC9CAC6CDCACBCFE4CAD6D5DAD9E2D5DEC6&#39;,</span>
+<span class="sd">                      &#39;4E4D46494E494F474D4947473F43554E484C514A&#39;,</span>
+<span class="sd">                      &#39;463F3C444D47494A4A4654494C3E3C3B3A3A3D3E3D3B3A&#39;])</span>
+<span class="sd">        True</span>
+<span class="sd">                     OR</span>
+<span class="sd">        &gt;&gt;&gt; serv = camelot.create_camelot_server(CamServIp, CamServPort)</span>
+<span class="sd">        &gt;&gt;&gt; cache_h = serv.load_prompt_cache(&#39;-fmt g711ulaw</span>
+<span class="sd">                    -v /tmp/srcprompt /tmp/dstprompt/&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; make a successful call and gets connected</span>
+<span class="sd">        &gt;&gt;&gt; ep1instream =  ep1.get_streams()[0][&#39;StrmID&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; ep1.start_prompt_detector(stream_ref = ep1instream,</span>
+<span class="sd">                     prompt_type = &#39;sig&#39;, cache = cache_h)</span>
+<span class="sd">        True</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">prompt_types</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sig&#39;</span><span class="p">,</span> <span class="s1">&#39;bin&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">prompt_type</span> <span class="ow">and</span> <span class="n">prompt_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prompt_types</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Invalid prompt type, should either be &quot;sig&quot; or &quot;bin&quot;&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">prompt_type</span> <span class="ow">or</span> <span class="n">prompt_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">prompt_types</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;destination directory (cache) not specified&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">prompt_type</span> <span class="o">==</span> <span class="s1">&#39;sig&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Cache not specified.&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">prompt_type</span> <span class="o">==</span> <span class="s1">&#39;bin&#39;</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">pattern_list</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">pattern_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;Pattern not specified.&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;prompt_type&#39;</span><span class="p">:</span> <span class="n">prompt_type</span><span class="p">,</span>
+                  <span class="s1">&#39;cache&#39;</span><span class="p">:</span> <span class="n">cache</span><span class="p">,</span>
+                  <span class="s1">&#39;pattern_list&#39;</span><span class="p">:</span> <span class="n">pattern_list</span>
+                  <span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">START_PROMPT_DETECTOR</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stop_prompt_detector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Stops prompt detector on an inbound stream</span>
+
+<span class="sd">        Stops the prompt detector started for specified stream_ref parameter</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: True if detector stop is successfully initiated.</span>
+<span class="sd">         If an error occurs, False is returned.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.stop_prompt_detector()</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">START_PROMPT_DETECTOR</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">start_tone_detector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="n">tone_id</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">bw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">freq2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bw2</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Start a tone detector on an inbound stream.</span>
+
+<span class="sd">        Initiates start of a tone detector on an inbound stream. The tone</span>
+<span class="sd">        detector is identified by an integer, 0 to n, specified via tone_id.</span>
+<span class="sd">        A tone detector must be running to receive tone events.</span>
+<span class="sd">        Dual frequency tones can be specified via the freq2 option</span>
+<span class="sd">        (TDM endpoints only).  For RTP streams only g711u(default),</span>
+<span class="sd">        g711a, g722-64, g7221-32, g7221-24, g723, g728, g729, g729a,</span>
+<span class="sd">        g729b, g729ab, ilbc20, ilbc30, isac30, isac60 and gsmamr</span>
+<span class="sd">        codecs are supported for tone detection.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+<span class="sd">        :parameter tone_id: integer id, 0 to n, to identify detector</span>
+<span class="sd">        :parameter freq:  first frequency (Hz) of tone to detect.</span>
+<span class="sd">        :parameter bw: bandwidth (Hz) of first frequency</span>
+<span class="sd">        :parameter freq2: second frequency (Hz) of tone to detect</span>
+<span class="sd">                          (TDM endpoints only)</span>
+<span class="sd">        :parameter bw2: bandwidth (Hz) of second frequency (TDM endpoints only)</span>
+
+<span class="sd">        :returns: True if detector start is successfully initiated otherwise</span>
+<span class="sd">         False. If an error occurs a CamelotError exception is raised.</span>
+<span class="sd">         Due to server processing delay, the tone detector may</span>
+<span class="sd">         not immediately start upon return of this routine.</span>
+<span class="sd">         A tonedetstarted event is generated once the detector actually</span>
+<span class="sd">         begins running.  See mediaevent and getmediaevent.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.start_tone_detector()</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_integer</span><span class="p">(</span><span class="n">tone_id</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid tone id&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="sd">&#39;&#39;&#39;---------------check------------------&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_integer</span><span class="p">(</span><span class="n">freq</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid tone id&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">bw</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_integer</span><span class="p">(</span><span class="n">bw</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid bandwidth&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bw</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">freq2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_integer</span><span class="p">(</span><span class="n">freq2</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid bandwidth&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">freq2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">bw2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_integer</span><span class="p">(</span><span class="n">bw2</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid bandwidth&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">bw2</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tone_id&#39;</span><span class="p">:</span> <span class="n">tone_id</span><span class="p">,</span>
+                  <span class="s1">&#39;freq&#39;</span><span class="p">:</span> <span class="n">freq</span><span class="p">,</span>
+                  <span class="s1">&#39;bw&#39;</span><span class="p">:</span> <span class="n">bw</span><span class="p">,</span>
+                  <span class="s1">&#39;freq2&#39;</span><span class="p">:</span> <span class="n">freq2</span><span class="p">,</span>
+                  <span class="s1">&#39;bw2&#39;</span><span class="p">:</span> <span class="n">bw2</span>
+                  <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">START_TONE_DETECTOR</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stop_tone_detector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="n">tone_id</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Stop a tone detector on an inbound stream</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: True if detector stop is successfully initiated.</span>
+<span class="sd">         If an error occurs CamelotError exception is raised.</span>
+<span class="sd">         When the detector ceases operation, a dtmfdetdone event is generated.</span>
+<span class="sd">         See media_event and get_media_event.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.stop_tone_detector()</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_integer</span><span class="p">(</span><span class="n">tone_id</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid tone id&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tone_id&#39;</span><span class="p">:</span> <span class="n">tone_id</span>
+                  <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">STOP_TONE_DETECTOR</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">start_cadence_detector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="n">tone_id</span><span class="p">,</span> <span class="n">freq</span><span class="p">,</span> <span class="n">freq2</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Start a cadence detector on an inbound stream for particular</span>
+<span class="sd">        frequency.The parameter &quot;freq&quot; takes the frequency value to be</span>
+<span class="sd">        detected.In case of Dual frequency tones the second frequency should</span>
+<span class="sd">        be provided with optional parameter &quot;freq2&quot;.</span>
+<span class="sd">        The cadence detector is identified by an integer, 0 to n,</span>
+<span class="sd">        specified via tone_id. The cadence detector will start detecting media</span>
+<span class="sd">        tone once there is some traffic in the selected stream. Events will be</span>
+<span class="sd">        sent to client periodically.The time period can be configured using</span>
+<span class="sd">        &quot;media.cadencedetect.eventsampleperiod&quot;, this is in millisecond.</span>
+<span class="sd">        If not configured, the default value is 100 (millisecond).</span>
+
+<span class="sd">        For RTP streams only g711u(default),</span>
+<span class="sd">        g711a, g722-64, g7221-32, g7221-24, g723, g728, g729, g729a,</span>
+<span class="sd">        g729b, g729ab, ilbc20, ilbc30, isac30, isac60 and gsmamr</span>
+<span class="sd">        codecs are supported for cadence detection.</span>
+
+<span class="sd">        Note: All the limitations and conditions applied for</span>
+<span class="sd">        &quot;start_tone_detector&quot; will also hold true for this API except that</span>
+<span class="sd">        freq2 is currently not supported for tone detector (for non TDM</span>
+<span class="sd">        endpoints), whereas cadence detector supports freq2 as well.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+<span class="sd">        :parameter tone_id: integer id, 0 to n, to identify detector</span>
+<span class="sd">        :parameter freq:  frequency (Hz) of tone to detect.</span>
+<span class="sd">        :parameter freq2: second frequency (Hz) of tone to detect incase of</span>
+<span class="sd">         dual frequency tone</span>
+
+
+<span class="sd">        :returns: True if detector start is successfully initiated otherwise</span>
+<span class="sd">         False. If an error occurs a CamelotError exception is raised.</span>
+<span class="sd">         Due to server processing delay, the tone detector may</span>
+<span class="sd">         not immediately start upon return of this routine.</span>
+<span class="sd">         A cadencedetstarted event is generated once the detector actually</span>
+<span class="sd">         begins running.  See mediaevent and getmediaevent.</span>
+<span class="sd">         The periodic event sent to client will be cadencereport event.</span>
+<span class="sd">         It will send event about &#39;tone&#39; and &#39;no_tone&#39; on presence and absence</span>
+<span class="sd">         of tone respectively.</span>
+
+<span class="sd">         Example:</span>
+<span class="sd">         0a669624 2016-12-20T14:31:30.830-05:30 cadencereport 1 tone</span>
+<span class="sd">         0a669624 2016-12-20T14:31:30.930-05:30 cadencereport 1 no_tone</span>
+
+<span class="sd">         For more reference on use of API please check</span>
+<span class="sd">         &#39;https://wiki.cisco.com/display/CAMELOT/Cadence+Detection+Functionality&#39;</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.start_cadence_detector()</span>
+<span class="sd">            True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_integer</span><span class="p">(</span><span class="n">tone_id</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid tone id&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="sd">&#39;&#39;&#39;---------------check------------------&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_integer</span><span class="p">(</span><span class="n">freq</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid tone id&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">freq2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_integer</span><span class="p">(</span><span class="n">freq2</span><span class="p">):</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid second frequency&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tone_id&#39;</span><span class="p">:</span> <span class="n">tone_id</span><span class="p">,</span>
+                  <span class="s1">&#39;freq&#39;</span><span class="p">:</span> <span class="n">freq</span><span class="p">,</span>
+                  <span class="s1">&#39;freq2&#39;</span><span class="p">:</span> <span class="n">freq2</span>
+                  <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">START_CADENCE_DETECTOR</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stop_cadence_detector</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="n">tone_id</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Stop a cadence detector on an inbound stream</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: True if cadence detector stop is successfully initiated.</span>
+<span class="sd">         If an error occurs CamelotError exception is raised.</span>
+<span class="sd">         tonedetdone event is sent to client once cadence</span>
+<span class="sd">         detector stops.</span>
+<span class="sd">         See media_event and get_media_event.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.stop_cadence_detector()</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_integer</span><span class="p">(</span><span class="n">tone_id</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid tone id&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tone_id&#39;</span><span class="p">:</span> <span class="n">tone_id</span>
+                  <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">STOP_CADENCE_DETECTOR</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">start_tone_player</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="n">tone_seq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tones</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Start playing tones on an outbound stream.</span>
+
+<span class="sd">        Starts playing the specified tonesequence(s) on the specified stream.</span>
+<span class="sd">        Note that codec used to build toneseq must be compatible with</span>
+<span class="sd">        stream&#39;s encoding, or this procedure will fail.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+<span class="sd">        :parameter tone_seq: either a single toneseq handle (to be played</span>
+<span class="sd">            exactly once) or dictionaries of records of the</span>
+<span class="sd">            following form: {&#39;toneseq&#39;:&#39;&#39;, &#39;iterations&#39;:&#39;&#39;}\n</span>
+<span class="sd">            * toneseq: Handle for a tone sequence built with camelot</span>
+<span class="sd">              create_tone_seq</span>
+<span class="sd">            * iterations: number of times to play tone sequence,</span>
+<span class="sd">              0 for indefinitely</span>
+<span class="sd">        :parameter tones: lists of tones to be played [&#39;1336 1000 500 5&#39;,</span>
+<span class="sd">         ,&#39;697 1000 500 5&#39;]\n</span>
+<span class="sd">            * 1336 1000 500 5 - 1336 is frequency, 1000 is ontime,</span>
+<span class="sd">              500 is off time, 5 is iteration</span>
+<span class="sd">        :returns: True if player start is successfully initiated.</span>
+<span class="sd">             If an error occurs False is returned. Due to server processing</span>
+<span class="sd">             delay, the tone player may not immediately start upon return</span>
+<span class="sd">             of this routine.  A tonestarted event is generated once the player</span>
+<span class="sd">             actually begins running.  Once the tones have been played, a</span>
+<span class="sd">             tonedone event is generated.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.start_tone_player()</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">str_ref</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tones</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tones</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;tones is not passed as a list&#39;</span><span class="p">)</span>
+            <span class="n">tone_seq_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">len_tone_seq</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">tone_seq_handle</span> <span class="ow">in</span> <span class="n">tones</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tone_seq_handle</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tone_seq_handle</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span> <span class="o">!=</span> <span class="mi">4</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;invalid tone[</span><span class="si">%s</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="n">tone_seq_handle</span><span class="p">)</span>
+                <span class="n">tone_seq_str</span> <span class="o">+=</span> <span class="n">tone_seq_handle</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span>
+                <span class="n">len_tone_seq</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">tone_seq_str</span><span class="p">:</span>
+                <span class="n">tone_seq_str</span> <span class="o">=</span> <span class="n">tone_seq_str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;len_tone_seq&#39;</span><span class="p">:</span> <span class="n">len_tone_seq</span><span class="p">,</span>
+                      <span class="s1">&#39;tone_seq_str&#39;</span><span class="p">:</span> <span class="n">tone_seq_str</span>
+                      <span class="p">}</span>
+        <span class="k">elif</span> <span class="n">tone_seq</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tone_seq</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;No Tone sequence specified&#39;</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="n">len_tone_seq</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">tone_seq_str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">tone_seq</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">tone_seq_handle</span> <span class="ow">in</span> <span class="n">tone_seq</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">tone_seq_handle</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+                        <span class="n">toneseq</span> <span class="o">=</span> <span class="n">tone_seq_handle</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;toneseq&#39;</span><span class="p">)</span>
+                        <span class="n">interations</span> <span class="o">=</span> <span class="n">tone_seq_handle</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;interations&#39;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">tone_seq_str</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">toneseq</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">interations</span><span class="p">)</span>
+                    <span class="n">len_tone_seq</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">tone_seq_str</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">tone_seq</span> <span class="o">+</span> <span class="s1">&#39; 1&#39;</span>
+                <span class="n">len_tone_seq</span> <span class="o">+=</span> <span class="mi">1</span>
+
+            <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;len_tone_seq&#39;</span><span class="p">:</span> <span class="n">len_tone_seq</span><span class="p">,</span>
+                      <span class="s1">&#39;tone_seq_str&#39;</span><span class="p">:</span> <span class="n">tone_seq_str</span>
+                      <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;start_tone_player() parameters are missing&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">START_TONE_PLAYER</span><span class="p">,</span> <span class="n">str_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stop_tone_player</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Stops an active tone player.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: True if player stop is successfully initiated.</span>
+<span class="sd">         If an error occurs, False is returned. Once the player ceases</span>
+<span class="sd">         operation, a tonedone event is generated.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.stop_tone_player()</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">STOP_TONE_PLAYER</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">start_traffic_player</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Starts playing bearer traffic on an outbound stream.</span>
+
+<span class="sd">        By default, all audio traffic streams consist of a continuous 130hz</span>
+<span class="sd">        tone that is encoded for all audio codecs when camserv starts.</span>
+<span class="sd">        If you&#39;d prefer to have some alternate content for your endpoint&#39;s</span>
+<span class="sd">        outbound audio traffic stream, write a file of the following form to</span>
+<span class="sd">        Camelot&#39;s CamelotInstallDir/lib/media/ directory</span>
+<span class="sd">        (where CamelotInstallDir is C:/Camelot by default):</span>
+
+<span class="sd">        traffic-samplerate.pcm16</span>
+
+<span class="sd">        Where samplerate is 16000 when using g722-64, isac-30, or isac-60</span>
+<span class="sd">        codecs and 8000 when using any other codecs.</span>
+
+<span class="sd">        The .pcm16 file must contain some number of signed linear</span>
+<span class="sd">        16-bit(little-endian) samples without any header/trailer information.</span>
+<span class="sd">        This file format can be written with a number of free or shareware</span>
+<span class="sd">        audio tools, such as Microsoft SoundRecorder or the GoldWave audio</span>
+<span class="sd">        editor a. You must restart camserv after writing these .pcm16 file(s)</span>
+<span class="sd">        into the media directory.</span>
+
+<span class="sd">        Limitations</span>
+
+<span class="sd">        Presently, with the exception of CTS eps, media for eps using</span>
+<span class="sd">        AAC codec is not supported. If the ep is configured to use AAC</span>
+<span class="sd">        codec, there will be no RTP packets sent over the media stream.</span>
+<span class="sd">        With CTS ep, AAC media traffic will be sent, however, a</span>
+<span class="sd">        pre-recorded file of RTP packet is played back and that there</span>
+<span class="sd">        is no actual encoding/decoding of the media.</span>
+
+<span class="sd">        :returns: True if player start is successfully initiated.</span>
+<span class="sd">         If an error occurs False is returned.</span>
+<span class="sd">         Due to server processing delay, the traffic player may not</span>
+<span class="sd">         immediately start upon return of this routine. A trafficstarted</span>
+<span class="sd">         event is generated once the player actually begins running.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.start_traffic_player()</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">mode_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;random&#39;</span><span class="p">,</span> <span class="s1">&#39;continuous&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mode</span> <span class="ow">or</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mode_list</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;mode not specified or invalid&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;mode&#39;</span><span class="p">:</span> <span class="n">mode</span>
+                  <span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">START_TRAFFIC_PLAYER</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stop_traffic_player</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Stops the traffic player.</span>
+
+<span class="sd">        Stops an outbound stream&#39;s traffic player.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: True if player stop is successfully initiated.</span>
+<span class="sd">         If an error occurs False is returned. Once the player ceases</span>
+<span class="sd">         operation, a trafficdone event is generated.</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.stop_traffic_player()</span>
+<span class="sd">        True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">STOP_TRAFFIC_PLAYER</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">release_stream_ref</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Release/decrement the reference count associated with a stream.</span>
+
+<span class="sd">        Decrements the Camelot server&#39;s reference count associated with</span>
+<span class="sd">        a stream.  A stream can not be released or deleted on the server</span>
+<span class="sd">        unless its reference count is 0 or below. Currently a stream&#39;s</span>
+<span class="sd">        reference count is incremented when a stream event of type</span>
+<span class="sd">        start is sent to a client application. It is incremented once</span>
+<span class="sd">        for each client receiving the event. It is the responsibility</span>
+<span class="sd">        of each client to decrement the reference count via releasestreamref</span>
+<span class="sd">        when the client is done processing the stream. This ensures the stream</span>
+<span class="sd">        is not deleted inadvertently via releasestreams or autorelease before</span>
+<span class="sd">        the client can process the stream.</span>
+
+<span class="sd">        :parameter stream_ref: stream reference</span>
+
+<span class="sd">        :returns: nothing</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;invalid stream reference&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">RELEASE_STREAM_REF</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">send_tones</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="n">tone_type</span><span class="p">,</span> <span class="n">frequencies</span><span class="o">=</span><span class="p">[],</span>
+                   <span class="n">continuous_tone</span><span class="o">=</span><span class="s1">&#39;-1&#39;</span><span class="p">,</span> <span class="n">tone_duration</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">frequencyA</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                   <span class="n">amplituteA</span><span class="o">=</span><span class="mi">65536</span><span class="p">,</span> <span class="n">frequencyB</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">amplituteB</span><span class="o">=</span><span class="mi">65536</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This API is used for CAS Endpoints to send tones.</span>
+
+<span class="sd">        :parameter stream_ref: Valid stream ref reference to send tone.</span>
+<span class="sd">                               It should be of outbound stream reference.</span>
+<span class="sd">        :parameter tone_type: Type of tone to be sent.</span>
+<span class="sd">                                Valid values are:\n</span>
+<span class="sd">                                * camelot.Tones.ToneType.continuousTone</span>
+<span class="sd">                                * camelot.Tones.ToneType.multiFrequencyTone</span>
+<span class="sd">                                * camelot.Tones.ToneType.singleTone</span>
+<span class="sd">                                * camelot.Tones.ToneType.dualTone</span>
+<span class="sd">        :parameter frequencies: This parameter is valid only for multifreuqncy</span>
+<span class="sd">                                tones.   Maximum count of frequencies</span>
+<span class="sd">                                in a list is 12.  Valid Values are:\n</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone1</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone2</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone3</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone4</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone5</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone6</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone7</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone8</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone9</span>
+<span class="sd">                                * 1camelot.Tones.DivaMF.tone0</span>
+<span class="sd">                                * camelot.Tones.DivaMF.toneStart</span>
+<span class="sd">                                * camelot.Tones.DivaMF.toneStop</span>
+<span class="sd">        :parameter continous_tone: This parameter is applicable only for</span>
+<span class="sd">                                   continous tone type. Valid value are</span>
+<span class="sd">                                   &#39;0x80&#39; to &#39;0xCB&#39;. Default is -1.</span>
+<span class="sd">                                   Refer the Diva SDK document for tone name.</span>
+<span class="sd">        :parameter tone_duration: This parameter is applicable for continuous,</span>
+<span class="sd">                                      single and dual tone type.</span>
+<span class="sd">                                      duration in seconds</span>
+<span class="sd">        :parameter frequencyA: This parameter is applicable only for single or</span>
+<span class="sd">                                dual tone type. Value between 0 to 4000 (in Hz)</span>
+<span class="sd">                                default is -1.</span>
+<span class="sd">        :parameter amplituteA: This parameter is applicable only for single or</span>
+<span class="sd">                                dual tone type.  Value between -32767 to 32767.</span>
+<span class="sd">                                default is 65535</span>
+<span class="sd">        :parameter frequencyB: This parameter is applicable only for dual tone</span>
+<span class="sd">                                type. Value between 0 to 4000 (in Hz)</span>
+<span class="sd">                                default is -1.</span>
+<span class="sd">        :parameter amplituteB: This parameter is applicable only for dual tone</span>
+<span class="sd">                                type.  Value between -32767 to 32767.</span>
+<span class="sd">                                default is 65535</span>
+<span class="sd">        :returns: True or Camelot Exception\n</span>
+<span class="sd">                  possible Exceptions are:\n</span>
+<span class="sd">                  * Invalid stream Reference\n</span>
+<span class="sd">                  * endpoint does not support this feature\n</span>
+<span class="sd">                  * Continuous tone type requires continuous_tone id given \</span>
+<span class="sd">                    valid values 0x80 to OxCB.\n</span>
+<span class="sd">                  * Multifrequcenty tone requires valid frequency list\n</span>
+<span class="sd">                  * maximum count of frequencies list should be 12\n</span>
+<span class="sd">                  * single tone requires frequencyA (0 to 4000)</span>
+<span class="sd">                  * single tone rquires amplituteA (-32767 to 32767)\n</span>
+<span class="sd">                  * dual tone requires frequencies in (0 to 4000)\n</span>
+<span class="sd">                  * dual tone rquires amplitutes in (-32767 to 32767</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.send_tones(&#39;0x7843e12a&#39;, tone_type=0, continuous_tone=&#39;0x82&#39;,</span>
+<span class="sd">            tone_duration=5)</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.send_tones(&#39;0x763211f2&#39;,tone_type=1, freuqencies=[1,2,3,4])</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.send_tones(&#39;0x8732fa21&#39;, 2, frequencyA=2000, amplituteA=300,</span>
+<span class="sd">                tone_duration=4)</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+
+<span class="sd">        &gt;&gt;&gt; ep1.send_tones(&#39;0x8732fa21&#39;, 3, frequencyA=2000, amplituteA=300,</span>
+<span class="sd">                frequencyB=2500, amplitureB=400, tone_duration=4)</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering method send_tones().&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">stream_ref</span> <span class="o">!=</span> <span class="s1">&#39;null&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;Invalid stream Reference&quot;</span><span class="p">)</span>
+        <span class="n">tone_value</span> <span class="o">=</span> <span class="n">tone_type</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="n">tone_value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">continuous_tone</span> <span class="o">==</span> <span class="s1">&#39;-1&#39;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span>
+                <span class="p">(</span><span class="s2">&quot;Continuous tone type requires continuous_tone id given </span><span class="se">\</span>
+<span class="s2">                valid values 0x80 to OxCB&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">tone_duration</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span>
+                <span class="p">(</span><span class="s2">&quot;Continuous tone duration should be non zero&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tone_value</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">frequencies</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span>
+                <span class="p">(</span><span class="s2">&quot;Multifrequcenty tone requires valid frequency list&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">frequencies</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">12</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span>
+                <span class="p">(</span><span class="s2">&quot;maximum count of frequencies list should be 12&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tone_value</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">frequencyA</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span>
+                <span class="p">(</span><span class="s2">&quot;single tone requires frequencyA (0 to 4000)&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">amplituteA</span> <span class="o">==</span> <span class="mi">65536</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span>
+                <span class="p">(</span><span class="s2">&quot;single tone rquires amplituteA (-32767 to 32767)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">tone_value</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">frequencyA</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">frequencyB</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span>
+                <span class="p">(</span><span class="s2">&quot;dual tone requires frequencies in (0 to 4000)&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">amplituteA</span> <span class="o">==</span> <span class="mi">65536</span> <span class="ow">or</span> <span class="n">amplituteB</span> <span class="o">==</span> <span class="mi">65536</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span>
+                <span class="p">(</span><span class="s2">&quot;dual tone rquires amplitutes in (-32767 to 32767)&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s2">&quot;Invalid tone type&quot;</span><span class="p">)</span>
+
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tone_type&#39;</span><span class="p">:</span> <span class="n">tone_value</span><span class="p">,</span>
+                  <span class="s1">&#39;mf_frequencies&#39;</span><span class="p">:</span> <span class="n">frequencies</span><span class="p">,</span>
+                  <span class="s1">&#39;continuous_tone&#39;</span><span class="p">:</span> <span class="n">continuous_tone</span><span class="p">,</span>
+                  <span class="s1">&#39;tone_duration&#39;</span><span class="p">:</span> <span class="n">tone_duration</span><span class="p">,</span>
+                  <span class="s1">&#39;frequencyA&#39;</span><span class="p">:</span> <span class="n">frequencyA</span><span class="p">,</span>
+                  <span class="s1">&#39;amplituteA&#39;</span><span class="p">:</span> <span class="n">amplituteA</span><span class="p">,</span>
+                  <span class="s1">&#39;frequencyB&#39;</span><span class="p">:</span> <span class="n">frequencyB</span><span class="p">,</span>
+                  <span class="s1">&#39;amplituteB&#39;</span><span class="p">:</span> <span class="n">amplituteB</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary_to_boolean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span>
+                                       <span class="p">(</span><span class="n">camelot</span><span class="o">.</span><span class="n">SEND_TONES</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span>
+                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">detect_tones</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                     <span class="n">stream_ref</span><span class="p">,</span>
+                     <span class="n">tone_type</span><span class="o">=</span><span class="n">camelot</span><span class="o">.</span><span class="n">Tones</span><span class="o">.</span><span class="n">ToneType</span><span class="o">.</span><span class="n">all</span><span class="p">,</span>
+                     <span class="n">continuous_tone</span><span class="o">=</span><span class="p">[],</span>
+                     <span class="n">report_flag</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                     <span class="n">frequencies</span><span class="o">=</span><span class="p">[],</span>
+                     <span class="n">min_duration</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+                     <span class="n">min_snr</span><span class="o">=</span><span class="mi">65536</span><span class="p">,</span>
+                     <span class="n">min_level</span><span class="o">=</span><span class="mi">65536</span><span class="p">,</span>
+                     <span class="n">max_highlow_am</span><span class="o">=</span><span class="mi">65536</span><span class="p">,</span>
+                     <span class="n">max_lowhigh_fm</span><span class="o">=</span><span class="mi">65536</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This API is used for CAS endpoints to enable diferent tone detections.</span>
+
+<span class="sd">        :parameter stream_ref: Valid stream_ref.  The stream_ref should be of</span>
+<span class="sd">                               receiving inbound stream</span>
+<span class="sd">        :parameter tone_type: Type of tone to be detected. Valid values are:\n</span>
+<span class="sd">                                * camelot.Tones.ToneType.continuousTone</span>
+<span class="sd">                                * camelot.Tones.ToneType.multiFrequencyTone</span>
+<span class="sd">                                * camelot.Tones.ToneType.singleTone</span>
+<span class="sd">                                * camelot.Tones.ToneType.dualTone</span>
+<span class="sd">                                * camelot.Tones.ToneType.all (Default)</span>
+<span class="sd">                                * camelot.Tones.ToneType.none</span>
+<span class="sd">                            Note: camelot.Tones.ToneType.none will disable</span>
+<span class="sd">                                  tone detection.</span>
+<span class="sd">        :parameter frequencies: This parameter is valid only for multifreuqncy.</span>
+<span class="sd">                                The given frequencies are only reported through</span>
+<span class="sd">                                event call backs.</span>
+<span class="sd">                                Valid Values are:\n</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone1</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone2</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone3</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone4</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone5</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone6</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone7</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone8</span>
+<span class="sd">                                * camelot.Tones.DivaMF.tone9</span>
+<span class="sd">                                * 1camelot.Tones.DivaMF.tone0</span>
+<span class="sd">                                * camelot.Tones.DivaMF.toneStart</span>
+<span class="sd">                                * camelot.Tones.DivaMF.toneStop</span>
+<span class="sd">        :parameter continous_tone: This parameter is applicable only for</span>
+<span class="sd">                                   continous tone type. The given frequency</span>
+<span class="sd">                                   only is reported through event call back.</span>
+<span class="sd">                                   Valid value are</span>
+<span class="sd">                                   &#39;0x80&#39; to &#39;0xCB&#39;.</span>
+<span class="sd">                                   Refer the Diva SDK document for tone name.</span>
+<span class="sd">        :parameter report_flag: Applicable only for single or dual tone.\n</span>
+<span class="sd">                               possible values are:\n</span>
+<span class="sd">                               For single tone:\n</span>
+<span class="sd">                               * 2 - Signal Noise Ratio\n</span>
+<span class="sd">                               * 4 - Energy\n</span>
+<span class="sd">                               * 8 - Frequency\n</span>
+<span class="sd">                               * 16 - Energy variation\n</span>
+<span class="sd">                               * 32 - Frequency variation\n</span>
+<span class="sd">                               For dual tone:\n</span>
+<span class="sd">                               * 2 - signal noise reation \n</span>
+<span class="sd">                               * 4 - energy low tone \n</span>
+<span class="sd">                               * 8 - energy high tone \n</span>
+<span class="sd">                               * 16 - frequency low tone \n</span>
+<span class="sd">                               * 32 - frequency hight tone \n</span>
+<span class="sd">        :parameter min_duration: Applicable only for single or dual tone.\n</span>
+<span class="sd">                                the minimum duration of a tone before the</span>
+<span class="sd">                                detection is reported (in milli seconds)</span>
+<span class="sd">        :parameter min_snr: Applicable only for single or dual tone.\n</span>
+<span class="sd">                            minimum signal noise ratio (-32768 to 32767)</span>
+<span class="sd">        :parameter min_level: Applicable only for single or dual tone.\n</span>
+<span class="sd">                            minimum level of detected signal\n</span>
+<span class="sd">                             * -1 - any level</span>
+<span class="sd">                             * -32767 to 32767</span>
+<span class="sd">        :parameter max_highlow_am: Applicable only for single or dual tone.\n</span>
+<span class="sd">                                    * if single tone this parameter means,</span>
+<span class="sd">                                    maximum allowed variation of signal</span>
+<span class="sd">                                    frequency. value in between 0 to 65535</span>
+<span class="sd">                                    * if dual tone this parameter means,</span>
+<span class="sd">                                    maximum allowed difference in levels</span>
+<span class="sd">                                    between the higher and the lower frequency</span>
+<span class="sd">                                    tone. The value -32767 corresponds to</span>
+<span class="sd">                                    -127.996 dB and the value 32767 corresponds</span>
+<span class="sd">                                    to +127.996 dB. The value -32768 is invalid</span>
+<span class="sd">        :parameter max_lowhigh_fm: Applicable only for single or dual tone.\n</span>
+<span class="sd">                                    * if single tone this paramter means,</span>
+<span class="sd">                                    maximum allowed variation of the signal</span>
+<span class="sd">                                    frequency. value between 0 - 4000 (Hz)</span>
+<span class="sd">                                    * if dual tone this paramter means,</span>
+<span class="sd">                                    maximum allowed difference in level between</span>
+<span class="sd">                                    the lower and higher frequency tone. The</span>
+<span class="sd">                                    value -32767 corresponds to -127.996 dB and</span>
+<span class="sd">                                    the value 32767 corresponds to +127.996 dB.</span>
+<span class="sd">                                    The value -32768 is invalid</span>
+
+<span class="sd">        :returns: True or Camelot Exception\n</span>
+<span class="sd">                  possible exceptions are:\n</span>
+<span class="sd">                  * invalid stream reference\n</span>
+<span class="sd">                  * endpoint does not support this feature\n</span>
+<span class="sd">                  * Continuous tone type requires continuous_tone id given \</span>
+<span class="sd">                    valid values 0x80 to OxCB\n</span>
+<span class="sd">                  * Multifrequcenty tone requires valid frequency list\n</span>
+<span class="sd">                  * Invalid report flag\n</span>
+<span class="sd">                  * Invalid min_duration\n</span>
+<span class="sd">                  * Invalid min_snr; valid:-32768 to 32767\n</span>
+<span class="sd">                  * Invalid min_level;valid:-1, -32767 to 32767\n</span>
+<span class="sd">                  * Invalid max_highlow_am;SingleTone: 0 to 65535\n</span>
+<span class="sd">                    DualTone: -32768 to 32767\n</span>
+<span class="sd">                  * Invalid max_lowhigh_fm;SingleTone: valid 0 to 4000\n</span>
+<span class="sd">                    DualTone: -32768 to 32767\n</span>
+<span class="sd">                  * Invalid tone_type; valid 0 to 3\n</span>
+
+<span class="sd">        &gt;&gt;&gt; enable continuous and multi frequency tone</span>
+<span class="sd">        &gt;&gt;&gt; ep2.detect_tones(&#39;0x792af221&#39;, camelot.Tones.ToneType.all)</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+<span class="sd">        &gt;&gt;&gt; ep2.detect_tones(&#39;0x792af221&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+
+<span class="sd">        &gt;&gt;&gt; disable continuous and multi frequency tone</span>
+<span class="sd">        &gt;&gt;&gt; ep2.detect_tones(&#39;0x792af221&#39;, camelot.Tones.ToneType.none)</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+
+<span class="sd">        &gt;&gt;&gt; continuous tone</span>
+<span class="sd">        &gt;&gt;&gt; ep2.detect_tones(&#39;0x792af221&#39;,</span>
+<span class="sd">            camelot.Tones.ToneType.continuousTone,</span>
+<span class="sd">            continuous_tone=[0x80,0x81])</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+
+<span class="sd">        &gt;&gt;&gt; multi frequency tone</span>
+<span class="sd">        &gt;&gt;&gt; ep2.detect_tones(&#39;0x792af221&#39;,</span>
+<span class="sd">             camelot.Tones.ToneType.multiFrequencyTone,</span>
+<span class="sd">             frequencies=[camelot.Tones.DivaMF.tone1,</span>
+<span class="sd">                          camelot.Tones.DivaMF.tone2,</span>
+<span class="sd">                          camelot.Tones.DivaMF.tone3])</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+
+<span class="sd">        &gt;&gt;&gt; single tone</span>
+<span class="sd">        &gt;&gt;&gt; ep2.detect_tones(&#39;0x792af221&#39;,</span>
+<span class="sd">                             camelot.Tones.ToneType.singleTone,</span>
+<span class="sd">                             8, 2000, 200, 200, 3000)</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+
+<span class="sd">        &gt;&gt;&gt; dual tone</span>
+<span class="sd">        &gt;&gt;&gt; ep2.detect_tones(&#39;0x792af221&#39;,</span>
+<span class="sd">                             camelot.Tones.ToneType.dualTone,</span>
+<span class="sd">                             8, 2000, 200, 200, 3000)</span>
+<span class="sd">        &gt;&gt;&gt; True</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">log</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Entering method detect_tones&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">stream_ref</span> <span class="o">!=</span> <span class="s1">&#39;null&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_valid_call_ref</span><span class="p">(</span><span class="n">stream_ref</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Invalid stream Reference&quot;</span><span class="p">)</span>
+        <span class="n">tone_value</span> <span class="o">=</span> <span class="n">tone_type</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="n">tone_value</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]:</span>
+            <span class="n">tone_value</span> <span class="o">=</span> <span class="n">tone_type</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tone_value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">continuous_tone</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span>
+                    <span class="p">(</span><span class="s2">&quot;Continuous tone type requires continuous_tone id given </span><span class="se">\</span>
+<span class="s2">                    valid values 0x80 to OxCB&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">tone_value</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">frequencies</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span>
+                    <span class="p">(</span><span class="s2">&quot;Multifrequcenty tone requires valid frequency list&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">tone_value</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">report_flag</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">]:</span>
+                    <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;Invalid report flag&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">min_duration</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;Invalid min_duration&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">min_snr</span> <span class="o">==</span> <span class="mi">65536</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Invalid min_snr; valid:-32768 to 32767&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">min_level</span> <span class="o">==</span> <span class="mi">65536</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;Invalid min_level;</span><span class="se">\</span>
+<span class="s1">                        valid:-1, -32767 to 32767&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">max_highlow_am</span> <span class="o">==</span> <span class="mi">65536</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;Invalid max_highlow_am;</span><span class="se">\</span>
+<span class="s1">                        SingleTone: 0 to 65535</span><span class="se">\n</span><span class="s1">DualTone: -32768 to 32767&#39;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">max_lowhigh_fm</span> <span class="o">==</span> <span class="mi">65536</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;Invalid max_lowhigh_fm;</span><span class="se">\</span>
+<span class="s1">                    SingleTone: valid 0 to 4000</span><span class="se">\n</span><span class="s1">DualTone: -32768 to 32767&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">camelot</span><span class="o">.</span><span class="n">CamelotError</span><span class="p">(</span><span class="s1">&#39;Invalid tone_type; valid 0 to 3&#39;</span><span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;tone_type&#39;</span><span class="p">:</span> <span class="n">tone_value</span><span class="p">,</span>
+                  <span class="s1">&#39;continuous_tone&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span>
+                                          <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">continuous_tone</span><span class="p">),</span>
+                                           <span class="n">key</span><span class="o">=</span><span class="n">continuous_tone</span><span class="o">.</span><span class="n">index</span><span class="p">)),</span>
+                  <span class="s1">&#39;mf_frequencies&#39;</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span>
+                                         <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">frequencies</span><span class="p">),</span>
+                                          <span class="n">key</span><span class="o">=</span><span class="n">frequencies</span><span class="o">.</span><span class="n">index</span><span class="p">)),</span>
+                  <span class="s1">&#39;report_flag&#39;</span><span class="p">:</span> <span class="n">report_flag</span><span class="p">,</span>
+                  <span class="s1">&#39;min_duration&#39;</span><span class="p">:</span> <span class="n">min_duration</span><span class="p">,</span>
+                  <span class="s1">&#39;min_snr&#39;</span><span class="p">:</span> <span class="n">min_snr</span><span class="p">,</span>
+                  <span class="s1">&#39;min_level&#39;</span><span class="p">:</span> <span class="n">min_level</span><span class="p">,</span>
+                  <span class="s1">&#39;max_highlow_am&#39;</span><span class="p">:</span> <span class="n">max_highlow_am</span><span class="p">,</span>
+                  <span class="s1">&#39;max_lowhigh_fm&#39;</span><span class="p">:</span> <span class="n">max_lowhigh_fm</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binary_to_boolean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_query_camelot</span><span class="p">(</span>
+            <span class="n">camelot</span><span class="o">.</span><span class="n">DETECT_TONES</span><span class="p">,</span> <span class="n">stream_ref</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../../camelot.html" >camelot</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

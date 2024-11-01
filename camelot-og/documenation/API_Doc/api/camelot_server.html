@@ -1,0 +1,797 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Camelot Server API &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ContentBodyObject API" href="contentbodyobject.html" />
+    <link rel="prev" title="Camelot API" href="camelot.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="contentbodyobject.html" title="ContentBodyObject API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="camelot.html" title="Camelot API"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api_reference.html" accesskey="U">API Reference</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="camelot-server-api">
+<h1>Camelot Server API<a class="headerlink" href="#camelot-server-api" title="Permalink to this headline">¶</a></h1>
+<p>The Camelot Server API provides the ability to probe and get the Camelot generic functionalities.</p>
+<div class="section" id="api-methods">
+<h2>API Methods<a class="headerlink" href="#api-methods" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="camelot.camelot_server.CamelotServer">
+<em class="property">class </em><code class="descclassname">camelot.camelot_server.</code><code class="descname">CamelotServer</code><span class="sig-paren">(</span><em>ip</em>, <em>port</em>, <em>server_key</em>, <em>version='12.6.22.12.0.0'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.attach_endpoint">
+<code class="descname">attach_endpoint</code><span class="sig-paren">(</span><em>ep_id_or_name</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.attach_endpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.attach_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns information about a previously created endpoint.
+The specified id can be a endpoint name or endpoint id.
+This queries camelot server and gets the endpoint.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>ep_id_or_name</strong> – <p>id of the endpoint. Possible values</p>
+<ul class="simple">
+<li>epid - Hex value as a string ‘00000001’ … ‘0000000n’ is in
+the sequence in which the endpoint were created.</li>
+<li>epname - arbitrary string set by ep.set_client_data(data)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns object:</th><td class="field-body">endpoint object on camelot server is returned else
+an exception is thrown.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">create_camelot_server</span><span class="p">(</span><span class="s1">&#39;10.12.10.180, &#39;</span><span class="mi">5001</span><span class="s1">&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">&lt;</span><span class="n">camelot</span><span class="o">.</span><span class="n">camelot_server</span><span class="o">.</span><span class="n">CamelotServer</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x1445550</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ret</span> <span class="o">=</span> <span class="n">serv</span><span class="o">.</span><span class="n">attach_endpoint</span><span class="p">(</span><span class="s1">&#39;phone1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">ret</span>
+<span class="go">&lt;camelot.endpoint.CamelotEndpoint object at 0x29ed490&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.create_in_action_set">
+<code class="descname">create_in_action_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.create_in_action_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.create_in_action_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a blank set of verification as a place holder
+Then using different command one can keep on adding actions
+for verification of original message.</p>
+<dl class="docutils">
+<dt>NOTE: This API can be used for Simulated Endpoints as well.</dt>
+<dd>i.e., the endpoint need not to be RawEndpoint.</dd>
+</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">inActionObj</span> <span class="o">=</span> <span class="n">create_in_action_set</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.create_new_endpoint">
+<code class="descname">create_new_endpoint</code><span class="sig-paren">(</span><em>ep_type</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.create_new_endpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.create_new_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new endpoint for the Camelot server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ep_type</strong> – <p>endpoint type.  Possible values:</p>
+<ul>
+<li>sk - SCCP (Skinny) audio-only endpoint</li>
+<li>skm - SCCP (Skinny) multimedia (audio, video, and data) endpoint</li>
+<li>sks - SCCP (Skinny) IP-STE endpoint</li>
+<li>sipx - SIP TNP endpoint for use with CCM</li>
+<li>sip - SIP user agent (audio-only)</li>
+<li>sipv - SIP user agent (video and audio)</li>
+<li>cupc - Cisco Unified Personal Communicator client</li>
+<li>cupcd - CUPC in Deskphone mode</li>
+<li>csfd - CSF in deskphone mode</li>
+<li>cumc - Cisco Unified Mobile Client</li>
+<li>h323 - H.323 endpoint</li>
+<li>pri - ISDN PRI T1/E1 trunk</li>
+<li>cas - CAS T1/E1/Analog trunk (includes analog loop
+start i.e. POTS)</li>
+<li>raw - Non protocol-specific endpoint for use with protocol
+transport services, see Transport Query and Control.</li>
+<li>tandbergsip - Tandberg Sip endpoint (MXP 1000, MXP 1700, E20)</li>
+<li>imsclient - SIP IMS Client</li>
+<li>dmc - Dual mode single registration mobile client</li>
+</ul>
+</li>
+<li><strong>args</strong> – endpoint type specific arguments</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">CamelotEndpoint object on successful creation of the endpoint
+else camelot.CamelotError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">create_camelot_server</span><span class="p">(</span><span class="s1">&#39;10.12.10.180&#39;</span><span class="p">,</span> <span class="s1">&#39;5001&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span>
+<span class="go">&lt;camelot.camelot_server.CamelotServer object at 0x1445550&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span> <span class="o">=</span> <span class="n">serv</span><span class="o">.</span><span class="n">create_new_endpoint</span><span class="p">(</span> <span class="s1">&#39;sipx&#39;</span><span class="p">,</span><span class="s1">&#39;SEPBAACBAAC7001&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span>
+<span class="go">&lt;camelot.endpoint.CamelotEndpoint object at 0x29ed490&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.create_out_action_set">
+<code class="descname">create_out_action_set</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.create_out_action_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.create_out_action_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a blank set of actions as a place holder for all the messages.
+Then using different command one can keep on adding different action
+for addition/deletion or modification of original message.</p>
+<dl class="docutils">
+<dt>NOTE: This API can be used for Simulated Endpoints as well.</dt>
+<dd>i.e., the endpoint need not to be RawEndpoint.</dd>
+</dl>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">outActionObj</span> <span class="o">=</span> <span class="n">create_out_action_set</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.delete_in_action_set">
+<code class="descname">delete_in_action_set</code><span class="sig-paren">(</span><em>validationObj</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.delete_in_action_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.delete_in_action_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the inaction object created.
+:parameter validationObj: inaction returned by</p>
+<blockquote>
+<div>create_in_action_set().</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True Upon success, else Exception is thrown.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">delete_in_action_set</span><span class="p">(</span><span class="n">validationObj</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.delete_out_action_set">
+<code class="descname">delete_out_action_set</code><span class="sig-paren">(</span><em>actionObj</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.delete_out_action_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.delete_out_action_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deletes the outaction object created.
+:parameter actionObj: actionObj returned by</p>
+<blockquote>
+<div>create_out_action_set().</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">True Upon success, else Exception is thrown.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">delete_out_action_set</span><span class="p">(</span><span class="n">actionObj</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.get_compat_versions">
+<code class="descname">get_compat_versions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.get_compat_versions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.get_compat_versions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries Currently running Camelot server for the
+compatiblity versions of various app servers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of the app and version pairs</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">create_camelot_server</span><span class="p">(</span><span class="s1">&#39;10.12.10.180&#39;</span><span class="p">,</span> <span class="s1">&#39;5001&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span>
+<span class="go">&lt;camelot.camelot_server.CamelotServer object at 0x1445550&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span><span class="o">.</span><span class="n">get_compat_versions</span><span class="p">()</span>
+<span class="go">{&#39;CTMS&#39;: &#39;1.1.0&#39;, &#39;CME&#39;: &#39;9.1&#39;, &#39;CUCM&#39;: &#39;9.0.0&#39;,</span>
+<span class="go"> &#39;VAPIEI&#39;: &#39;9.5.0.0.15.8&#39;, &#39;CUP&#39;: &#39;8.5&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.get_endpoint">
+<code class="descname">get_endpoint</code><span class="sig-paren">(</span><em>ep_id_or_name</em>, <em>get_from_server=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.get_endpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.get_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find an endpoint
+Returns information about a previously created endpoint.
+The specified id can be a endpoint name or endpoint id.
+If endpoint exists in camelot-pi current process , only
+then it will be returned else an exception will be thrown.
+If the requirement is to get the endpoint on a different process
+either set get_from_server to True or refer attach_endpoint.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ep_id_or_name</strong> – <p>epid of the endpoint. Possible values</p>
+<ul>
+<li>epid - Hex value as a string ‘00000001’ … ‘0000000n’ is in
+the sequence in which the endpoint were created.</li>
+<li>epname - arbitrary string set by ep.set_client_data(data)</li>
+</ul>
+</li>
+<li><strong>get_from_server</strong> – to attach an endpoint in a different
+process set it to True.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns object:</th><td class="field-body"><p class="first last">endpoint object if exists is returned else
+an exception is thrown.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">create_camelot_server</span><span class="p">(</span><span class="s1">&#39;10.12.10.180, &#39;</span><span class="mi">5001</span><span class="s1">&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">&lt;</span><span class="n">camelot</span><span class="o">.</span><span class="n">camelot_server</span><span class="o">.</span><span class="n">CamelotServer</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x1445550</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span> <span class="o">=</span> <span class="n">serv</span><span class="o">.</span><span class="n">create_new_endpoint</span><span class="p">(</span> <span class="s1">&#39;sipx&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                                <span class="s1">&#39;SEPBAACBAAC7001&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span>
+<span class="go">&lt;camelot.endpoint.CamelotEndpoint object at 0x29ed490&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span><span class="o">.</span><span class="n">set_client_data</span><span class="p">(</span><span class="s1">&#39;phone1&#39;</span><span class="p">)</span>
+<span class="go">&#39;phone1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ret</span> <span class="o">=</span> <span class="n">serv</span><span class="o">.</span><span class="n">get_end_point</span><span class="p">(</span><span class="s1">&#39;phone1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span> <span class="n">ret</span>
+<span class="go">&lt;camelot.endpoint.CamelotEndpoint object at 0x29ed490&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.get_server_os">
+<code class="descname">get_server_os</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.get_server_os"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.get_server_os" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries currently running Camelot server for its host OS.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string indicating the server’s host OS.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">create_camelot_server</span><span class="p">(</span><span class="s1">&#39;10.12.10.180&#39;</span><span class="p">,</span> <span class="s1">&#39;5001&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span>
+<span class="go">&lt;camelot.camelot_server.CamelotServer object at 0x1445550&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span><span class="o">.</span><span class="n">get_server_os</span><span class="p">()</span>
+<span class="go">Linux</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.get_server_version">
+<code class="descname">get_server_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.get_server_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.get_server_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries currently running Camelot server for its version.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">string indicating the server’s Camelot version.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">create_camelot_server</span><span class="p">(</span><span class="s1">&#39;10.12.10.180&#39;</span><span class="p">,</span> <span class="s1">&#39;5001&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span>
+<span class="go">&lt;camelot.camelot_server.CamelotServer object at 0x1445550&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span><span class="o">.</span><span class="n">get_server_version</span><span class="p">(</span><span class="s1">&#39;10.1.2.56&#39;</span><span class="p">,</span> <span class="mi">9988</span><span class="p">)</span>
+<span class="go">9.5.0.0.15.8</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.get_sss_list">
+<code class="descname">get_sss_list</code><span class="sig-paren">(</span><em>shandle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.get_sss_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.get_sss_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>get sss script info</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>shandle</strong> – script handled returned by loadsss</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.get_sss_load_state">
+<code class="descname">get_sss_load_state</code><span class="sig-paren">(</span><em>shandle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.get_sss_load_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.get_sss_load_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>get sss load state</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>shandle</strong> – script handled returned by loadsss</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.get_sss_script">
+<code class="descname">get_sss_script</code><span class="sig-paren">(</span><em>shandle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.get_sss_script"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.get_sss_script" title="Permalink to this definition">¶</a></dt>
+<dd><p>get sss script</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>shandle</strong> – script handled returned by loadsss</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.get_vapiei_version">
+<code class="descname">get_vapiei_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.get_vapiei_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.get_vapiei_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fetches the compatible vapiei version</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.load_prompt_cache">
+<code class="descname">load_prompt_cache</code><span class="sig-paren">(</span><em>cachepathargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.load_prompt_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.load_prompt_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load prompt cache used for signature-based prompt detection.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>cachepathargs</strong> – path to directory containing pre-chunked
+prompts or paths to original prompts directory
+_and_ directory to receive chunked prompts.
+N.B. Relative paths are relative to directory containing
+camserv.exe.  Include one or more –vs to increase
+signature-specific debugging which will be written
+to a file named ‘widlog.txt’ in the same directory
+as camserv.exe.    Include -fmt g711alaw to change
+default wire format from g711ulaw (use with Unity’s 16-bit
+prompts in European telephony configurations).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a handle for cache on success and raises an error exception
+otherwise.Cache handle is in turn supplied as –cache parameter to
+startpromptdetector for signature-based (-type sig) prompt detection
+on an audio stream.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.load_sss">
+<code class="descname">load_sss</code><span class="sig-paren">(</span><em>script</em>, <em>scripttype='tcl'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.load_sss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.load_sss" title="Permalink to this definition">¶</a></dt>
+<dd><p>load script on to the current camelot server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>script</strong> – Path of the script file</li>
+<li><strong>scripttype</strong> – <p>SSS script is written in tcl or python.</p>
+<p>Possible values are</p>
+<blockquote>
+<div><ul>
+<li>tcl (default)</li>
+<li>python</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.log_book_mark">
+<code class="descname">log_book_mark</code><span class="sig-paren">(</span><em>book_mark_text</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.log_book_mark"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.log_book_mark" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Insert a user defined bookmark string to the current log</dt>
+<dd>file</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An informative status message;
+on success bookmark inserted is returned</td>
+</tr>
+</tbody>
+</table>
+<p>Note: If Camelot server is started with json format enable.                The output will be in Json format.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span><span class="o">.</span><span class="n">log_book_mark</span><span class="p">()</span>
+<span class="go">{&#39;bookmark&#39;: &#39;bookmark inserted&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.log_dir">
+<code class="descname">log_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.log_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.log_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the server’s execution logs directory path on
+Camelot server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The execution log folder’s path.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">create_camelot_server</span><span class="p">(</span><span class="n">CamelotServerIp</span><span class="p">,</span>
+<span class="go">        CamelotServerPort)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span><span class="o">.</span><span class="n">log_dir</span><span class="p">()</span>
+<span class="go">&#39;/tmp/&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.log_file_prefix">
+<code class="descname">log_file_prefix</code><span class="sig-paren">(</span><em>prefix=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.log_file_prefix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.log_file_prefix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Changes the current log file name prefix.</p>
+<p>The command sets or returns the log file prefix.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>prefix</strong> – filename prefix.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The current log file name prefix.</td>
+</tr>
+</tbody>
+</table>
+<p>Fetching the current file prefix</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">create_camelot_server</span><span class="p">(</span><span class="n">CamelotServerIp</span><span class="p">,</span>
+<span class="go">                                CamelotServerPort)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span><span class="o">.</span><span class="n">log_file_prefix</span><span class="p">()</span>
+<span class="go">&#39;&#39;</span>
+</pre></div>
+</div>
+<p>Changing the current file prefix</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span><span class="o">.</span><span class="n">log_file_prefix</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+<span class="go">&#39;log&#39;</span>
+</pre></div>
+</div>
+<p>Note: If Camelot server is started with json format enable.                The output will be in Json format.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span><span class="o">.</span><span class="n">log_file_prefix</span><span class="p">()</span>
+<span class="go">{&#39;file_prefix&#39;: &#39;camlog&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.log_filesz">
+<code class="descname">log_filesz</code><span class="sig-paren">(</span><em>size=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.log_filesz"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.log_filesz" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set or get the current server log file size.
+Default file value is 1024KB</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>size</strong> – size in kbytes</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The current set log file size or 0 on error.</td>
+</tr>
+</tbody>
+</table>
+<p>Fetching the current file size</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">create_camelot_server</span><span class="p">(</span><span class="n">CamelotServerIp</span><span class="p">,</span>
+<span class="go"> CamelotServerPort)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span><span class="o">.</span><span class="n">log_filesz</span><span class="p">()</span>
+<span class="go">&#39;1024&#39;</span>
+</pre></div>
+</div>
+<p>Changing the current file size</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span><span class="o">.</span><span class="n">log_filesz</span><span class="p">(</span><span class="s1">&#39;2048&#39;</span><span class="p">)</span>
+<span class="go">&#39;2048&#39;</span>
+</pre></div>
+</div>
+<p>Note: If Camelot server is started with json format enable.                The output will be in Json format.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span><span class="o">.</span><span class="n">log_filesz</span><span class="p">()</span>
+<span class="go">{&#39;file_size&#39;: &#39;1024&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.log_mask">
+<code class="descname">log_mask</code><span class="sig-paren">(</span><em>level=None</em>, <em>moduleid=None</em>, <em>device=None</em>, <em>reset=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.log_mask"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.log_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set or get the current server logging level.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>moduleid</strong> – <p>the functional component to which the setting is
+being applied. Modules defined:</p>
+<ul>
+<li>cupc - CUPC endpoint related events</li>
+<li>cupcd - CUPC-Deskphone mode events</li>
+<li>csfd - Client Services Framework Deskphone mode
+events</li>
+<li>http - HTTP related log events</li>
+<li>media - IP media related events</li>
+<li>mediatransp - IP media transport events.
+Warning! enabling info
+level logging or lower may result in huge amount
+of log information and may impact server
+performance.</li>
+<li>qbe - QBE related log events</li>
+<li>qbetransp - QBE line protocols related log
+events</li>
+<li>sccp - SCCP endpoints related events</li>
+<li>sccptransp - SCCP protocol level events</li>
+<li>sip - SIP endpoints related events</li>
+<li>siptransp - SIP protocol level events</li>
+<li>tftp - TFTP protocol events</li>
+<li>tvs - Trust Verification Service client events</li>
+<li>vapi - VAPI client handler events.</li>
+<li>auto - incoming auto methods from camelot-pi.
+Enabled by default.</li>
+<li>method - all incoming methods other than auto
+and config from camelot-pi. Enabled by default.
+Disabled if camelot  is started with -load
+option.</li>
+<li>config - all incoming config methods from
+camelot-pi. Enabled by default.
+is started with -load option.</li>
+<li>’*’ - global filter
+Warning! enabling info level logging or lower
+may result in huge amount of log information and
+may impact server performance.</li>
+<li>’~’ - log messages that do not belong to any of
+the listed modules</li>
+</ul>
+</li>
+<li><strong>level</strong> – <p>the log level being applied to a specific module.
+Levels defined:</p>
+<ul>
+<li>none - disable logging</li>
+<li>error - error level log events</li>
+<li>info - high level informational events</li>
+<li>debug_1 through debug_5 - debug information                             (debug_5 being the most detailed)</li>
+</ul>
+</li>
+<li><strong>device</strong> – either file or console.</li>
+<li><strong>reset</strong> – reset all log settings.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">When trying to apply new settings a status string is
+returned. On success Log Level Set is returned; otherwise an
+informative exception raised.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.max_log_files">
+<code class="descname">max_log_files</code><span class="sig-paren">(</span><em>numfiles=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.max_log_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.max_log_files" title="Permalink to this definition">¶</a></dt>
+<dd><p>The command sets a limit on the number of log files in log folder.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>numfiles</strong> – number of files</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">The current log files limit</td>
+</tr>
+</tbody>
+</table>
+<p>Note: If Camelot server is started with json format enable.                The output will be in Json format.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span><span class="o">.</span><span class="n">max_log_files</span><span class="p">()</span>
+<span class="go">{&#39;max_files&#39;: &#39;1024&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.register_event_callback">
+<code class="descname">register_event_callback</code><span class="sig-paren">(</span><em>callback</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.register_event_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.register_event_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a event callback that can be notified when a event
+occurs on a currently running server. This calback will be
+called when an event is received from camelot server for an
+endpoint on which callback wasn’t registered,
+otherwise the python framework calls the callback on
+an endpoint for which this event was sent.</p>
+<dl class="docutils">
+<dt>event will be a dictionary with following falues:</dt>
+<dd><table class="first last docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">camelot_ip:</th><td class="field-body">Camelot server ip</td>
+</tr>
+<tr class="field-even field"><th class="field-name">camelot_port:</th><td class="field-body">Camelot server port</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">endpoint_id:</th><td class="field-body">Camelot endpoint id</td>
+</tr>
+<tr class="field-even field"><th class="field-name">event_type:</th><td class="field-body">type of the event</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">event_sub_type:</th><td class="field-body">sub type of the event</td>
+</tr>
+<tr class="field-even field"><th class="field-name">message:</th><td class="field-body">following message from the even</td>
+</tr>
+</tbody>
+</table>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>callback</strong> – callback method which can be invoked by SDK</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">event_callback</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span> <span class="s1">&#39;Received Event: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">event</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">create_camelot_server</span><span class="p">(</span><span class="s1">&#39;10.12.10.180, &#39;</span><span class="mi">5001</span><span class="s1">&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="o">&lt;</span><span class="n">camelot</span><span class="o">.</span><span class="n">camelot_server</span><span class="o">.</span><span class="n">CamelotServer</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x1445550</span><span class="o">&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">serv</span><span class="o">.</span><span class="n">register_event_callback</span><span class="p">(</span><span class="n">event_callback</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span> <span class="o">=</span> <span class="n">serv</span><span class="o">.</span><span class="n">create_new_endpoint</span><span class="p">(</span> <span class="s1">&#39;sipx&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                                <span class="s1">&#39;SEPBAACBAAC7001&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span>
+<span class="go">&lt;camelot.endpoint.CamelotEndpoint object at 0x29ed490&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span><span class="o">.</span><span class="n">start_info_events</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span><span class="o">.</span><span class="n">start_station_events</span><span class="p">()</span>
+<span class="go">True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+<span class="go">&#39;outofservice&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ep1</span><span class="o">.</span><span class="n">inservice</span><span class="p">()</span>
+<span class="go">&#39;inservicepending&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Received</span> <span class="n">Event</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;event_sub_type&#39;</span><span class="p">:</span> <span class="s1">&#39;ccmreg&#39;</span><span class="p">,</span>
+<span class="go">        &#39;event_type&#39;: &#39;station&#39;,</span>
+<span class="go">        &#39;camelot_ip&#39;: &#39;10.106.248.199&#39;, &#39;endpoint_id&#39;: &#39;00000003&#39;,</span>
+<span class="go">        &#39;camelot_port&#39;: 5004, &#39;message&#39;:</span>
+<span class="go">        &#39;17:27:33:314 ccmreg {registration ok} 10.20.1.21&#39;}</span>
+<span class="go">    Received Event: {&#39;event_sub_type&#39;: None, &#39;event_type&#39;: &#39;state&#39;,</span>
+<span class="go">        &#39;camelot_ip&#39;: &#39;10.106.248.199&#39;, &#39;endpoint_id&#39;: &#39;00000003&#39;,</span>
+<span class="go">        &#39;camelot_port&#39;: 5004, &#39;message&#39;: &#39;&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.register_reconnect_callback">
+<code class="descname">register_reconnect_callback</code><span class="sig-paren">(</span><em>callback</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.register_reconnect_callback"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.register_reconnect_callback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Camelot calls this function when the connect to restarted camelot
+server is successful. User can have script relavant initialization
+code in callback which should be executed on connect to restarted
+camleot server is successful</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.camelot_server.CamelotServer.unload_sss">
+<code class="descname">unload_sss</code><span class="sig-paren">(</span><em>shandle</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/camelot_server.html#CamelotServer.unload_sss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.camelot_server.CamelotServer.unload_sss" title="Permalink to this definition">¶</a></dt>
+<dd><p>unload sss script from the camelot server</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>shandle</strong> – script handled returned by loadsss</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Camelot Server API</a><ul>
+<li><a class="reference internal" href="#api-methods">API Methods</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="camelot.html"
+                        title="previous chapter">Camelot API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="contentbodyobject.html"
+                        title="next chapter">ContentBodyObject API</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/camelot_server.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="contentbodyobject.html" title="ContentBodyObject API"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="camelot.html" title="Camelot API"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api_reference.html" >API Reference</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

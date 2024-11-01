@@ -1,0 +1,383 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>BCG API &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Camelot API" href="camelot.html" />
+    <link rel="prev" title="API Reference" href="../api_reference.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="camelot.html" title="Camelot API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../api_reference.html" title="API Reference"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api_reference.html" accesskey="U">API Reference</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="bcg-api">
+<h1>BCG API<a class="headerlink" href="#bcg-api" title="Permalink to this headline">¶</a></h1>
+<p>The BCG API provides the ability to perform BCG functionalities.</p>
+<div class="section" id="starting-the-bcg-server">
+<h2>Starting the BCG Server<a class="headerlink" href="#starting-the-bcg-server" title="Permalink to this headline">¶</a></h2>
+<p>bcgserver.py  [–host|-h &lt;hostname/ip&gt;] [–port|-p &lt;port&gt;]</p>
+</div>
+<div class="section" id="module-camelot.bcg">
+<span id="api-methods"></span><h2>API Methods<a class="headerlink" href="#module-camelot.bcg" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="camelot.bcg.Bcg">
+<em class="property">class </em><code class="descclassname">camelot.bcg.</code><code class="descname">Bcg</code><span class="sig-paren">(</span><em>ip</em>, <em>port</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#Bcg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.Bcg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>BCG instance representation</p>
+<dl class="method">
+<dt id="camelot.bcg.Bcg.add_endpoint">
+<code class="descname">add_endpoint</code><span class="sig-paren">(</span><em>endpoint</em>, <em>autocmd_type='call'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#Bcg.add_endpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.Bcg.add_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>add endpoint to the bcg queue</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>endpoint</strong> – endpoint object created
+by camelot.create_new_endpoint()</li>
+<li><strong>type</strong> – <p>operation type. Possible values:</p>
+<ul>
+<li>call - invoke placecall from BCG</li>
+<li>script - invoke placescript from BCG</li>
+<li>camelot_api - invoke any camelot API.The API
+should be specified using “set_camelot_api” method
+in BCG level.</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bcgobj</span><span class="o">.</span><span class="n">add_endpoint</span><span class="p">(</span><span class="n">ep</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.bcg.Bcg.get_info">
+<code class="descname">get_info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#Bcg.get_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.Bcg.get_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the bcg information</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of bcg information as shown below</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bcgobj</span><span class="o">.</span><span class="n">get_info</span><span class="p">()</span>
+<span class="go">{&#39;endpoints queued&#39;: &#39;199&#39;, &#39;state&#39;: &#39;running&#39;,</span>
+<span class="go">&#39;actual rate&#39;: &#39;4.94&#39;, &#39;set rate&#39;: &#39;5.0&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.bcg.Bcg.get_members">
+<code class="descname">get_members</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#Bcg.get_members"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.Bcg.get_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the members from bcg server list.  It will return a
+list of endpoint references</p>
+<p>returns: list of endpoint references added</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bcgobj</span><span class="o">.</span><span class="n">get_members</span><span class="p">()</span>
+<span class="go">[&#39;192.168.1.109:5000:00000004&#39;. &#39;192.168.1.109:5000:00000005&#39;,...]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.bcg.Bcg.get_name">
+<code class="descname">get_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#Bcg.get_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.Bcg.get_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the name of bcg instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">name of the bcg</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bcgobj</span><span class="o">.</span><span class="n">get_name</span><span class="p">()</span>
+<span class="go">&#39;bcg1&#39;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.bcg.Bcg.get_stats">
+<code class="descname">get_stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#Bcg.get_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.Bcg.get_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the bcg statistics information</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of bcg statistics shown below</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bcgobj</span><span class="o">.</span><span class="n">get_stats</span><span class="p">()</span>
+<span class="go">{&#39;aborted endpoint&#39;: &#39;&#39;, &#39;aborted reason&#39;: &#39;&#39;,</span>
+<span class="go">&#39;attempts&#39;: &#39;92&#39;, &#39;aborts&#39;: &#39;0&#39;}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.bcg.Bcg.remove_endpoint">
+<code class="descname">remove_endpoint</code><span class="sig-paren">(</span><em>endpoint</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#Bcg.remove_endpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.Bcg.remove_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove endpoint from the bcg queue</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Parameters endpoint:</th></tr>
+<tr class="field-odd field"><td>&#160;</td><td class="field-body">endpoint object created by create_new_endpoint()</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bcgobj</span><span class="o">.</span><span class="n">remove_endpoint</span><span class="p">(</span><span class="n">ep</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.bcg.Bcg.set_camelot_api">
+<code class="descname">set_camelot_api</code><span class="sig-paren">(</span><em>endpoint</em>, <em>api_name</em>, <em>api_args={}</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#Bcg.set_camelot_api"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.Bcg.set_camelot_api" title="Permalink to this definition">¶</a></dt>
+<dd><p>It is used for specifying a particular camelot API which
+will be invoked by BCG according to configured rate.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>endpoint</strong> – endpoint object created
+by camelot.create_new_endpoint()</li>
+<li><strong>api_name</strong> – name of the API to be invoked</li>
+<li><strong>api_args</strong> – valid arguments of the API in dictionary
+format.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bcgobj</span><span class="o">.</span><span class="n">set_camelot_api</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s1">&#39;http_query_request&#39;</span><span class="p">,</span>
+<span class="go">        {&#39;ip&#39;:&#39;10.12.10.74&#39;, &#39;port&#39;:&#39;8443&#39;,</span>
+<span class="go">         &#39;url&#39;:&#39;/cucm-uds/clusterUser?username=JABBEREP1300000&#39;,</span>
+<span class="go">         &#39;secure&#39;:True})</span>
+</pre></div>
+</div>
+<p>Note: Before calling this method we must invoke BCG command
+“add_endpoint” which should have “camelot_api” as second parm.
+For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bcgobj</span><span class="o">.</span><span class="n">add_endpoint</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span> <span class="s1">&#39;camelot_api&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.bcg.Bcg.set_name">
+<code class="descname">set_name</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#Bcg.set_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.Bcg.set_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>set the name to the bcg instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>name</strong> – name of the bcg</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bcgobj</span><span class="o">.</span><span class="n">set_name</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.bcg.Bcg.set_rate">
+<code class="descname">set_rate</code><span class="sig-paren">(</span><em>rate</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#Bcg.set_rate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.Bcg.set_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>set the bcg cps rate</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rate</strong> – calls per second rate</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bcgobj</span><span class="o">.</span><span class="n">set_rate</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.bcg.Bcg.start">
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#Bcg.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.Bcg.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the bcg server to schedule calls</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bcgobj</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.bcg.Bcg.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#Bcg.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.Bcg.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop the bcg server to schedule calls</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bcgobj</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="camelot.bcg.create_new_bcg">
+<code class="descclassname">camelot.bcg.</code><code class="descname">create_new_bcg</code><span class="sig-paren">(</span><em>ip</em>, <em>port</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#create_new_bcg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.create_new_bcg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new bcg instance’</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ip</strong> – ip of the bcg server</li>
+<li><strong>port</strong> – port of the bcg server</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bcg reference</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">bcgobj</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">bcg</span><span class="o">.</span><span class="n">create_new_bcg</span><span class="p">(</span><span class="s1">&#39;10.12.10.188&#39;</span><span class="p">,</span><span class="mi">30101</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="camelot.bcg.delete_bcg">
+<code class="descclassname">camelot.bcg.</code><code class="descname">delete_bcg</code><span class="sig-paren">(</span><em>ip</em>, <em>port</em>, <em>bcgref</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/bcg.html#delete_bcg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.bcg.delete_bcg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete requested bcg instance’</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ip</strong> – ip of the bcg server</li>
+<li><strong>port</strong> – port of the bcg server</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">bcg reference</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">camelot</span><span class="o">.</span><span class="n">bcg</span><span class="o">.</span><span class="n">delete_bcg</span><span class="p">(</span><span class="s1">&#39;10.12.10.188&#39;</span><span class="p">,</span> <span class="mi">30101</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">BCG API</a><ul>
+<li><a class="reference internal" href="#starting-the-bcg-server">Starting the BCG Server</a></li>
+<li><a class="reference internal" href="#module-camelot.bcg">API Methods</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../api_reference.html"
+                        title="previous chapter">API Reference</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="camelot.html"
+                        title="next chapter">Camelot API</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/bcg.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="camelot.html" title="Camelot API"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../api_reference.html" title="API Reference"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api_reference.html" >API Reference</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

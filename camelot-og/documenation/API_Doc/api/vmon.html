@@ -1,0 +1,424 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>VMON API &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="People" href="../people.html" />
+    <link rel="prev" title="Camelot raw and simulated endpoint API" href="tngpicommands.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../people.html" title="People"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tngpicommands.html" title="Camelot raw and simulated endpoint API"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api_reference.html" accesskey="U">API Reference</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="vmon-api">
+<h1>VMON API<a class="headerlink" href="#vmon-api" title="Permalink to this headline">¶</a></h1>
+<p>The VMON API provides the ability to perform VMON functionalities.</p>
+<div class="section" id="starting-the-vmon-server">
+<h2>Starting the VMON Server<a class="headerlink" href="#starting-the-vmon-server" title="Permalink to this headline">¶</a></h2>
+<p>vmonserver.py  [–host|-h &lt;hostname/ip&gt;] [–port|-p &lt;port&gt;]</p>
+</div>
+<div class="section" id="module-camelot.vmon">
+<span id="api-methods"></span><h2>API Methods<a class="headerlink" href="#module-camelot.vmon" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="camelot.vmon.Vmon">
+<em class="property">class </em><code class="descclassname">camelot.vmon.</code><code class="descname">Vmon</code><span class="sig-paren">(</span><em>ip</em>, <em>port</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/vmon.html#Vmon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.vmon.Vmon" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Vmon instance representation, ip port and path are mandatory</p>
+<p>‘from camelot import vmon’ package</p>
+<dl class="method">
+<dt id="camelot.vmon.Vmon.add_endpoint">
+<code class="descname">add_endpoint</code><span class="sig-paren">(</span><em>endpoint</em>, <em>description</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/vmon.html#Vmon.add_endpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.vmon.Vmon.add_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>add endpoint to the monitor(vmon server) queue for monitoring</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>endpoint</strong> – endpoint object created
+by camelot.create_new_endpoint()</li>
+<li><strong>description</strong> – description of the phone</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>nothing if successful,</p>
+<p>else ‘Invalid Endpoint/ endpoint already exists’
+exception is raised</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span><span class="o">.</span><span class="n">add_endpoint</span><span class="p">(</span><span class="n">ep</span><span class="p">,</span><span class="s2">&quot;phone 1&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.vmon.Vmon.clear_monitor">
+<code class="descname">clear_monitor</code><span class="sig-paren">(</span><em>mode=None</em>, <em>entries=None</em>, <em>events=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/vmon.html#Vmon.clear_monitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.vmon.Vmon.clear_monitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clear user defined entries associated with a monitor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">nothing if successful, else
+‘Invalid parameter/value passed’ exception is thrown</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span><span class="o">.</span><span class="n">clear_monitor</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.vmon.Vmon.get_info">
+<code class="descname">get_info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/vmon.html#Vmon.get_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.vmon.Vmon.get_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets current information about a monitor. changes made using
+set_monitor() can be verified.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dictionary of monitor information as shown below</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span><span class="o">.</span><span class="n">get_info</span><span class="p">()</span>
+<span class="go">{&#39;current file&#39;: &#39;1.txt&#39;,</span>
+<span class="go"> &#39;entries per file&#39;: &#39;500&#39;,</span>
+<span class="go"> &#39;mode&#39;: &#39;calls&#39;,</span>
+<span class="go"> &#39;monitor directory&#39;: &#39;/tmp/vmon&#39;}</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span><span class="o">.</span><span class="n">get_info</span><span class="p">()</span>
+<span class="go">{&#39;current file&#39;: None,</span>
+<span class="go"> &#39;entries per file&#39;: None,</span>
+<span class="go"> &#39;mode&#39;: &#39;calls&#39;,</span>
+<span class="go"> &#39;monitor directory&#39;: None}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.vmon.Vmon.get_members">
+<code class="descname">get_members</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/vmon.html#Vmon.get_members"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.vmon.Vmon.get_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>get the members from vmon server list.  It will return a
+list of endpoint references</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">list of endpoint references added else returns an empty list</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span><span class="o">.</span><span class="n">get_members</span><span class="p">()</span>
+<span class="go">[&#39;192.168.1.109:5000:00000004&#39;. &#39;192.168.1.109:5000:00000005&#39;,...]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.vmon.Vmon.release">
+<code class="descname">release</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/vmon.html#Vmon.release"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.vmon.Vmon.release" title="Permalink to this definition">¶</a></dt>
+<dd><p>releases monitor releases endpoints associated with the monitor.
+Does not delete monitor files or the monitor directory.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">nothing is successful, else ‘No endpoints added
+to be released’ exception is thrown</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span><span class="o">.</span><span class="n">release</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.vmon.Vmon.remove_endpoint">
+<code class="descname">remove_endpoint</code><span class="sig-paren">(</span><em>endpoint</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/vmon.html#Vmon.remove_endpoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.vmon.Vmon.remove_endpoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>remove endpoint from the monitor server. Once removed,
+the endpoint will no longer be monitored</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>endpoint</strong> – endpoint object created by create_new_endpoint()</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">nothing if successful,<p>else ‘Invalid Endpoint/endpoint not found’ exception is
+thrown if it fails.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span><span class="o">.</span><span class="n">remove_endpoint</span><span class="p">(</span><span class="n">ep</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.vmon.Vmon.set_monitor">
+<code class="descname">set_monitor</code><span class="sig-paren">(</span><em>mode=None</em>, <em>entries=None</em>, <em>events=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/vmon.html#Vmon.set_monitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.vmon.Vmon.set_monitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set thresholds associated with a monitor</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>entries</strong> – maximum number of entries per log file
+by default 500</li>
+<li><strong>mode</strong> – <p>Specify which class of events to monitor:</p>
+<ul>
+<li>calls - call state events</li>
+<li>streams - streams events</li>
+<li>epstate - endpoint info events</li>
+<li>station - monitor specific station events</li>
+</ul>
+</li>
+<li><strong>events</strong> – Any of the supported (python) list of station events</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">nothing if successful, else
+‘Invalid parameter/value passed’ exception is thrown</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span><span class="o">.</span><span class="n">set_monitor</span><span class="p">(</span><span class="s1">&#39;calls&#39;</span><span class="p">,</span> <span class="s1">&#39;1000&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span><span class="o">.</span><span class="n">set_monitor</span><span class="p">(</span>
+<span class="go">    &#39;epstate&#39;, &#39;1000&#39;, &#39;httpqueryresponse deletevvmresponse&#39;)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.vmon.Vmon.start">
+<code class="descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/vmon.html#Vmon.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.vmon.Vmon.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>startmonitor Start monitoring calls</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">nothing if successfull.
+exception ‘could not start monitor’ is raised if failed.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="camelot.vmon.Vmon.stop">
+<code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/vmon.html#Vmon.stop"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.vmon.Vmon.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>stopmonitor Stops monitoring calls</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">nothing if successfull.
+exception ‘monitor is not started/vmon instance is not valid’
+is raised if failed.</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="camelot.vmon.create_new_monitor">
+<code class="descclassname">camelot.vmon.</code><code class="descname">create_new_monitor</code><span class="sig-paren">(</span><em>ip</em>, <em>port</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/vmon.html#create_new_monitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.vmon.create_new_monitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new vmon instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ip</strong> – ip of the vmon server</li>
+<li><strong>port</strong> – port of the vmon server</li>
+<li><strong>dirpath</strong> – directory path to store vmon data
+specify another path or None
+default is /tmp/vmon</li>
+<li><strong>kwargs</strong> – <p>optional parameter. It takes following keys:</p>
+<ul>
+<li>dirpath: directory path to store vmon data,
+defaults to None</li>
+<li>vmoninstance:  key for which user can provide the
+subsclass for
+vmonInstance.On providing this key the Vmon server
+instantiates this subclass
+otherwise the VmonInstance will be instantiated.</li>
+<li>vmon_class: key for which user can provide subclass
+for Vmon class.
+On providing this key vmon client instantiates this
+subclass otherwise
+Vmon will be instantiated.</li>
+</ul>
+</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><p>vmon instance is created if successful. Else if not running</p>
+<p>’Plesae check ip/port or make sure vmonserver is running’
+exception is raised.</p>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">vmon</span><span class="o">.</span><span class="n">create_new_monitor</span><span class="p">(</span><span class="s1">&#39;10.12.10.188&#39;</span><span class="p">,</span><span class="mi">30101</span><span class="p">)</span>
+<span class="go">&lt;Vmon object at 0x1b53a10&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">vmon</span><span class="o">.</span><span class="n">create_new_monitor</span><span class="p">(</span>
+<span class="go">&#39;10.12.10.188&#39;,30101,vmon_class=myvmon)</span>
+<span class="go">&lt;myvmon object at 0x1b53a10&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">vmonobj</span> <span class="o">=</span> <span class="n">camelot</span><span class="o">.</span><span class="n">vmon</span><span class="o">.</span><span class="n">create_new_monitor</span><span class="p">(</span>
+<span class="go">&#39;10.12.10.188&#39;,30101,vmon_class=myvmon, vmoninstance=</span>
+<span class="go">&#39;myvmonclass.VmonInstanceUser1&#39;)</span>
+<span class="go">&lt;myvmon object at 0x1b53a10&gt;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="camelot.vmon.delete_monitor">
+<code class="descclassname">camelot.vmon.</code><code class="descname">delete_monitor</code><span class="sig-paren">(</span><em>ip</em>, <em>port</em>, <em>vmonref</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/camelot/vmon.html#delete_monitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.vmon.delete_monitor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete requested vmon instance’</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ip</strong> – ip of the monitor server</li>
+<li><strong>port</strong> – port of the monitor server</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">vmon reference</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">camelot</span><span class="o">.</span><span class="n">vmon</span><span class="o">.</span><span class="n">delete_vmon</span><span class="p">(</span><span class="s1">&#39;10.12.10.188&#39;</span><span class="p">,</span> <span class="mi">30101</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">VMON API</a><ul>
+<li><a class="reference internal" href="#starting-the-vmon-server">Starting the VMON Server</a></li>
+<li><a class="reference internal" href="#module-camelot.vmon">API Methods</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="tngpicommands.html"
+                        title="previous chapter">Camelot raw and simulated endpoint API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../people.html"
+                        title="next chapter">People</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/vmon.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../people.html" title="People"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tngpicommands.html" title="Camelot raw and simulated endpoint API"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api_reference.html" >API Reference</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

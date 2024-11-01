@@ -1,0 +1,182 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>camelot.events &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../camelot.html" accesskey="U">camelot</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for camelot.events</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">camelot</span> <span class="k">import</span> <span class="n">camlogger</span>
+
+<span class="n">log</span> <span class="o">=</span> <span class="n">camlogger</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="EventType"><a class="viewcode-back" href="../../api/events.html#camelot.events.EventType">[docs]</a><span class="k">class</span> <span class="nc">EventType</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">STATION_EVENT</span> <span class="o">=</span> <span class="s2">&quot;station&quot;</span>
+    <span class="n">INFO_EVENT</span> <span class="o">=</span> <span class="s2">&quot;info&quot;</span>
+    <span class="n">CALL_INFO_EVENT</span> <span class="o">=</span> <span class="s2">&quot;callstate&quot;</span>
+    <span class="n">STREAM_INFO_EVENT</span> <span class="o">=</span> <span class="s2">&quot;streamstate&quot;</span>
+    <span class="n">STREAM_EVENT</span> <span class="o">=</span> <span class="s2">&quot;stream&quot;</span>
+    <span class="n">STATE</span> <span class="o">=</span> <span class="s2">&quot;state&quot;</span>
+    <span class="n">CALLS</span> <span class="o">=</span> <span class="s2">&quot;calls&quot;</span>
+    <span class="n">STREAMS</span> <span class="o">=</span> <span class="s2">&quot;streams&quot;</span>
+    <span class="n">PRIMARY_CM</span> <span class="o">=</span> <span class="s2">&quot;primarycm&quot;</span>
+    <span class="n">BACKUP_CM</span> <span class="o">=</span> <span class="s2">&quot;backupcm&quot;</span>
+    <span class="n">BCG_READY</span> <span class="o">=</span> <span class="s2">&quot;bcgready&quot;</span>
+    <span class="n">TRASNPORTS</span> <span class="o">=</span> <span class="s2">&quot;transports&quot;</span>
+    <span class="n">LOST_CONN</span> <span class="o">=</span> <span class="s2">&quot;lostconn&quot;</span>
+    <span class="n">MEDIA_EVENT</span> <span class="o">=</span> <span class="s2">&quot;media&quot;</span>
+    <span class="n">TRACE_EVENT</span> <span class="o">=</span> <span class="s2">&quot;log&quot;</span>
+    <span class="n">TRANSPORT_INFO_EVENT</span> <span class="o">=</span> <span class="s2">&quot;transportstate&quot;</span>
+    <span class="n">CONNECTED</span> <span class="o">=</span> <span class="s2">&quot;connected&quot;</span>
+    <span class="n">CONNECTION_ERROR</span> <span class="o">=</span> <span class="s2">&quot;connectionerror&quot;</span>
+    <span class="n">CONNECTION_LOST</span> <span class="o">=</span> <span class="s2">&quot;connectionlost&quot;</span>
+    <span class="n">CONNECTION_TERMINATED</span> <span class="o">=</span> <span class="s2">&quot;connectionterminated&quot;</span>
+    <span class="n">CALL_EVENT</span> <span class="o">=</span> <span class="s2">&quot;callevent&quot;</span></div>
+
+
+<div class="viewcode-block" id="InfoEventType"><a class="viewcode-back" href="../../api/events.html#camelot.events.InfoEventType">[docs]</a><span class="k">class</span> <span class="nc">InfoEventType</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">STATE</span> <span class="o">=</span> <span class="s1">&#39;state&#39;</span>
+    <span class="n">CALLS</span> <span class="o">=</span> <span class="s1">&#39;calls&#39;</span>
+    <span class="n">PRIMARYCM</span> <span class="o">=</span> <span class="s1">&#39;primarycm&#39;</span>
+    <span class="n">BACKUPCM</span> <span class="o">=</span> <span class="s1">&#39;backupcm&#39;</span>
+    <span class="n">BCGREADY</span> <span class="o">=</span> <span class="s1">&#39;bcgready&#39;</span>
+    <span class="n">LOSTCONN</span> <span class="o">=</span> <span class="s1">&#39;lostconn&#39;</span>
+    <span class="n">TRANSPORTS</span> <span class="o">=</span> <span class="s1">&#39;transports&#39;</span></div>
+
+
+<div class="viewcode-block" id="StationEventType"><a class="viewcode-back" href="../../api/events.html#camelot.events.StationEventType">[docs]</a><span class="k">class</span> <span class="nc">StationEventType</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">RING</span> <span class="o">=</span> <span class="s1">&#39;ring&#39;</span>
+    <span class="n">START_TONE</span> <span class="o">=</span> <span class="s1">&#39;starttone&#39;</span>
+    <span class="n">STOP_TONE</span> <span class="o">=</span> <span class="s1">&#39;stoptone&#39;</span>
+    <span class="n">LAMP</span> <span class="o">=</span> <span class="s1">&#39;lamp&#39;</span>
+    <span class="n">PROMPT</span> <span class="o">=</span> <span class="s1">&#39;prompt&#39;</span>
+    <span class="n">NOTIFY</span> <span class="o">=</span> <span class="s1">&#39;notify&#39;</span>
+    <span class="n">BLF_ACK</span> <span class="o">=</span> <span class="s1">&#39;blfack&#39;</span>
+    <span class="n">BLF_NOTIFY</span> <span class="o">=</span> <span class="s1">&#39;blfnotify&#39;</span>
+    <span class="n">CALL_SELECT</span> <span class="o">=</span> <span class="s1">&#39;callselect&#39;</span>
+    <span class="n">KEY_PAD</span> <span class="o">=</span> <span class="s1">&#39;keypad&#39;</span>
+    <span class="n">USER_DATA</span> <span class="o">=</span> <span class="s1">&#39;userdata&#39;</span>
+    <span class="n">CCM_REG</span> <span class="o">=</span> <span class="s1">&#39;ccmreg&#39;</span>
+    <span class="n">CCM_RESET</span> <span class="o">=</span> <span class="s1">&#39;ccmreset&#39;</span>
+    <span class="n">CTI</span> <span class="o">=</span> <span class="s1">&#39;cti&#39;</span>
+    <span class="n">PRESENCE_PUBLISH_STATUS</span> <span class="o">=</span> <span class="s1">&#39;presencepublishstatus&#39;</span>
+    <span class="n">PRESENCE_NOTIFICATION</span> <span class="o">=</span> <span class="s1">&#39;presencenotification&#39;</span>
+    <span class="n">IM_SEND_STATUS</span> <span class="o">=</span> <span class="s1">&#39;imsendstatus&#39;</span>
+    <span class="n">INCOMING_IM</span> <span class="o">=</span> <span class="s1">&#39;incomingim&#39;</span>
+    <span class="n">VOICEMAIL</span> <span class="o">=</span> <span class="s1">&#39;voicemail&#39;</span>
+    <span class="n">CALL_PICKUP_STATUS</span> <span class="o">=</span> <span class="s1">&#39;cellpickupStatus&#39;</span>
+    <span class="n">PRESENCE_LOGIN_REDIRECT</span> <span class="o">=</span> <span class="s1">&#39;presenceloginredirect&#39;</span>
+    <span class="n">PRESENCE_DECOMPOSED_LAYOUT</span> <span class="o">=</span> <span class="s1">&#39;presencedecomposedlayout&#39;</span>
+    <span class="n">PRESENCE_USER_REHOMED</span> <span class="o">=</span> <span class="s1">&#39;presenceuserrehomed&#39;</span>
+    <span class="n">PRESENCE_CUP_FAILED</span> <span class="o">=</span> <span class="s1">&#39;presencecupfailed&#39;</span>
+    <span class="n">ENVELOPE</span> <span class="o">=</span> <span class="s1">&#39;envelope&#39;</span></div>
+
+
+<div class="viewcode-block" id="Event"><a class="viewcode-back" href="../../api/events.html#camelot.events.Event">[docs]</a><span class="k">class</span> <span class="nc">Event</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="n">_CAMELOT_IP</span> <span class="o">=</span> <span class="s1">&#39;camelot_ip&#39;</span>
+    <span class="n">_CAMELOT_PORT</span> <span class="o">=</span> <span class="s1">&#39;camelot_port&#39;</span>
+    <span class="n">_ENDPOINT_ID</span> <span class="o">=</span> <span class="s1">&#39;endpoint_id&#39;</span>
+    <span class="n">_EVENT_TYPE</span> <span class="o">=</span> <span class="s1">&#39;event_type&#39;</span>
+    <span class="n">_EVENT_SUB_TYPE</span> <span class="o">=</span> <span class="s1">&#39;event_sub_type&#39;</span>
+    <span class="n">_MESSAGE</span> <span class="o">=</span> <span class="s1">&#39;message&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">camelot_ip</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">camelot_port</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endpoint_id</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_sub_type</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">_copy_from_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_dict</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">event_dict</span><span class="p">)</span> <span class="o">==</span> <span class="nb">dict</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">event_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Event</span><span class="o">.</span><span class="n">_CAMELOT_IP</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">camelot_ip</span> <span class="o">=</span> <span class="n">event_dict</span><span class="p">[</span><span class="n">Event</span><span class="o">.</span><span class="n">_CAMELOT_IP</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">event_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Event</span><span class="o">.</span><span class="n">_CAMELOT_PORT</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">camelot_port</span> <span class="o">=</span> <span class="n">event_dict</span><span class="p">[</span><span class="n">Event</span><span class="o">.</span><span class="n">_CAMELOT_PORT</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">event_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Event</span><span class="o">.</span><span class="n">_ENDPOINT_ID</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">endpoint_id</span> <span class="o">=</span> <span class="n">event_dict</span><span class="p">[</span><span class="n">Event</span><span class="o">.</span><span class="n">_ENDPOINT_ID</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">event_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Event</span><span class="o">.</span><span class="n">_EVENT_SUB_TYPE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">event_sub_type</span> <span class="o">=</span> <span class="n">event_dict</span><span class="p">[</span><span class="n">Event</span><span class="o">.</span><span class="n">_EVENT_SUB_TYPE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">event_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Event</span><span class="o">.</span><span class="n">_EVENT_TYPE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">event_type</span> <span class="o">=</span> <span class="n">event_dict</span><span class="p">[</span><span class="n">Event</span><span class="o">.</span><span class="n">_EVENT_TYPE</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">event_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Event</span><span class="o">.</span><span class="n">_MESSAGE</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">event_dict</span><span class="p">[</span><span class="n">Event</span><span class="o">.</span><span class="n">_MESSAGE</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">log</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s1">&#39;passed parameter is not of type dict&#39;</span><span class="p">)</span>
+            <span class="k">return</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../camelot.html" >camelot</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>

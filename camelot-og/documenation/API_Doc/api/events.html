@@ -1,0 +1,399 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Events API &#8212; Camelot Python SDK v12.6.22.12.0.0 documentation</title>
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Camelot Logger API" href="logging.html" />
+    <link rel="prev" title="Endpoint API" href="endpoint.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="logging.html" title="Camelot Logger API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="endpoint.html" title="Endpoint API"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api_reference.html" accesskey="U">API Reference</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="events-api">
+<h1>Events API<a class="headerlink" href="#events-api" title="Permalink to this headline">¶</a></h1>
+<p>The Event Classes</p>
+<span class="target" id="module-camelot.events"></span><dl class="class">
+<dt id="camelot.events.Event">
+<em class="property">class </em><code class="descclassname">camelot.events.</code><code class="descname">Event</code><a class="reference internal" href="../_modules/camelot/events.html#Event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.events.Event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.events.EventType">
+<em class="property">class </em><code class="descclassname">camelot.events.</code><code class="descname">EventType</code><a class="reference internal" href="../_modules/camelot/events.html#EventType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.events.EventType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="camelot.events.EventType.BACKUP_CM">
+<code class="descname">BACKUP_CM</code><em class="property"> = 'backupcm'</em><a class="headerlink" href="#camelot.events.EventType.BACKUP_CM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.BCG_READY">
+<code class="descname">BCG_READY</code><em class="property"> = 'bcgready'</em><a class="headerlink" href="#camelot.events.EventType.BCG_READY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.CALLS">
+<code class="descname">CALLS</code><em class="property"> = 'calls'</em><a class="headerlink" href="#camelot.events.EventType.CALLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.CALL_EVENT">
+<code class="descname">CALL_EVENT</code><em class="property"> = 'callevent'</em><a class="headerlink" href="#camelot.events.EventType.CALL_EVENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.CALL_INFO_EVENT">
+<code class="descname">CALL_INFO_EVENT</code><em class="property"> = 'callstate'</em><a class="headerlink" href="#camelot.events.EventType.CALL_INFO_EVENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.CONNECTED">
+<code class="descname">CONNECTED</code><em class="property"> = 'connected'</em><a class="headerlink" href="#camelot.events.EventType.CONNECTED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.CONNECTION_ERROR">
+<code class="descname">CONNECTION_ERROR</code><em class="property"> = 'connectionerror'</em><a class="headerlink" href="#camelot.events.EventType.CONNECTION_ERROR" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.CONNECTION_LOST">
+<code class="descname">CONNECTION_LOST</code><em class="property"> = 'connectionlost'</em><a class="headerlink" href="#camelot.events.EventType.CONNECTION_LOST" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.CONNECTION_TERMINATED">
+<code class="descname">CONNECTION_TERMINATED</code><em class="property"> = 'connectionterminated'</em><a class="headerlink" href="#camelot.events.EventType.CONNECTION_TERMINATED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.INFO_EVENT">
+<code class="descname">INFO_EVENT</code><em class="property"> = 'info'</em><a class="headerlink" href="#camelot.events.EventType.INFO_EVENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.LOST_CONN">
+<code class="descname">LOST_CONN</code><em class="property"> = 'lostconn'</em><a class="headerlink" href="#camelot.events.EventType.LOST_CONN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.MEDIA_EVENT">
+<code class="descname">MEDIA_EVENT</code><em class="property"> = 'media'</em><a class="headerlink" href="#camelot.events.EventType.MEDIA_EVENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.PRIMARY_CM">
+<code class="descname">PRIMARY_CM</code><em class="property"> = 'primarycm'</em><a class="headerlink" href="#camelot.events.EventType.PRIMARY_CM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.STATE">
+<code class="descname">STATE</code><em class="property"> = 'state'</em><a class="headerlink" href="#camelot.events.EventType.STATE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.STATION_EVENT">
+<code class="descname">STATION_EVENT</code><em class="property"> = 'station'</em><a class="headerlink" href="#camelot.events.EventType.STATION_EVENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.STREAMS">
+<code class="descname">STREAMS</code><em class="property"> = 'streams'</em><a class="headerlink" href="#camelot.events.EventType.STREAMS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.STREAM_EVENT">
+<code class="descname">STREAM_EVENT</code><em class="property"> = 'stream'</em><a class="headerlink" href="#camelot.events.EventType.STREAM_EVENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.STREAM_INFO_EVENT">
+<code class="descname">STREAM_INFO_EVENT</code><em class="property"> = 'streamstate'</em><a class="headerlink" href="#camelot.events.EventType.STREAM_INFO_EVENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.TRACE_EVENT">
+<code class="descname">TRACE_EVENT</code><em class="property"> = 'log'</em><a class="headerlink" href="#camelot.events.EventType.TRACE_EVENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.TRANSPORT_INFO_EVENT">
+<code class="descname">TRANSPORT_INFO_EVENT</code><em class="property"> = 'transportstate'</em><a class="headerlink" href="#camelot.events.EventType.TRANSPORT_INFO_EVENT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.EventType.TRASNPORTS">
+<code class="descname">TRASNPORTS</code><em class="property"> = 'transports'</em><a class="headerlink" href="#camelot.events.EventType.TRASNPORTS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.events.InfoEventType">
+<em class="property">class </em><code class="descclassname">camelot.events.</code><code class="descname">InfoEventType</code><a class="reference internal" href="../_modules/camelot/events.html#InfoEventType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.events.InfoEventType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="camelot.events.InfoEventType.BACKUPCM">
+<code class="descname">BACKUPCM</code><em class="property"> = 'backupcm'</em><a class="headerlink" href="#camelot.events.InfoEventType.BACKUPCM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.InfoEventType.BCGREADY">
+<code class="descname">BCGREADY</code><em class="property"> = 'bcgready'</em><a class="headerlink" href="#camelot.events.InfoEventType.BCGREADY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.InfoEventType.CALLS">
+<code class="descname">CALLS</code><em class="property"> = 'calls'</em><a class="headerlink" href="#camelot.events.InfoEventType.CALLS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.InfoEventType.LOSTCONN">
+<code class="descname">LOSTCONN</code><em class="property"> = 'lostconn'</em><a class="headerlink" href="#camelot.events.InfoEventType.LOSTCONN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.InfoEventType.PRIMARYCM">
+<code class="descname">PRIMARYCM</code><em class="property"> = 'primarycm'</em><a class="headerlink" href="#camelot.events.InfoEventType.PRIMARYCM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.InfoEventType.STATE">
+<code class="descname">STATE</code><em class="property"> = 'state'</em><a class="headerlink" href="#camelot.events.InfoEventType.STATE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.InfoEventType.TRANSPORTS">
+<code class="descname">TRANSPORTS</code><em class="property"> = 'transports'</em><a class="headerlink" href="#camelot.events.InfoEventType.TRANSPORTS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="camelot.events.StationEventType">
+<em class="property">class </em><code class="descclassname">camelot.events.</code><code class="descname">StationEventType</code><a class="reference internal" href="../_modules/camelot/events.html#StationEventType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#camelot.events.StationEventType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.BLF_ACK">
+<code class="descname">BLF_ACK</code><em class="property"> = 'blfack'</em><a class="headerlink" href="#camelot.events.StationEventType.BLF_ACK" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.BLF_NOTIFY">
+<code class="descname">BLF_NOTIFY</code><em class="property"> = 'blfnotify'</em><a class="headerlink" href="#camelot.events.StationEventType.BLF_NOTIFY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.CALL_PICKUP_STATUS">
+<code class="descname">CALL_PICKUP_STATUS</code><em class="property"> = 'cellpickupStatus'</em><a class="headerlink" href="#camelot.events.StationEventType.CALL_PICKUP_STATUS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.CALL_SELECT">
+<code class="descname">CALL_SELECT</code><em class="property"> = 'callselect'</em><a class="headerlink" href="#camelot.events.StationEventType.CALL_SELECT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.CCM_REG">
+<code class="descname">CCM_REG</code><em class="property"> = 'ccmreg'</em><a class="headerlink" href="#camelot.events.StationEventType.CCM_REG" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.CCM_RESET">
+<code class="descname">CCM_RESET</code><em class="property"> = 'ccmreset'</em><a class="headerlink" href="#camelot.events.StationEventType.CCM_RESET" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.CTI">
+<code class="descname">CTI</code><em class="property"> = 'cti'</em><a class="headerlink" href="#camelot.events.StationEventType.CTI" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.ENVELOPE">
+<code class="descname">ENVELOPE</code><em class="property"> = 'envelope'</em><a class="headerlink" href="#camelot.events.StationEventType.ENVELOPE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.IM_SEND_STATUS">
+<code class="descname">IM_SEND_STATUS</code><em class="property"> = 'imsendstatus'</em><a class="headerlink" href="#camelot.events.StationEventType.IM_SEND_STATUS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.INCOMING_IM">
+<code class="descname">INCOMING_IM</code><em class="property"> = 'incomingim'</em><a class="headerlink" href="#camelot.events.StationEventType.INCOMING_IM" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.KEY_PAD">
+<code class="descname">KEY_PAD</code><em class="property"> = 'keypad'</em><a class="headerlink" href="#camelot.events.StationEventType.KEY_PAD" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.LAMP">
+<code class="descname">LAMP</code><em class="property"> = 'lamp'</em><a class="headerlink" href="#camelot.events.StationEventType.LAMP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.NOTIFY">
+<code class="descname">NOTIFY</code><em class="property"> = 'notify'</em><a class="headerlink" href="#camelot.events.StationEventType.NOTIFY" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.PRESENCE_CUP_FAILED">
+<code class="descname">PRESENCE_CUP_FAILED</code><em class="property"> = 'presencecupfailed'</em><a class="headerlink" href="#camelot.events.StationEventType.PRESENCE_CUP_FAILED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.PRESENCE_DECOMPOSED_LAYOUT">
+<code class="descname">PRESENCE_DECOMPOSED_LAYOUT</code><em class="property"> = 'presencedecomposedlayout'</em><a class="headerlink" href="#camelot.events.StationEventType.PRESENCE_DECOMPOSED_LAYOUT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.PRESENCE_LOGIN_REDIRECT">
+<code class="descname">PRESENCE_LOGIN_REDIRECT</code><em class="property"> = 'presenceloginredirect'</em><a class="headerlink" href="#camelot.events.StationEventType.PRESENCE_LOGIN_REDIRECT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.PRESENCE_NOTIFICATION">
+<code class="descname">PRESENCE_NOTIFICATION</code><em class="property"> = 'presencenotification'</em><a class="headerlink" href="#camelot.events.StationEventType.PRESENCE_NOTIFICATION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.PRESENCE_PUBLISH_STATUS">
+<code class="descname">PRESENCE_PUBLISH_STATUS</code><em class="property"> = 'presencepublishstatus'</em><a class="headerlink" href="#camelot.events.StationEventType.PRESENCE_PUBLISH_STATUS" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.PRESENCE_USER_REHOMED">
+<code class="descname">PRESENCE_USER_REHOMED</code><em class="property"> = 'presenceuserrehomed'</em><a class="headerlink" href="#camelot.events.StationEventType.PRESENCE_USER_REHOMED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.PROMPT">
+<code class="descname">PROMPT</code><em class="property"> = 'prompt'</em><a class="headerlink" href="#camelot.events.StationEventType.PROMPT" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.RING">
+<code class="descname">RING</code><em class="property"> = 'ring'</em><a class="headerlink" href="#camelot.events.StationEventType.RING" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.START_TONE">
+<code class="descname">START_TONE</code><em class="property"> = 'starttone'</em><a class="headerlink" href="#camelot.events.StationEventType.START_TONE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.STOP_TONE">
+<code class="descname">STOP_TONE</code><em class="property"> = 'stoptone'</em><a class="headerlink" href="#camelot.events.StationEventType.STOP_TONE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.USER_DATA">
+<code class="descname">USER_DATA</code><em class="property"> = 'userdata'</em><a class="headerlink" href="#camelot.events.StationEventType.USER_DATA" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="camelot.events.StationEventType.VOICEMAIL">
+<code class="descname">VOICEMAIL</code><em class="property"> = 'voicemail'</em><a class="headerlink" href="#camelot.events.StationEventType.VOICEMAIL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="endpoint.html"
+                        title="previous chapter">Endpoint API</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="logging.html"
+                        title="next chapter">Camelot Logger API</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/api/events.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="logging.html" title="Camelot Logger API"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="endpoint.html" title="Endpoint API"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">Camelot Python SDK v12.6.22.12.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../api_reference.html" >API Reference</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2013, Author.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.9.
+    </div>
+  </body>
+</html>
